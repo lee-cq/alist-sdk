@@ -2,6 +2,7 @@
 __pycache__/
 .idea/
 alist/
+test/alist/
 # Byte-compiled / optimized / DLL files
 *.py[cod]
 *$py.class
