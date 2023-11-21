@@ -17,6 +17,10 @@ class NotLogin(AlistError):
     """未登陆"""
 
 
+class RequestError(AlistError):
+    """请求错误"""
+
+
 class Client(HttpClient):
 
     def __init__(self, base_url, token=None, username=None, password=None, has_opt=False, **kwargs):
@@ -66,7 +70,7 @@ class Client(HttpClient):
             },
         )
 
-        if res.status_code == 200:
+        if res.status_code == 200 and res.json()['code'] == 200:
             return self.set_token(res.json()["data"]["token"])
         logger.warning("登陆失败[%d]：%s", res.status_code, res.text)
         return False
