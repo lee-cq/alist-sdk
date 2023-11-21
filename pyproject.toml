@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "alist-sdk"
+version = "0.0.1"
+authors = [{ name = "LeeCQ", email = "lcq@leecq.cn" }]
+description = "Alist API 简单封装."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = ["httpx~=0.25.1", "pydantic~=2.5.1"]
+
+classifiers = [
+  "Development Status :: 1 - Planning",
+  "Environment :: Console",
+  "Framework :: Pydantic :: 2",
+  "Natural Language :: Chinese (Simplified)",
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+]
+
+[project.urls]
+Homepage = "https://github.com/pypa/sampleproject"
+Issues = "https://github.com/pypa/sampleproject/issues"
+
+[tool.setuptools]
+packages = ["alist_sdk"]
