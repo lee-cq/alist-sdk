@@ -15,6 +15,7 @@ logger = logging.getLogger('alist-sdk.fs.model')
 __all__ = [
     "BaseModel", "Item", "RawItem", "ListItem",
     "DirItem", "SearchItem", "Searches", "Me",
+    "Task",
     "Resp", "Verify", "verify"
 ]
 
@@ -103,10 +104,26 @@ class Me(_BaseModel):
     otp: Optional[bool]
 
 
+class Task(_BaseModel):
+    """ »» id	string	false	none	id	none
+        »» name	string	false	none	任务名	none
+        »» state	string	false	none	任务完成状态	none
+        »» status	string	false	none		none
+        »» progress	integer	false	none	进度	none
+        »» error	string	false	none	错误信息	none
+    """
+    id: str
+    name: str
+    state: str
+    status: str
+    progress: int
+    error: str
+
+
 class Resp(_BaseModel):
     code: int
     message: str
-    data: None | Me | list[DirItem] | ListItem | Searches | RawItem
+    data: None | str | Me | list[DirItem] | ListItem | Searches | RawItem | list[Task]
 
 
 class Verify:

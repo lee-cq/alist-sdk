@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "alist-sdk"
-version = "0.0.1"
+version = "0.0.2"
 authors = [{ name = "LeeCQ", email = "lcq@leecq.cn" }]
 description = "Alist API 简单封装."
 readme = "README.md"
@@ -22,8 +22,8 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/pypa/sampleproject"
-Issues = "https://github.com/pypa/sampleproject/issues"
+Homepage = "https://github.com/lee-cq/alist-sdk"
+Issues = "https://github.com/lee-cq/alist-sdk/issues"
 
 [tool.setuptools]
 packages = ["alist_sdk"]

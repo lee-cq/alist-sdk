@@ -4,9 +4,45 @@ from pathlib import Path
 
 from alist_sdk import *
 
-# os.system(f"python {Path(__file__).parent.joinpath('init_alist.py')}")
 client = Client('http://localhost:5244', username='admin', password='123456')
 DATA_DIR = Path(__file__).parent.joinpath('alist/test_dir')
+DATA_DIR_DST = Path(__file__).parent.joinpath('alist/test_dir')
+DATA_DIR_DST.mkdir(exist_ok=True)
+DATA_DIR.mkdir(exist_ok=True)
+
+
+def create_storage_local(client_, mount_name, local_path: Path):
+    local_storage = {
+        "mount_path": f"/{mount_name}",
+        "order": 0,
+        "driver": "Local",
+        "cache_expiration": 0,
+        "status": "work",
+        "addition": "{\"root_folder_path\":\"%s\",\"thumbnail\":false,"
+                    "\"thumb_cache_folder\":\"\",\"show_hidden\":true,"
+                    "\"mkdir_perm\":\"750\"}" % local_path.absolute().as_posix(),
+        "remark": "",
+        "modified": "2023-11-20T15:00:31.608106706Z",
+        "disabled": False,
+        "enable_sign": False,
+        "order_by": "name",
+        "order_direction": "asc",
+        "extract_folder": "front",
+        "web_proxy": False,
+        "webdav_policy": "native_proxy",
+        "down_proxy_url": ""
+    }
+    if f'/{mount_name}' not in [i['mount_path'] for i in client.get("/api/admin/storage/list").json()['data']['content']]:
+        assert client_.post(
+            "/api/admin/storage/create",
+            json=local_storage
+        ).json().get('code') == 200, "创建Storage失败。"
+    else:
+        print("已经创建，跳过 ...")
+
+
+def create_storage_dst():
+    """"""
 
 
 def clear_dir(path: Path):
@@ -20,18 +56,23 @@ def clear_dir(path: Path):
     path.rmdir()
 
 
-def test_login():
-    _client = Client("http://localhost:5244", verify=False)
-    assert _client.login(username='admin', password="123456", ), "登陆失败"
+class BaseTestCase(unittest.TestCase):
 
+    def test_login(self):
+        _client = Client("http://localhost:5244", verify=False)
+        self.assertTrue(_client.login(username='admin', password="123456", ), "登陆失败")
 
-def test_me():
-    res = client.me()
-    assert res.code == 200
-    assert isinstance(res.data, Me), "数据结构错误。"
+    def test_me(self):
+        res = client.me()
+        self.assertEqual(res.code, 200)
+        self.assertIsInstance(res.data, Me, "数据结构错误。")
 
 
 class FSTestCase(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        create_storage_local(client, 'local', DATA_DIR)
 
     def tearDown(self) -> None:
         clear_dir(DATA_DIR)
@@ -197,6 +238,38 @@ class FSTestCase(unittest.TestCase):
         """"""
         res = client.add_qbit("/local", [""])
         self.assertEqual(res.code, 200)
+
+
+class AdminTaskTestCase(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        create_storage_local(client, 'local', DATA_DIR)
+        create_storage_local(client, 'local_dst', DATA_DIR_DST)
+
+    def setUp(self) -> None:
+        clear_dir(DATA_DIR)
+        clear_dir(DATA_DIR_DST)
+        DATA_DIR.mkdir(exist_ok=True)
+        DATA_DIR_DST.mkdir(exist_ok=True)
+
+    def test_task_done(self):
+        """"""
+        DATA_DIR.joinpath('test.txt').write_text('abc')
+
+        res = client.copy(src_dir='/local',
+                          dst_dir='/local_dst',
+                          files=['test.txt']
+                          )
+
+        self.assertEqual(res.code, 200, res.message)
+
+        res = client.task_done('copy')
+        self.assertEqual(res.code, 200, res.message)
+        self.assertIsInstance(res.data, list)
+        self.assertIsInstance(res.data[0], Task)
+
+
 
 
 if __name__ == '__main__':
