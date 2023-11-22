@@ -7,23 +7,16 @@ from httpx import Response
 from json import JSONDecodeError
 
 from pydantic import BaseModel as _BaseModel, computed_field
-from ..client import Client
 
 from functools import wraps
 
 logger = logging.getLogger('alist-sdk.fs.model')
 
 __all__ = [
-    "BaseFS", "BaseModel",
-    "Item", "RawItem", "ListItem",
-    "DirItem", "SearchItem", "Searches",
+    "BaseModel", "Item", "RawItem", "ListItem",
+    "DirItem", "SearchItem", "Searches", "Me",
     "Resp", "Verify", "verify"
 ]
-
-
-class BaseFS:
-    def __init__(self, client: Client):
-        self.client = client
 
 
 class BaseModel(_BaseModel):
@@ -97,10 +90,23 @@ class DirItem(BaseModel):
     parent: Optional[str] | None = ''
 
 
+class Me(_BaseModel):
+    """"""
+    id: int
+    username: str
+    password: str | None
+    base_path: str
+    role: int
+    disabled: bool
+    permission: int
+    sso_id: str | None
+    otp: Optional[bool]
+
+
 class Resp(_BaseModel):
     code: int
     message: str
-    data: None | list[DirItem] | ListItem | Searches | RawItem
+    data: None | Me | list[DirItem] | ListItem | Searches | RawItem
 
 
 class Verify:

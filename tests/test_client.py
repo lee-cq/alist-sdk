@@ -1,13 +1,11 @@
-import time
+import os
 import unittest
 from pathlib import Path
 
-from alist_sdk import Client
-from alist_sdk.fs import FS
-from alist_sdk.fs.model import *
+from alist_sdk import *
 
+# os.system(f"python {Path(__file__).parent.joinpath('init_alist.py')}")
 client = Client('http://localhost:5244', username='admin', password='123456')
-fs = FS(client)
 DATA_DIR = Path(__file__).parent.joinpath('alist/test_dir')
 
 
@@ -22,15 +20,25 @@ def clear_dir(path: Path):
     path.rmdir()
 
 
+def test_login():
+    _client = Client("http://localhost:5244", verify=False)
+    assert _client.login(username='admin', password="123456", ), "登陆失败"
+
+
+def test_me():
+    res = client.me()
+    assert res.code == 200
+    assert isinstance(res.data, Me), "数据结构错误。"
+
+
 class FSTestCase(unittest.TestCase):
-    def setUp(self) -> None:
-        DATA_DIR.mkdir(exist_ok=True)
 
     def tearDown(self) -> None:
         clear_dir(DATA_DIR)
+        DATA_DIR.mkdir(exist_ok=True)
 
     def test_mkdir(self):
-        res = fs.mkdir('/local/test_mkdir')
+        res = client.mkdir('/local/test_mkdir')
         self.assertEqual(res.data, None)
         self.assertEqual(res.code, 200)
         self.assertTrue(DATA_DIR.joinpath('test_mkdir').exists(), "创建失败")
@@ -39,7 +47,7 @@ class FSTestCase(unittest.TestCase):
         DATA_DIR.joinpath('test_mkdir').mkdir()
         if DATA_DIR.joinpath('test_rename').exists():
             DATA_DIR.joinpath('test_rename').rmdir()
-        res = fs.rename('test_rename', '/local/test_mkdir')
+        res = client.rename('test_rename', '/local/test_mkdir')
         self.assertEqual(res.data, None)
         self.assertEqual(res.code, 200)
         self.assertTrue(DATA_DIR.joinpath('test_rename').exists())
@@ -50,7 +58,7 @@ class FSTestCase(unittest.TestCase):
         data = b"test_data"
         alist_full_name = '/local/upload_file_form_data'
         path_file = DATA_DIR.joinpath('upload_file_form_data')
-        res = fs.upload_file_form_data(data, alist_full_name, as_task=False)
+        res = client.upload_file_form_data(data, alist_full_name, as_task=False)
         self.assertEqual(res, None)
         self.assertEqual(res.code, 200)
         self.assertTrue(path_file.exists())
@@ -58,7 +66,7 @@ class FSTestCase(unittest.TestCase):
     def test_upload_put(self):
         alist_full_name = '/local/upload_file_form_data'
         alist_data_path = DATA_DIR.joinpath('upload_file_form_data')
-        res = fs.upload_file_put(__file__, alist_full_name, as_task=False)
+        res = client.upload_file_put(__file__, alist_full_name, as_task=False)
         self.assertEqual(res.data, None)
         self.assertEqual(res.code, 200)
         self.assertTrue(alist_data_path)
@@ -66,27 +74,27 @@ class FSTestCase(unittest.TestCase):
     def test_list_dir(self):
         DATA_DIR.joinpath('test_list_dir_dir').mkdir()
         DATA_DIR.joinpath('test_list_dir_file').write_text('test')
-        res = fs.list_files('/local', )
+        res = client.list_files('/local', )
         self.assertEqual(res.code, 200)
         self.assertIsInstance(res.data, ListItem)
         self.assertIsInstance(res.data.content[0], Item)
 
     def test_list_dir_null(self):
         DATA_DIR.joinpath('test_list_dir_null').mkdir()
-        res = fs.list_files('/local/test_list_dir_null', )
+        res = client.list_files('/local/test_list_dir_null', )
         self.assertEqual(res.code, 200)
         self.assertIsInstance(res.data, ListItem)
         self.assertEqual(res.data.total, 0)
 
     def test_get_item_info_dir(self):
         DATA_DIR.joinpath('test_ite_info_dir').mkdir()
-        res = fs.get_item_info('/local/test_ite_info_dir')
+        res = client.get_item_info('/local/test_ite_info_dir')
         self.assertEqual(res.code, 200)
         self.assertIsInstance(res.data, RawItem)
 
     def test_get_item_info_file(self):
         DATA_DIR.joinpath('test_ite_info_file.txt').write_text('abc')
-        res = fs.get_item_info('/local/test_ite_info_file.txt')
+        res = client.get_item_info('/local/test_ite_info_file.txt')
         self.assertEqual(res.code, 200)
         self.assertIsInstance(res, Resp)
         self.assertIsInstance(res.data, RawItem)
@@ -94,7 +102,7 @@ class FSTestCase(unittest.TestCase):
     def test_get_dir(self):
         DATA_DIR.joinpath('test_ite_info_dir').mkdir()
 
-        res = fs.get_dir('/local')
+        res = client.get_dir('/local')
         self.assertEqual(res.code, 200)
         self.assertIsInstance(res.data, list)
         self.assertIsInstance(res.data[0], DirItem)
@@ -104,10 +112,10 @@ class FSTestCase(unittest.TestCase):
         DATA_DIR.joinpath('test_move_src/test.txt').write_text('abc')
         DATA_DIR.joinpath('test_move_dst').mkdir()
 
-        res = fs.move(src_dir='/local/test_move_src',
-                      dst_dir='/local/test_move_dst',
-                      files=['test.txt']
-                      )
+        res = client.move(src_dir='/local/test_move_src',
+                          dst_dir='/local/test_move_dst',
+                          files=['test.txt']
+                          )
 
         self.assertEqual(res.code, 200)
         self.assertTrue(DATA_DIR.joinpath('test_move_dst/test.txt').exists())
@@ -120,9 +128,9 @@ class FSTestCase(unittest.TestCase):
         DATA_DIR.joinpath('test_move_src/test3.txt').write_text('abc')
         DATA_DIR.joinpath('test_move_dst').mkdir()
 
-        res = fs.recursive_move(src_dir='/local/test_move_src',
-                                dst_dir='/local/test_move_dst',
-                                )
+        res = client.recursive_move(src_dir='/local/test_move_src',
+                                    dst_dir='/local/test_move_dst',
+                                    )
 
         self.assertEqual(res.code, 200)
         self.assertTrue(DATA_DIR.joinpath('test_move_dst/test1.txt').exists())
@@ -133,10 +141,10 @@ class FSTestCase(unittest.TestCase):
         DATA_DIR.joinpath('test_move_src/test.txt').write_text('abc')
         DATA_DIR.joinpath('test_move_dst').mkdir()
 
-        res = fs.copy(src_dir='/local/test_move_src',
-                      dst_dir='/local/test_move_dst',
-                      files=['test.txt']
-                      )
+        res = client.copy(src_dir='/local/test_move_src',
+                          dst_dir='/local/test_move_dst',
+                          files=['test.txt']
+                          )
 
         self.assertEqual(res.code, 200)
         self.assertTrue(DATA_DIR.joinpath('test_move_dst/test.txt').exists())
@@ -144,9 +152,9 @@ class FSTestCase(unittest.TestCase):
 
     def test_remove_file(self):
         DATA_DIR.joinpath('test_remove_file.txt').write_text('abc')
-        res = fs.remove(path='/local',
-                        names=['test_remove_file.txt']
-                        )
+        res = client.remove(path='/local',
+                            names=['test_remove_file.txt']
+                            )
         self.assertEqual(res.code, 200)
         self.assertFalse(DATA_DIR.joinpath('test_remove_file.txt').exists())
 
@@ -154,9 +162,9 @@ class FSTestCase(unittest.TestCase):
         DATA_DIR.joinpath('test_dir').mkdir()
         DATA_DIR.joinpath('test_dir/test1.txt').write_text('123')
 
-        res = fs.remove(path='/local',
-                        names=['test_dir']
-                        )
+        res = client.remove(path='/local',
+                            names=['test_dir']
+                            )
         self.assertEqual(res.code, 200)
         self.assertFalse(DATA_DIR.joinpath('test_dir/test1.txt').exists())
         self.assertFalse(DATA_DIR.joinpath('test_dir').exists())
@@ -164,7 +172,7 @@ class FSTestCase(unittest.TestCase):
     @unittest.expectedFailure
     def test_remove_empty_directory(self):
         DATA_DIR.joinpath('test_dir').mkdir()
-        res = fs.remove_empty_directory(path='/local/test_dir/')
+        res = client.remove_empty_directory(path='/local/test_dir/')
 
         self.assertEqual(res.code, 200)
         self.assertFalse(DATA_DIR.joinpath('test_dir').exists())
@@ -174,20 +182,20 @@ class FSTestCase(unittest.TestCase):
         DATA_DIR.joinpath('test_dir').mkdir()
         DATA_DIR.joinpath('test_dir/test.txt').write_text('123')
 
-        res = fs.remove_empty_directory(path='/local/test_dir/')
+        res = client.remove_empty_directory(path='/local/test_dir/')
 
         self.assertEqual(res.code, 200)
         self.assertFalse(DATA_DIR.joinpath('test_dir').exists())
 
     @unittest.expectedFailure
     def test_add_aria2(self):
-        res = fs.add_aria2("/local", [""])
+        res = client.add_aria2("/local", [""])
         self.assertEqual(res.code, 200)
 
     @unittest.expectedFailure
     def test_add_qbit(self):
         """"""
-        res = fs.add_qbit("/local", [""])
+        res = client.add_qbit("/local", [""])
         self.assertEqual(res.code, 200)
 
 
