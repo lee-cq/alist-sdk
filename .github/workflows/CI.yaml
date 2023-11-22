@@ -32,7 +32,12 @@ jobs:
 
     - name: Install AList
       run: |
-        python3 test/init_alist.py
+        mkdir -p tests/alist
+        cd {WORKDIR}/alist
+        wget https://github.com/alist-org/alist/releases/download/v3.28.0/alist-linux-amd64.tar.gz
+        tar xzvf alist-linux-amd64.tar.gz
+        ./alist admin set 123456
+        ./alist start
 
     - name: Run Tests
       run: |
