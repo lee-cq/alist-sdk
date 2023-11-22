@@ -31,13 +31,7 @@ jobs:
         pip install -r requirements-dev.txt
 
     - name: Install AList
-      run: |
-        mkdir -p tests/alist
-        cd {WORKDIR}/alist
-        wget https://github.com/alist-org/alist/releases/download/v3.28.0/alist-linux-amd64.tar.gz
-        tar xzvf alist-linux-amd64.tar.gz
-        ./alist admin set 123456
-        ./alist start
+      run: bash -ex tests/init_alist.sh
 
     - name: Run Tests
       run: |
