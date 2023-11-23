@@ -1,10 +1,8 @@
-name: Alist SDK - Test
+name: Python package build and publish
 
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+  release:
+    types: [created]
 
 jobs:
   build:
@@ -36,3 +34,14 @@ jobs:
     - name: Run Tests
       run: |
         python -m pytest --log-level=INFO
+    
+    - name: Deploy
+      run: |
+        pip install twine
+        python -m build
+        python -m twine upload
+
+
+
+    
+    

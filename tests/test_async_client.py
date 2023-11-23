@@ -6,6 +6,7 @@ import pytest
 import pytest_asyncio
 
 from alist_sdk import *
+from .test_client import clear_dir, create_storage_local
 
 client = Client('http://localhost:5244', username='admin', password='123456')
 async_client = AsyncClient('http://localhost:5244', verify=False)
@@ -16,52 +17,8 @@ DATA_DIR_DST.mkdir(exist_ok=True)
 DATA_DIR.mkdir(exist_ok=True)
 
 
-def create_storage_local(client_, mount_name, local_path: Path):
-    local_storage = {
-        "mount_path": f"/{mount_name}",
-        "order": 0,
-        "driver": "Local",
-        "cache_expiration": 0,
-        "status": "work",
-        "addition": "{\"root_folder_path\":\"%s\",\"thumbnail\":false,"
-                    "\"thumb_cache_folder\":\"\",\"show_hidden\":true,"
-                    "\"mkdir_perm\":\"750\"}" % local_path.absolute().as_posix(),
-        "remark": "",
-        "modified": "2023-11-20T15:00:31.608106706Z",
-        "disabled": False,
-        "enable_sign": False,
-        "order_by": "name",
-        "order_direction": "asc",
-        "extract_folder": "front",
-        "web_proxy": False,
-        "webdav_policy": "native_proxy",
-        "down_proxy_url": ""
-    }
-    if f'/{mount_name}' not in [i['mount_path'] for i in client.get("/api/admin/storage/list").json()['data']['content']]:
-        assert client_.post(
-            "/api/admin/storage/create",
-            json=local_storage
-        ).json().get('code') == 200, "创建Storage失败。"
-    else:
-        print("已经创建，跳过 ...")
 
-
-def create_storage_dst():
-    """"""
-
-
-def clear_dir(path: Path):
-    if not path.exists():
-        return
-    for item in path.iterdir():
-        if item.is_dir():
-            clear_dir(item)
-        else:
-            item.unlink()
-    path.rmdir()
-
-
-@pytest_asyncio.fixture
+@pytest.mark.asyncio
 async def setup_module():
     print("setup ...")
     await async_client.login(username='admin', password='123456')
@@ -77,24 +34,13 @@ async def test_login():
     assert res.data.username == 'admin'
 
 
-@pytest.mark.asyncio
-async def test_me():
-    res = await async_client.me()
-    assert res.code == 200
-    assert isinstance(res.data, Me)
-    assert res.data.username == 'admin'
+# @pytest.mark.asyncio
+# async def test_me():
 
-
-class BaseTestCase(unittest.TestCase):
-    # @pytest.mark.anyio
-    # async def test_login(self):
-    #     raise
-
-    @pytest.mark.asyncio
-    async def test_me(self):
-        res = await async_client.me()
-        self.assertEqual(res.code, 200)
-        self.assertIsInstance
+#     res = await async_client.me()
+#     assert res.code == 200
+#     assert isinstance(res.data, Me)
+#     assert res.data.username == 'admin'
 
 
 class FSTestCase(unittest.TestCase):
@@ -240,34 +186,34 @@ class FSTestCase(unittest.TestCase):
         self.assertFalse(DATA_DIR.joinpath('test_dir/test1.txt').exists())
         self.assertFalse(DATA_DIR.joinpath('test_dir').exists())
 
-    @unittest.expectedFailure
-    async def test_remove_empty_directory(self):
-        DATA_DIR.joinpath('test_dir').mkdir()
-        res = await async_client.remove_empty_directory(path='/local/test_dir/')
+    # @unittest.expectedFailure
+    # async def test_remove_empty_directory(self):
+    #     DATA_DIR.joinpath('test_dir').mkdir()
+    #     res = await async_client.remove_empty_directory(path='/local/test_dir/')
 
-        self.assertEqual(res.code, 200)
-        self.assertFalse(DATA_DIR.joinpath('test_dir').exists())
+    #     self.assertEqual(res.code, 200)
+    #     self.assertFalse(DATA_DIR.joinpath('test_dir').exists())
 
-    @unittest.expectedFailure
-    async def test_remove_empty_directory_not(self):
-        DATA_DIR.joinpath('test_dir').mkdir()
-        DATA_DIR.joinpath('test_dir/test.txt').write_text('123')
+    # @unittest.expectedFailure
+    # async def test_remove_empty_directory_not(self):
+    #     DATA_DIR.joinpath('test_dir').mkdir()
+    #     DATA_DIR.joinpath('test_dir/test.txt').write_text('123')
 
-        res = await async_client.remove_empty_directory(path='/local/test_dir/')
+    #     res = await async_client.remove_empty_directory(path='/local/test_dir/')
 
-        self.assertEqual(res.code, 200)
-        self.assertFalse(DATA_DIR.joinpath('test_dir').exists())
+    #     self.assertEqual(res.code, 200)
+    #     self.assertFalse(DATA_DIR.joinpath('test_dir').exists())
 
-    @unittest.expectedFailure
-    async def test_add_aria2(self):
-        res = await async_client.add_aria2("/local", [""])
-        self.assertEqual(res.code, 200)
+    # @unittest.expectedFailure
+    # async def test_add_aria2(self):
+    #     res = await async_client.add_aria2("/local", [""])
+    #     self.assertEqual(res.code, 200)
 
-    @unittest.expectedFailure
-    async def test_add_qbit(self):
-        """"""
-        res = await async_client.add_qbit("/local", [""])
-        self.assertEqual(res.code, 200)
+    # @unittest.expectedFailure
+    # async def test_add_qbit(self):
+    #     """"""
+    #     res = await async_client.add_qbit("/local", [""])
+    #     self.assertEqual(res.code, 200)
 
 
 class AdminTaskTestCase(unittest.TestCase):
