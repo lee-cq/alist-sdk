@@ -3,7 +3,6 @@ import logging
 from pathlib import Path
 from typing import Optional
 
-from httpx import Response
 from json import JSONDecodeError
 
 from pydantic import BaseModel as _BaseModel, computed_field
@@ -15,14 +14,15 @@ logger = logging.getLogger('alist-sdk.fs.model')
 __all__ = [
     "BaseModel", "Item", "RawItem", "ListItem",
     "DirItem", "SearchItem", "Searches", "Me",
-    "Task",
-    "Resp", "Verify", "verify"
+    "Task", "Resp",
+    "Verify", "verify", "AsyncVerify", "async_verify"
 ]
 
 
 class BaseModel(_BaseModel):
 
     @computed_field()
+    @property
     def full_name(self) -> str:
         return Path(self.parent).joinpath(self.name).as_posix()
 
@@ -42,6 +42,8 @@ class Item(BaseModel):
     name: str  # 文件名
     size: int  # 文件大小
     is_dir: bool  # 是否是目录
+    # hashinfo: None
+    # hash_info: str
     modified: datetime.datetime  # 修改时间
     sign: str  # 签名
     thumb: str  # 缩略图
@@ -129,6 +131,7 @@ class Resp(_BaseModel):
 class Verify:
     def __init__(self):
         self.locals: dict = {}
+        # self.res: Response
 
     def add_parent(self, res_dict: dict):
         res_dict.setdefault('parent', self.locals.get('path'))
@@ -144,20 +147,46 @@ class Verify:
             BaseModel: []
         }
 
+    def acting(self, resp: Resp):
+        """对Resp做额外的修饰"""
+        return resp
+
     def __call__(self, func):
         @wraps(func)
         def wrapper(*args, **kwargs):
-            self.locals, res = func(*args, **kwargs)
-            res: Response
+            self.locals, self.res = func(*args, **kwargs)
             try:
-                res_dict = res.json()
-                return Resp(**res_dict)
+                res_dict = self.res.json()
+                resp = Resp(**res_dict)
+                return self.acting(resp)
 
             except JSONDecodeError:
-                logger.warning("JsonDecodeError: [http_status: %d] ", res.status_code)
-                return Resp(code=res.status_code, message="JsonDecodeError", data=None)
+                logger.warning("JsonDecodeError: [http_status: %d] ", self.res.status_code)
+                return Resp(code=self.res.status_code, message="JsonDecodeError", data=None)
 
         return wrapper  # 返回函数
 
 
 verify = Verify
+
+
+class AsyncVerify(Verify):
+    """"""
+
+    def __call__(self, func):
+        @wraps(func)
+        async def async_wrapper(*args, **kwargs):
+            self.locals, self.res = await func(*args, **kwargs)
+            try:
+                res_dict = self.res.json()
+                resp = Resp(**res_dict)
+                return self.acting(resp)
+
+            except JSONDecodeError:
+                logger.warning("[Async]JsonDecodeError: [http_status: %d] ", self.res.status_code)
+                return Resp(code=self.res.status_code, message="[Async]JsonDecodeError", data=None)
+
+        return async_wrapper  # 返回函数
+
+
+async_verify = AsyncVerify

@@ -1,4 +1,5 @@
 from .client import Client
+from .async_client import AsyncClient
 from .models import *
-
-__version__ = '0.0.2'
+from .err import *
+from .version import __version__
