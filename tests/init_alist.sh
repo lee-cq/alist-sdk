@@ -9,4 +9,4 @@ wget -q https://github.com/alist-org/alist/releases/download/v3.28.0/alist-linux
 tar xzvf alist-linux-amd64.tar.gz
 
 ./alist admin set 123456
-./alist start
+./alist restart

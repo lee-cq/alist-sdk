@@ -6,6 +6,7 @@ from pathlib import Path
 from httpx import AsyncClient as HttpClient
 
 from .models import async_verify as verify
+from .client import Client as SyncClient
 from .version import __version__
 
 logger = logging.getLogger("alist-sdk.async-client")
@@ -17,15 +18,17 @@ class AsyncClient(HttpClient):
         super().__init__(**kwargs)
         self.base_url = base_url
         self.headers.setdefault('User-Agent', f"Alist-SDK/{__version__}")
-        if token:
-            self.asyncio_run(self.set_token(token))
-
-        if username:
-            if token:
-                logger.warning("重复指定username, 将会忽略username和password")
-            else:
-                logger.info('登陆')
-                self.asyncio_run(self.login(username, password, has_opt))
+        if token or username:
+            self.headers.update(
+                SyncClient(
+                    base_url=base_url,
+                    token=token,
+                    username=username,
+                    password=password,
+                    has_opt=has_opt,
+                    **kwargs
+                ).headers
+            )
 
     @staticmethod
     def asyncio_run(con):
