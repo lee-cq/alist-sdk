@@ -27,11 +27,12 @@ class BaseModel(_BaseModel):
         return Path(self.parent).joinpath(self.name).as_posix()
 
 
-class ListItem(BaseModel):
+class ListItem(_BaseModel):
     """列出的目录"""
     content: list['Item'] | None
     total: int  # 总数
     readme: str  # 用于渲染Readme
+    header: Optional[str] = ''  # 用于渲染Header
     write: bool  # 是否可写
     provider: str
     parent: Optional[str] = ''
@@ -42,9 +43,10 @@ class Item(BaseModel):
     name: str  # 文件名
     size: int  # 文件大小
     is_dir: bool  # 是否是目录
-    # hashinfo: None
-    # hash_info: str
+    hashinfo: Optional[str] = 'null'  # v3.29.0
+    hash_info: Optional[None] = None  # v3.29.0
     modified: datetime.datetime  # 修改时间
+    created: Optional[datetime.datetime]  # v3.29.0 创建时间
     sign: str  # 签名
     thumb: str  # 缩略图
     type: int  # 类型
@@ -116,7 +118,7 @@ class Task(_BaseModel):
     """
     id: str
     name: str
-    state: str
+    state: int
     status: str
     progress: int
     error: str
@@ -125,6 +127,7 @@ class Task(_BaseModel):
 class Resp(_BaseModel):
     code: int
     message: str
+    # data: ListItem
     data: None | str | Me | list[DirItem] | ListItem | Searches | RawItem | list[Task]
 
 

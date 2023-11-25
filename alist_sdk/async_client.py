@@ -97,7 +97,6 @@ class AsyncClient(HttpClient):
         return locals(), await self.put(
             '/api/fs/form',
             headers={"As-Task": 'true' if as_task else 'false',
-
                      "File-Path": urllib.parse.quote_plus(path)
                      },
             # content=data,
@@ -120,7 +119,7 @@ class AsyncClient(HttpClient):
                      "Last-Modified": str(int(local_path.stat(follow_symlinks=True).st_mtime * 1000)),
                      "File-Path": urllib.parse.quote_plus(path)
                      },
-            content=open(local_path, 'rb'),
+            content=open(local_path, 'rb').read(),
         )
 
     @verify()
