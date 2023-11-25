@@ -3,6 +3,7 @@ name: Python package build and publish
 on:
   release:
     types: [created]
+  workflow_dispatch:
 
 jobs:
   build:
@@ -37,9 +38,9 @@ jobs:
     
     - name: Deploy
       run: |
-        pip install twine
+        pip install twine build
         python -m build
-        python -m twine upload
+        python -m twine upload dist/*
 
 
 
