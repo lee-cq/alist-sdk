@@ -13,6 +13,9 @@ jobs:
       matrix:
         python-version: ['3.10', '3.11', '3.12']
       fail-fast: false
+    permissions:
+      # IMPORTANT: this permission is mandatory for trusted publishing
+      id-token: write
 
     steps:
     - uses: actions/checkout@v3
@@ -35,20 +38,11 @@ jobs:
       run: |
         python -m pytest --log-level=INFO
     
-    - name: Deploy
+    - name: Build
       run: |
         pip install twine build
         python -m build
         python -m twine upload dist/*
-
-  pypi-publish:
-    name: upload release to PyPI
-    runs-on: ubuntu-latest
-    permissions:
-      # IMPORTANT: this permission is mandatory for trusted publishing
-      id-token: write
-    steps:
-      # retrieve your distributions here
 
       - name: Publish package distributions to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
