@@ -1,6 +1,9 @@
+import os
 import asyncio
+from datetime import datetime
+from pathlib import Path, PurePosixPath
+
 import pytest
-from pathlib import Path
 
 from alist_sdk import Client, Me, Item, RawItem, ListItem, Resp, Task, DirItem, AsyncClient
 
@@ -42,10 +45,6 @@ def create_storage_local(client_, mount_name, local_path: Path):
         print("已经创建，跳过 ...")
 
 
-def create_storage_dst():
-    """"""
-
-
 def clear_dir(path: Path):
     if not path.exists():
         return
@@ -58,19 +57,63 @@ def clear_dir(path: Path):
 
 
 def setup_module() -> None:
+    # os.system(f"bash {Path(__file__).parent.joinpath('init_alist.sh')}")
     clear_dir(DATA_DIR)
     clear_dir(DATA_DIR_DST)
     DATA_DIR.mkdir(exist_ok=True)
     DATA_DIR_DST.mkdir(exist_ok=True)
 
-    _client = Client('http://localhost:5244', username='admin', password='123456')
+    _client = Client('http://localhost:5244',
+                     username='admin', password='123456')
     create_storage_local(_client, 'local', DATA_DIR)
     create_storage_local(_client, 'local_dst', DATA_DIR_DST)
 
 
+class TestModel:
+
+    def test_item(self):
+        a = Item(
+            name='test',
+            size=2,
+            is_dir=False,
+            sign='',
+            thumb='',
+            type=1,
+            created=datetime.now(),
+            modified=datetime.now(),
+            parent='/local'
+        )
+        assert isinstance(a.full_name, PurePosixPath)
+        assert a.full_name.as_posix() == '/local/test', "Item.full_name 验证失败。"
+        assert isinstance(a.model_dump_json(), str)
+        print(a)
+
+    def test_list_item(self):
+        a = ListItem(
+            content=[
+                Item(
+                    name='test',
+                    size=2, is_dir=False,
+                    sign='',
+                    thumb='',
+                    type=1, created=datetime.now(),
+                    modified=datetime.now()
+                )
+            ],
+            total=1,
+            readme='',
+            header='',
+            write=False,
+            provider='Local'
+        ).model_dump_json()
+        assert isinstance(a, str)
+        print(a)
+
+
 # noinspection PyMethodMayBeStatic
 class TestSyncClient:
-    __client = Client('http://localhost:5244', username='admin', password='123456')
+    __client = Client('http://localhost:5244',
+                      username='admin', password='123456')
 
     @property
     def client(self) -> Client:
@@ -86,7 +129,8 @@ class TestSyncClient:
     def run(self, func, *args, **kwargs):
         print("run", func.__name__, end=": ")
         res = func(*args, **kwargs)
-        print("RESP: ", res)
+        res: Resp
+        print("RESP: ", res.model_dump_json())
         return res
 
     def test_login(self):
@@ -100,7 +144,7 @@ class TestSyncClient:
 
     def test_mkdir(self):
         res = self.run(
-            self.client.mkdir, 
+            self.client.mkdir,
             '/local/test_mkdir'
         )
         assert res.code == 200

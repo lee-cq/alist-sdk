@@ -10,6 +10,6 @@ if [ ! -f alist ]; then
     tar xzvf alist-linux-amd64.tar.gz
 fi
 
-
+rm -rf alist/data/ alist/test_dir/ alist/test_dir_dst/
 ./alist admin set 123456
 ./alist restart

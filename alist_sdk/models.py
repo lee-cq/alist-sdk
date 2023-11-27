@@ -5,7 +5,7 @@ from typing import Optional
 
 from json import JSONDecodeError
 
-from pydantic import BaseModel as _BaseModel, computed_field
+from pydantic import BaseModel as _BaseModel, computed_field, field_serializer
 
 from functools import wraps
 
@@ -21,11 +21,16 @@ __all__ = [
 
 class BaseModel(_BaseModel):
 
+    parent: Optional[str | PurePosixPath| None] = ''
+
     @computed_field()
     @property
     def full_name(self) -> PurePosixPath:
         return PurePosixPath(self.parent).joinpath(self.name)
 
+    @field_serializer('full_name', mode="wrap")
+    def serializer_path(self, value: PurePosixPath, info) -> str:
+        return value.as_posix()
 
 class ListItem(_BaseModel):
     """列出的目录"""
@@ -49,7 +54,6 @@ class Item(BaseModel):
     sign: str  # 签名
     thumb: str  # 缩略图
     type: int  # 类型
-    parent: Optional[str] = ''
 
 
 class RawItem(BaseModel):
@@ -65,7 +69,6 @@ class RawItem(BaseModel):
     readme: str
     provider: str
     related: str | None
-    parent: Optional[str] = ''
 
 
 class SearchItem(BaseModel):
@@ -84,7 +87,6 @@ class Searches(_BaseModel):
 class DirItem(BaseModel):
     name: str
     modified: datetime.datetime
-    parent: Optional[str] | None = ''
 
 
 class Me(_BaseModel):
