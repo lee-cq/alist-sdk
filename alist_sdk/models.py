@@ -1,6 +1,6 @@
 import datetime
 import logging
-from pathlib import Path
+from pathlib import PurePosixPath
 from typing import Optional
 
 from json import JSONDecodeError
@@ -23,8 +23,8 @@ class BaseModel(_BaseModel):
 
     @computed_field()
     @property
-    def full_name(self) -> str:
-        return Path(self.parent).joinpath(self.name).as_posix()
+    def full_name(self) -> PurePosixPath:
+        return PurePosixPath(self.parent).joinpath(self.name)
 
 
 class ListItem(_BaseModel):
@@ -35,7 +35,6 @@ class ListItem(_BaseModel):
     header: Optional[str] = ''  # 用于渲染Header
     write: bool  # 是否可写
     provider: str
-    parent: Optional[str] = ''
 
 
 class Item(BaseModel):
@@ -70,13 +69,6 @@ class RawItem(BaseModel):
 
 
 class SearchItem(BaseModel):
-    """
-    "parent": "/m",
-        "name": "4305da1e",
-        "is_dir": false,
-        "size": 393090,
-        "type": 0
-    """
     parent: str
     name: str
     is_dir: bool
@@ -116,12 +108,12 @@ class Task(_BaseModel):
         »» progress	integer	false	none	进度	none
         »» error	string	false	none	错误信息	none
     """
-    id: str
-    name: str
-    state: int
-    status: str
-    progress: int
-    error: str
+    id: str  # 任务ID
+    name: str  # 任务名
+    state: int  # 任务完成状态
+    status: str  # 任务状态
+    progress: int  # 进度
+    error: str  # 错误信息
 
 
 class Resp(_BaseModel):
