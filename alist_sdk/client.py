@@ -49,6 +49,33 @@ class Client(HttpClient):
         return self.verify_login_status()
 
     @verify()
+    def verify_request(self,
+                       method: str,
+                       url,
+                       *,
+                       content=None,
+                       data=None,
+                       files=None,
+                       json=None,
+                       params=None,
+                       headers=None,
+                       follow_redirects=True,
+                       **kwargs
+                       ):
+        return {}, self.request(
+            method=method,
+            url=url,
+            content=content,
+            data=data,
+            files=files,
+            json=json,
+            params=params,
+            headers=headers,
+            follow_redirects=follow_redirects,
+            **kwargs
+        )
+
+    @verify()
     def me(self):
         return locals(), self.get('/api/me')
 
@@ -115,7 +142,7 @@ class Client(HttpClient):
         )
 
     @verify()
-    def list_files(self, path, password=None, page=1, per_page=0, refresh=False):
+    def list_files(self, path, password='', page=1, per_page=0, refresh=False):
         """POST 列出文件目录"""
         return locals(), self.post('/api/fs/list', json={
             "path": path,

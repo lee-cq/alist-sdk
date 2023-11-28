@@ -58,6 +58,34 @@ class AsyncClient(HttpClient):
         return await self.verify_login_status()
 
     @verify()
+    async def verify_request(
+            self,
+            method: str,
+            url,
+            *,
+            content=None,
+            data=None,
+            files=None,
+            json=None,
+            params=None,
+            headers=None,
+            follow_redirects=True,
+            **kwargs
+    ):
+        return {}, await self.request(
+            method=method,
+            url=url,
+            content=content,
+            data=data,
+            files=files,
+            json=json,
+            params=params,
+            headers=headers,
+            follow_redirects=follow_redirects,
+            **kwargs
+        )
+
+    @verify()
     async def me(self):
         return locals(), await self.get('/api/me')
 
