@@ -1,0 +1,13 @@
+[
+  {
+    "id": 1,
+    "username": "admin",
+    "password": "",
+    "base_path": "/",
+    "role": 2,
+    "disabled": false,
+    "permission": 0,
+    "sso_id": "",
+    "otp": false
+  }
+]

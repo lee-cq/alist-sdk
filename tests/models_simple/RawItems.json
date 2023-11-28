@@ -1,0 +1,55 @@
+[
+  {
+    "name": "139Yun",
+    "size": 519758,
+    "is_dir": false,
+    "modified": "2023-11-28T11:54:39+08:00",
+    "created": "2023-11-28T11:54:39+08:00",
+    "sign": "",
+    "thumb": "https://test.com/ss",
+    "type": 5,
+    "hashinfo": "{\"md5\":\"E800DC209E1136F6CACD610EEDA9F095\"}",
+    "hash_info": {
+      "md5": "E800DC209E1136F6CACD610EEDA9F095"
+    },
+    "raw_url": "https://localhost/test",
+    "readme": "",
+    "header": "",
+    "provider": "139Yun",
+    "related": null
+  },
+  {
+    "name": "OneDrive",
+    "size": 39553711,
+    "is_dir": false,
+    "modified": "2021-07-18T07:26:03Z",
+    "created": "2021-07-18T07:26:03Z",
+    "sign": "",
+    "thumb": "https://sou.com/",
+    "type": 2,
+    "hashinfo": "null",
+    "hash_info": null,
+    "raw_url": "https://ss.com",
+    "readme": "",
+    "header": "",
+    "provider": "Onedrive",
+    "related": null
+  },
+  {
+    "name": "Local",
+    "size": 11678497,
+    "is_dir": false,
+    "modified": "2022-11-26T23:51:58.02310783+08:00",
+    "created": "2022-11-26T23:51:58.02310783+08:00",
+    "sign": "0J9kDH7TUrIcf285wdBMWQKNAGZ-REGxDPXHX-9_5uo=:0",
+    "thumb": "",
+    "type": 0,
+    "hashinfo": "null",
+    "hash_info": null,
+    "raw_url": "http://127.0.0.1",
+    "readme": "",
+    "header": "",
+    "provider": "Local",
+    "related": null
+  }
+]

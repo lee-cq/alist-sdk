@@ -1,0 +1,229 @@
+[
+  [
+    "/api/fs/get",
+    "RawItem",
+    {
+      "code": 200,
+      "message": "success",
+      "data": {
+        "name": "root",
+        "size": 0,
+        "is_dir": true,
+        "modified": "0001-01-01T00:00:00Z",
+        "created": "0001-01-01T00:00:00Z",
+        "sign": "",
+        "thumb": "",
+        "type": 0,
+        "hashinfo": "null",
+        "hash_info": null,
+        "raw_url": "",
+        "readme": "",
+        "header": "",
+        "provider": "unknown",
+        "related": null
+      }
+    }
+  ],
+  [
+    "/api/fs/list",
+    "ListItem",
+    {
+      "code": 200,
+      "message": "success",
+      "data": {
+        "content": [
+          {
+            "name": "local",
+            "size": 0,
+            "is_dir": true,
+            "modified": "2023-11-28T10:51:27.324181215+08:00",
+            "created": "2023-11-28T10:51:27.324181215+08:00",
+            "sign": "",
+            "thumb": "",
+            "type": 1,
+            "hashinfo": "null",
+            "hash_info": null
+          },
+          {
+            "name": "local_dst",
+            "size": 0,
+            "is_dir": true,
+            "modified": "2023-11-28T10:51:27.32745696+08:00",
+            "created": "2023-11-28T10:51:27.32745696+08:00",
+            "sign": "",
+            "thumb": "",
+            "type": 1,
+            "hashinfo": "null",
+            "hash_info": null
+          }
+        ],
+        "total": 2,
+        "readme": "",
+        "header": "",
+        "write": true,
+        "provider": "unknown"
+      }
+    }
+  ],
+  [
+    "/api/me",
+    "Me",
+    {
+      "code": 200,
+      "message": "success",
+      "data": {
+        "id": 1,
+        "username": "admin",
+        "password": "",
+        "base_path": "/",
+        "role": 2,
+        "disabled": false,
+        "permission": 0,
+        "sso_id": "",
+        "otp": false
+      }
+    }
+  ],
+  [
+    "/api/fs/get",
+    "RawItem",
+    {
+      "code": 200,
+      "message": "success",
+      "data": {
+        "name": "root",
+        "size": 0,
+        "is_dir": true,
+        "modified": "0001-01-01T00:00:00Z",
+        "created": "0001-01-01T00:00:00Z",
+        "sign": "",
+        "thumb": "",
+        "type": 0,
+        "hashinfo": "null",
+        "hash_info": null,
+        "raw_url": "",
+        "readme": "",
+        "header": "",
+        "provider": "unknown",
+        "related": null
+      }
+    }
+  ],
+  [
+    "/api/admin/task/copy/done",
+    "Task",
+    {
+      "code": 200,
+      "message": "success",
+      "data": [
+        {
+          "id": "ZRcWRp4CY4ndFnm9LhCpK",
+          "name": "copy [/移动云盘](/6d3115ce23cd4377b698c5824b2ad065z.jpg) to [/local](/)",
+          "state": 2,
+          "status": "getting src object",
+          "progress": 100.01199442119945,
+          "error": ""
+        },
+        {
+          "id": "miSa1Byn3MB9lQPXX3mly",
+          "name": "copy [/移动云盘](/07c74fcc6c3642faacb1fe0d794caf9ez.jpg) to [/local](/)",
+          "state": 2,
+          "status": "getting src object",
+          "progress": 100.01116028477968,
+          "error": ""
+        },
+        {
+          "id": "3fG83CUC9mc12d-0CAur6",
+          "name": "copy [/移动云盘](/README.md) to [/local](/)",
+          "state": 2,
+          "status": "getting src object",
+          "progress": 0,
+          "error": ""
+        },
+        {
+          "id": "-qbRTsaf9cSLGgehf_qwa",
+          "name": "copy [/移动云盘](/e95976aeeb874f97ad8d1e472324f0b1z.png) to [/local](/)",
+          "state": 2,
+          "status": "getting src object",
+          "progress": 100.00066382171646,
+          "error": ""
+        }
+      ]
+    }
+  ],
+  [
+    "/api/admin/task/done",
+    "NoneType",
+    {
+      "code": 200,
+      "message": "success",
+      "data": null
+    }
+  ],
+  [
+    "/api/fs/mkdir",
+    "NoneType",
+    {
+      "code": 200,
+      "message": "success",
+      "data": null
+    }
+  ],
+  [
+    "/api/fs/dirs",
+    "DirItem",
+    {
+      "code": 200,
+      "message": "success",
+      "data": [
+        {
+          "name": "local",
+          "modified": "2023-11-28T10:51:27.324181215+08:00"
+        },
+        {
+          "name": "local_dst",
+          "modified": "2023-11-28T10:51:27.32745696+08:00"
+        }
+      ]
+    }
+  ],
+  [
+    "/api/fs/search",
+    "Searches",
+    {
+      "code": 200,
+      "message": "success",
+      "data": {
+        "content": [],
+        "total": 0
+      }
+    }
+  ],
+  [
+    "/api/fs/search",
+    "Searches",
+    {
+      "code": 200,
+      "message": "success",
+      "data": {
+        "content": [
+          {
+            "parent": "/onedrive",
+            "name": "手机壁纸",
+            "is_dir": true,
+            "size": 2291351,
+            "type": 1
+          },
+          {
+            "parent": "/local/test_dir",
+            "name": "手机壁纸",
+            "is_dir": true,
+            "size": 0,
+            "type": 1
+          }
+        ],
+        "total": 8
+      }
+    }
+  ]
+]

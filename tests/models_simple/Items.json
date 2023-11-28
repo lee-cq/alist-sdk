@@ -1,0 +1,40 @@
+[
+  {
+    "name": "Local",
+    "size": 0,
+    "is_dir": true,
+    "modified": "2022-11-05T21:20:20.53628191+08:00",
+    "created": "2022-11-05T21:20:20.53628191+08:00",
+    "sign": "",
+    "thumb": "",
+    "type": 1,
+    "hashinfo": "null",
+    "hash_info": null
+  },
+  {
+    "name": "OneDrive",
+    "size": 0,
+    "is_dir": true,
+    "modified": "2023-03-03T16:28:22Z",
+    "created": "2023-03-03T16:28:22Z",
+    "sign": "",
+    "thumb": "",
+    "type": 1,
+    "hashinfo": "null",
+    "hash_info": null
+  },
+  {
+    "name": "139Yun",
+    "size": 717086,
+    "is_dir": false,
+    "modified": "2023-11-28T11:54:41+08:00",
+    "created": "2023-11-28T11:54:41+08:00",
+    "sign": "",
+    "thumb": "https://downloCE2B9B2B37FA3E0ECE880C592",
+    "type": 5,
+    "hashinfo": "{\"md5\":\"A041B630DC821027B2FE012519A60482\"}",
+    "hash_info": {
+      "md5": "A041B630DC821027B2FE012519A60482"
+    }
+  }
+]

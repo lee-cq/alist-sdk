@@ -5,7 +5,11 @@ from typing import Optional
 
 from json import JSONDecodeError
 
-from pydantic import BaseModel as _BaseModel, computed_field, field_serializer
+from pydantic import (
+    BaseModel as _BaseModel,
+    computed_field,
+    field_serializer,
+)
 
 from functools import wraps
 
@@ -14,14 +18,14 @@ logger = logging.getLogger('alist-sdk.fs.model')
 __all__ = [
     "BaseModel", "Item", "RawItem", "ListItem",
     "DirItem", "SearchItem", "Searches", "Me",
-    "Task", "Resp",
+    "Task", "Resp", "HashInfo", "NoneType",
     "Verify", "verify", "AsyncVerify", "async_verify"
 ]
+NoneType = type(None)
 
 
 class BaseModel(_BaseModel):
-
-    parent: Optional[str | PurePosixPath| None] = ''
+    parent: Optional[str | PurePosixPath | None] = ''
 
     @computed_field()
     @property
@@ -31,6 +35,7 @@ class BaseModel(_BaseModel):
     @field_serializer('full_name', mode="wrap")
     def serializer_path(self, value: PurePosixPath, info) -> str:
         return value.as_posix()
+
 
 class ListItem(_BaseModel):
     """列出的目录"""
@@ -42,13 +47,19 @@ class ListItem(_BaseModel):
     provider: str
 
 
+class HashInfo(_BaseModel):
+    """Hash 信息"""
+    md5: Optional[str] = None
+    sha1: Optional[str] = None
+
+
 class Item(BaseModel):
     """文件对象"""
     name: str  # 文件名
     size: int  # 文件大小
     is_dir: bool  # 是否是目录
     hashinfo: Optional[str] = 'null'  # v3.29.0
-    hash_info: Optional[None] = None  # v3.29.0
+    hash_info: Optional[HashInfo | None] = None  # v3.29.0
     modified: datetime.datetime  # 修改时间
     created: Optional[datetime.datetime]  # v3.29.0 创建时间
     sign: str  # 签名
@@ -61,6 +72,8 @@ class RawItem(BaseModel):
     name: str
     size: int
     is_dir: bool
+    hashinfo: Optional[str] = 'null'  # v3.29.0
+    hash_info: Optional[HashInfo | None] = None  # v3.29.0
     modified: datetime.datetime
     sign: str
     thumb: str
@@ -114,7 +127,7 @@ class Task(_BaseModel):
     name: str  # 任务名
     state: int  # 任务完成状态
     status: str  # 任务状态
-    progress: int  # 进度
+    progress: int | float  # 进度
     error: str  # 错误信息
 
 

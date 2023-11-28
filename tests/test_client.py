@@ -1,3 +1,4 @@
+import json
 import os
 import asyncio
 from datetime import datetime
@@ -7,8 +8,9 @@ import pytest
 
 from alist_sdk import Client, Me, Item, RawItem, ListItem, Resp, Task, DirItem, AsyncClient
 
-DATA_DIR = Path(__file__).parent.joinpath('alist/test_dir')
-DATA_DIR_DST = Path(__file__).parent.joinpath('alist/test_dir_dst')
+WORKDIR = Path(__file__).parent
+DATA_DIR = WORKDIR.joinpath('alist/test_dir')
+DATA_DIR_DST = WORKDIR.joinpath('alist/test_dir_dst')
 DATA_DIR_DST.mkdir(exist_ok=True)
 DATA_DIR.mkdir(exist_ok=True)
 
@@ -67,47 +69,6 @@ def setup_module() -> None:
                      username='admin', password='123456')
     create_storage_local(_client, 'local', DATA_DIR)
     create_storage_local(_client, 'local_dst', DATA_DIR_DST)
-
-
-class TestModel:
-
-    def test_item(self):
-        a = Item(
-            name='test',
-            size=2,
-            is_dir=False,
-            sign='',
-            thumb='',
-            type=1,
-            created=datetime.now(),
-            modified=datetime.now(),
-            parent='/local'
-        )
-        assert isinstance(a.full_name, PurePosixPath)
-        assert a.full_name.as_posix() == '/local/test', "Item.full_name 验证失败。"
-        assert isinstance(a.model_dump_json(), str)
-        print(a)
-
-    def test_list_item(self):
-        a = ListItem(
-            content=[
-                Item(
-                    name='test',
-                    size=2, is_dir=False,
-                    sign='',
-                    thumb='',
-                    type=1, created=datetime.now(),
-                    modified=datetime.now()
-                )
-            ],
-            total=1,
-            readme='',
-            header='',
-            write=False,
-            provider='Local'
-        ).model_dump_json()
-        assert isinstance(a, str)
-        print(a)
 
 
 # noinspection PyMethodMayBeStatic
