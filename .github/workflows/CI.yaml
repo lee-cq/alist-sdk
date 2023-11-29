@@ -14,6 +14,7 @@ jobs:
       max-parallel: 4
       matrix:
         python-version: ['3.10', '3.11', '3.12']
+        alist-version: ['3.28.0', '3.29.0', '3.29.1']
       fail-fast: false
 
     steps:
@@ -32,6 +33,8 @@ jobs:
 
     - name: Install AList
       run: bash -ex tests/init_alist.sh
+      with:
+        ALIST_VERSION: ${{ matrix.alist-version }}
 
     - name: Run Tests
       run: |
