@@ -33,7 +33,7 @@ jobs:
 
     - name: Install AList
       run: bash -ex tests/init_alist.sh
-      with:
+      env:
         ALIST_VERSION: ${{ matrix.alist-version }}
 
     - name: Run Tests
