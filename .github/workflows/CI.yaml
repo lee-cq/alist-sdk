@@ -11,10 +11,10 @@ jobs:
 
     runs-on: ubuntu-latest
     strategy:
-      max-parallel: 4
+      max-parallel: 3
       matrix:
         python-version: ['3.10', '3.11', '3.12']
-        alist-version: ['3.28.0', '3.29.0', '3.29.1']
+        alist-version: ['3.29.0', '3.29.1']
       fail-fast: false
 
     steps:
