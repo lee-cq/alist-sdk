@@ -10,6 +10,8 @@ Alist API 简单封装
 
 ## 使用
 
+客户端或异步客户端方法签名于API基本一致。
+
 ```python
 # Sync 模式
 from alist_sdk import Client
