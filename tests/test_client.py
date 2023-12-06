@@ -6,7 +6,8 @@ from pathlib import Path, PurePosixPath
 
 import pytest
 
-from alist_sdk import Client, Me, Item, RawItem, ListItem, Resp, Task, DirItem, AsyncClient
+from alist_sdk import Client, AsyncClient
+from alist_sdk import models
 
 WORKDIR = Path(__file__).parent
 DATA_DIR = WORKDIR.joinpath('alist/test_dir')
@@ -90,7 +91,7 @@ class TestSyncClient:
     def run(self, func, *args, **kwargs):
         print("run", func.__name__, end=": ")
         res = func(*args, **kwargs)
-        res: Resp
+        res: models.Resp
         print("RESP: ", res.model_dump_json())
         return res
 
@@ -101,7 +102,7 @@ class TestSyncClient:
     def test_me(self):
         res = self.run(self.client.me)
         assert res.code == 200
-        assert isinstance(res.data, Me), "数据结构错误。"
+        assert isinstance(res.data, models.Me), "数据结构错误。"
 
     def test_mkdir(self):
         res = self.run(
@@ -160,8 +161,8 @@ class TestSyncClient:
             '/local',
         )
         assert res.code == 200
-        assert isinstance(res.data, ListItem)
-        assert isinstance(res.data.content[0], Item)
+        assert isinstance(res.data, models.ListItem)
+        assert isinstance(res.data.content[0], models.Item)
 
     def test_list_dir_null(self):
         DATA_DIR.joinpath('test_list_dir_null').mkdir()
@@ -170,7 +171,7 @@ class TestSyncClient:
             '/local/test_list_dir_null',
         )
         assert res.code == 200
-        assert isinstance(res.data, ListItem)
+        assert isinstance(res.data, models.ListItem)
         assert res.data.total == 0
 
     def test_get_item_info_dir(self):
@@ -180,7 +181,7 @@ class TestSyncClient:
             '/local/test_ite_info_dir'
         )
         assert res.code == 200
-        assert isinstance(res.data, RawItem)
+        assert isinstance(res.data, models.RawItem)
 
     def test_get_item_info_file(self):
         DATA_DIR.joinpath('test_ite_info_file.txt').write_text('abc')
@@ -189,8 +190,8 @@ class TestSyncClient:
             '/local/test_ite_info_file.txt'
         )
         assert res.code == 200
-        assert isinstance(res, Resp)
-        assert isinstance(res.data, RawItem)
+        assert isinstance(res, models.Resp)
+        assert isinstance(res.data, models.RawItem)
 
     def test_get_dir(self):
         DATA_DIR.joinpath('test_ite_info_dir').mkdir()
@@ -201,7 +202,7 @@ class TestSyncClient:
         )
         assert res.code == 200
         assert isinstance(res.data, list)
-        assert isinstance(res.data[0], DirItem)
+        assert isinstance(res.data[0], models.DirItem)
 
     def test_move(self):
         DATA_DIR.joinpath('test_move_src').mkdir()
@@ -333,7 +334,20 @@ class TestSyncClient:
         )
         assert res.code == 200, res.message
         assert isinstance(res.data, list)
-        assert isinstance(res.data[0], Task)
+        assert isinstance(res.data[0], models.Task)
+    
+    def test_storage_list(self):
+        res = self.run(
+            self.client.storage_list
+        )
+        assert res.code == 200
+        assert isinstance(res.data, models.ListContents)
+        assert isinstance(res.data.content, (list, models.NoneType))
+        assert isinstance(res.data.content[0], models.Storage)
+
+        assert '/local' in [
+            s.mount_path for s in res.data.content
+        ]
 
 
 class TestAsyncClient(TestSyncClient):

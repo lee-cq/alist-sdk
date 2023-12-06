@@ -189,7 +189,7 @@
   ],
   [
     "/api/fs/search",
-    "Searches",
+    "ListContents",
     {
       "code": 200,
       "message": "success",
@@ -201,7 +201,7 @@
   ],
   [
     "/api/fs/search",
-    "Searches",
+    "ListContents",
     {
       "code": 200,
       "message": "success",
@@ -225,5 +225,72 @@
         "total": 8
       }
     }
-  ]
+  ],
+  ["/api/admin/storage/list", "ListContents", {
+    "code": 200,
+    "message": "success",
+    "data": {
+      "content": [
+            {
+                "id": 1,
+                "mount_path": "/onedrive",
+                "order": 0,
+                "driver": "Onedrive",
+                "cache_expiration": 1,
+                "status": "work",
+                "addition": "{\"root_folder_path\":\"/\",\"region\":\"global\",\"is_sharepoint\":true,\"client_id\":\"UUID\",\"client_secret\":\"SBA8b3u\",\"redirect_uri\":\"https://tool.nn.ci/onedrive/callback\",\"refresh_token\":\"0.AXEAEaSLS6NOskCNG\",\"site_id\":\"*****.sharepoint.com,UUID,UUID\",\"chunk_size\":5,\"custom_host\":\"\"}",
+                "remark": "",
+                "modified": "2023-06-17T13:48:58.041+08:00",
+                "disabled": false,
+                "enable_sign": false,
+                "order_by": "size",
+                "order_direction": "asc",
+                "extract_folder": "front",
+                "web_proxy": false,
+                "webdav_policy": "302_redirect",
+                "down_proxy_url": ""
+            },
+            {
+                "id": 6,
+                "mount_path": "/云盘",
+                "order": 0,
+                "driver": "139Yun",
+                "cache_expiration": 30,
+                "status": "work",
+                "addition": "{\"authorization\":\"Toekn From Cookies\",\"type\":\"personal\",\"cloud_id\":\"\"}",
+                "remark": "",
+                "modified": "2023-11-20T17:32:09.07+08:00",
+                "disabled": false,
+                "enable_sign": false,
+                "order_by": "name",
+                "order_direction": "asc",
+                "extract_folder": "front",
+                "web_proxy": false,
+                "webdav_policy": "302_redirect",
+                "down_proxy_url": ""
+            },
+            {
+                "id": 2,
+                "mount_path": "/ali",
+                "order": 1,
+                "driver": "Aliyundrive",
+                "cache_expiration": 30,
+                "status": "work",
+                "addition": "{\"root_folder_id\":\"ID\",\"refresh_token\":\"TOKEN\",\"order_by\":\"name\",\"order_direction\":\"ASC\",\"rapid_upload\":true,\"internal_upload\":false}",
+                "remark": "",
+                "modified": "2022-09-30T15:10:08.425+08:00",
+                "disabled": true,
+                "enable_sign": false,
+                "order_by": "",
+                "order_direction": "",
+                "extract_folder": "front",
+                "web_proxy": false,
+                "webdav_policy": "302_redirect",
+                "down_proxy_url": ""
+            }
+        ]
+        ,
+        "total": 5
+    }
+}]
 ]

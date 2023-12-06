@@ -1,5 +1,6 @@
 import datetime
 import logging
+import os
 from pathlib import PurePosixPath
 from typing import Optional
 
@@ -17,8 +18,9 @@ logger = logging.getLogger('alist-sdk.fs.model')
 
 __all__ = [
     "BaseModel", "Item", "RawItem", "ListItem",
-    "DirItem", "SearchItem", "Searches", "Me",
+    "DirItem", "SearchItem", "Me",
     "Task", "Resp", "HashInfo", "NoneType",
+    "Storage", "ListContents", 
     "Verify", "verify", "AsyncVerify", "async_verify"
 ]
 NoneType = type(None)
@@ -92,11 +94,6 @@ class SearchItem(BaseModel):
     type: int
 
 
-class Searches(_BaseModel):
-    content: list[SearchItem] | None
-    total: int
-
-
 class DirItem(BaseModel):
     name: str
     modified: datetime.datetime
@@ -130,12 +127,37 @@ class Task(_BaseModel):
     progress: int | float  # 进度
     error: str  # 错误信息
 
+class Storage(_BaseModel):
+    # /api/admin/storage/list
+    id: int
+    mount_path: str| os.PathLike
+    order: int
+    driver: str
+    cache_expiration: int
+    status: str
+    addition: str  # TODO JOSN
+    remark: str = ''
+    modified: datetime.datetime
+    disabled: bool
+    enable_sign: bool
+    order_by: str # name 可选枚举
+    order_direction: str # asc easc  二选枚举
+    extract_folder: str  # 提取文件夹位置
+    web_proxy: bool
+    webdav_policy: str  # webdav策略
+    down_proxy_url: str = ''
+
+
+class ListContents(_BaseModel):
+    content: list[Storage| SearchItem] | None
+    total: int
+
 
 class Resp(_BaseModel):
     code: int
     message: str
     # data: ListItem
-    data: None | str | Me | list[DirItem] | ListItem | Searches | RawItem | list[Task]
+    data: None | str | Me | list[DirItem] | ListItem | ListContents | RawItem | list[Task]
 
 
 class Verify:

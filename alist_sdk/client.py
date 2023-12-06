@@ -331,3 +331,11 @@ class Client(HttpClient):
         """重试任务"""
         self.task_type_verify(task_type)
         return locals(), self.post(f'/api/admin/task/{task_type}/retry', params={"tid": task_id})
+
+
+    # ================= Admin/Stroages 相关 ==========================
+
+    @verify()
+    def storage_list(self):
+        """列出存储器列表"""
+        return locals(), self.get("/api/admin/storage/list")

@@ -60,6 +60,15 @@ class TestModel:
     )
     def test_me(self, me):
         Me(**me)
+    
+    @pytest.mark.parametrize(
+            "storage",
+            json.loads(MODEL_SIMPLE.joinpath('Storages.json').read_text())
+    )
+    def test_storage(self, storage):
+        """"""
+        _s = Storage(**storage)
+        _s.model_dump_json()
 
     @pytest.mark.parametrize(
         'url, model, resp',
