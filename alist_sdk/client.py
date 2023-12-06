@@ -12,6 +12,8 @@ from .version import __version__
 
 logger = logging.getLogger("alist-sdk.client")
 
+__all__ = ['Client']
+
 
 class Client(HttpClient):
 
@@ -339,3 +341,13 @@ class Client(HttpClient):
     def storage_list(self):
         """列出存储器列表"""
         return locals(), self.get("/api/admin/storage/list")
+    
+    @verify()
+    def storage_create(self, storage:dict| Storage):
+        """创建一个存储器后端"""
+        if isinstance(storage, dict):
+            storage = Storage(**storage)
+        return locals(), self.post(
+            "/api/admin/storage/create",
+            json=storage.model_dump(exclude=['id', 'modified'])
+        )

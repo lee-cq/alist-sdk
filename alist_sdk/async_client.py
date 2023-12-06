@@ -5,11 +5,14 @@ from pathlib import Path
 
 from httpx import AsyncClient as HttpClient
 
+from .models import *
 from .models import async_verify as verify
 from .client import Client as SyncClient
 from .version import __version__
 
 logger = logging.getLogger("alist-sdk.async-client")
+
+__all__ = ['AsyncClient']
 
 
 class AsyncClient(HttpClient):
@@ -348,3 +351,13 @@ class AsyncClient(HttpClient):
     async def storage_list(self):
         """列出存储器列表"""
         return locals(), await self.get("/api/admin/storage/list")
+    
+    @verify()
+    async def storage_create(self, storage:dict| Storage):
+        """创建一个存储器后端"""
+        if isinstance(storage, dict):
+            storage = Storage(**storage)
+        return locals(), await self.post(
+            "/api/admin/storage/create",
+            json=storage.model_dump(exclude=['id', 'modified'])
+        )

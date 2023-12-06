@@ -335,7 +335,7 @@ class TestSyncClient:
         assert res.code == 200, res.message
         assert isinstance(res.data, list)
         assert isinstance(res.data[0], models.Task)
-    
+
     def test_storage_list(self):
         res = self.run(
             self.client.storage_list
@@ -348,6 +348,38 @@ class TestSyncClient:
         assert '/local' in [
             s.mount_path for s in res.data.content
         ]
+
+    def test_storage_create(self):
+        """测试创建存储器"""
+        import time
+        store_name = f'test_storage_{int(time.time())}'
+        store_path = WORKDIR.joinpath(f'alist/{store_name}').absolute()
+        store_path.mkdir(parents=True, exist_ok=True)
+        local_storage = {
+            "mount_path": f"/{store_name}",
+            "order": 0,
+            "driver": "Local",
+            "cache_expiration": 0,
+            "status": "work",
+            "addition": "{\"root_folder_path\":\"%s\",\"thumbnail\":false,"
+            "\"thumb_cache_folder\":\"\",\"show_hidden\":true,"
+            "\"mkdir_perm\":\"750\"}" % store_path.as_posix(),
+            "remark": "",
+            "modified": "2023-11-20T15:00:31.608106706Z",
+            "disabled": False,
+            "enable_sign": False,
+            "order_by": "name",
+            "order_direction": "asc",
+            "extract_folder": "front",
+            "web_proxy": False,
+            "webdav_policy": "native_proxy",
+            "down_proxy_url": ""
+        }
+        res = self.run(
+            self.client.storage_create,
+            local_storage
+        )
+        assert res.code == 200, res.message
 
 
 class TestAsyncClient(TestSyncClient):

@@ -20,7 +20,7 @@ __all__ = [
     "BaseModel", "Item", "RawItem", "ListItem",
     "DirItem", "SearchItem", "Me",
     "Task", "Resp", "HashInfo", "NoneType",
-    "Storage", "ListContents", 
+    "Storage", "ListContents",
     "Verify", "verify", "AsyncVerify", "async_verify"
 ]
 NoneType = type(None)
@@ -127,10 +127,15 @@ class Task(_BaseModel):
     progress: int | float  # 进度
     error: str  # 错误信息
 
+
+class ID(_BaseModel):
+    id: int | str | None
+
+
 class Storage(_BaseModel):
     # /api/admin/storage/list
-    id: int
-    mount_path: str| os.PathLike
+    id: Optional[int] = None
+    mount_path: str | os.PathLike
     order: int
     driver: str
     cache_expiration: int
@@ -140,8 +145,8 @@ class Storage(_BaseModel):
     modified: datetime.datetime
     disabled: bool
     enable_sign: bool
-    order_by: str # name 可选枚举
-    order_direction: str # asc easc  二选枚举
+    order_by: str  # name 可选枚举
+    order_direction: str  # asc easc  二选枚举
     extract_folder: str  # 提取文件夹位置
     web_proxy: bool
     webdav_policy: str  # webdav策略
@@ -149,7 +154,7 @@ class Storage(_BaseModel):
 
 
 class ListContents(_BaseModel):
-    content: list[Storage| SearchItem] | None
+    content: list[Storage | SearchItem] | None
     total: int
 
 
@@ -157,7 +162,7 @@ class Resp(_BaseModel):
     code: int
     message: str
     # data: ListItem
-    data: None | str | Me | list[DirItem] | ListItem | ListContents | RawItem | list[Task]
+    data: None | str | Me | list[DirItem] | ListItem | ListContents | RawItem | list[Task] | ID
 
 
 class Verify:
@@ -193,7 +198,8 @@ class Verify:
                 return self.acting(resp)
 
             except JSONDecodeError:
-                logger.warning("JsonDecodeError: [http_status: %d] ", self.res.status_code)
+                logger.warning(
+                    "JsonDecodeError: [http_status: %d] ", self.res.status_code)
                 return Resp(code=self.res.status_code, message="JsonDecodeError", data=None)
 
         return wrapper  # 返回函数
@@ -215,7 +221,8 @@ class AsyncVerify(Verify):
                 return self.acting(resp)
 
             except JSONDecodeError:
-                logger.warning("[Async]JsonDecodeError: [http_status: %d] ", self.res.status_code)
+                logger.warning(
+                    "[Async]JsonDecodeError: [http_status: %d] ", self.res.status_code)
                 return Resp(code=self.res.status_code, message="[Async]JsonDecodeError", data=None)
 
         return async_wrapper  # 返回函数
