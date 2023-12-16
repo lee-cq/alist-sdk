@@ -17,17 +17,41 @@ from functools import wraps
 logger = logging.getLogger('alist-sdk.fs.model')
 
 __all__ = [
-    "BaseModel", "Item", "RawItem", "ListItem",
-    "DirItem", "SearchItem", "Me",
-    "Task", "Resp", "HashInfo", "NoneType",
-    "Storage", "ListContents",
-    "Verify", "verify", "AsyncVerify", "async_verify",
+    "BaseModel",
+    "Item",
+    "RawItem",
+    "ListItem",
+    "DirItem",
+    "SearchItem",
+    "Me",
+    "Task",
+    "Resp",
+    "HashInfo",
+    "NoneType",
+    "Storage",
+    "ListContents",
 
-    "TaskTypeModify"
+    "Verify",
+    "verify",
+    "AsyncVerify",
+    "async_verify",
+
+    "TaskTypeModify",
+    "TaskStateModify",
+    "TaskStatusModify",
+    "OrderDirectionModify",
+    "OrderByModify",
+    "ExtractFolderModify",
 ]
 NoneType = type(None)
 
 TaskTypeModify = Literal['copy', 'upload', 'aria2_down', 'aria2_transfer', 'qbit_down', 'qbit_transfer',]
+TaskStateModify = Literal[0, 1, 2, 3, 4, 5]
+TaskStatusModify = Literal['', 'waiting', 'running', 'success', 'failed', 'getting src object']
+
+OrderDirectionModify = Literal['', 'asc', 'desc']
+OrderByModify = Literal['', 'size', 'name',]
+ExtractFolderModify = Literal['', 'front', 'back', 'none']
 
 
 class BaseModel(_BaseModel):
@@ -126,8 +150,8 @@ class Task(_BaseModel):
     """
     id: str  # 任务ID
     name: str  # 任务名
-    state: int  # 任务完成状态
-    status: str  # 任务状态
+    state: TaskStateModify  # 任务完成状态
+    status: TaskStatusModify  # 任务状态
     progress: int | float  # 进度
     error: str  # 错误信息
 
@@ -144,14 +168,14 @@ class Storage(_BaseModel):
     driver: str
     cache_expiration: int
     status: str
-    addition: str  # TODO JOSN
+    addition: str  # TODO JSON
     remark: str = ''
     modified: datetime.datetime
     disabled: bool
     enable_sign: bool
-    order_by: str  # name 可选枚举
-    order_direction: str  # asc easc  二选枚举
-    extract_folder: str  # 提取文件夹位置
+    order_by: OrderByModify
+    order_direction: OrderDirectionModify
+    extract_folder: ExtractFolderModify  # 提取文件夹位置
     web_proxy: bool
     webdav_policy: str  # webdav策略
     down_proxy_url: str = ''
