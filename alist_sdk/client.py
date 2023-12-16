@@ -287,67 +287,66 @@ class Client(HttpClient):
     # ================ admin/task 相关API ============================
 
     @staticmethod
-    def task_type_verify(task_type):
+    def task_type_verify(task_type: TaskTypeModify):
         ok = ['upload', 'copy', 'aria2_down', 'aria2_transfer', 'qbit_down', 'qbit_transfer']
         if task_type not in ok:
             raise ValueError(f"{task_type = }, not in {ok}")
 
     @verify()
-    def task_done(self, task_type):
+    def task_done(self, task_type: TaskTypeModify):
         """获取已经完成的任务"""
         self.task_type_verify(task_type)
         return locals(), self.get(f'/api/admin/task/{task_type}/done')
 
     @verify()
-    def task_undone(self, task_type):
+    def task_undone(self, task_type: TaskTypeModify):
         """获取未完成的任务"""
         self.task_type_verify(task_type)
         return locals(), self.get(f'/api/admin/task/{task_type}/undone')
 
     @verify()
-    def task_delete(self, task_type, task_id):
+    def task_delete(self, task_type: TaskTypeModify, task_id):
         """删除任务"""
         self.task_type_verify(task_type)
         return locals(), self.post(f'/api/admin/task/{task_type}/delete', params={"tid": task_id})
 
     @verify()
-    def task_cancel(self, task_type, task_id):
+    def task_cancel(self, task_type: TaskTypeModify, task_id):
         """取消任务"""
         self.task_type_verify(task_type)
         return locals(), self.post(f'/api/admin/task/{task_type}/cancel', params={"tid": task_id})
 
     @verify()
-    def task_clear_done(self, task_type):
+    def task_clear_done(self, task_type: TaskTypeModify):
         """清除已经完成的任务"""
         self.task_type_verify(task_type)
         return locals(), self.post(f'/api/admin/task/{task_type}/clear_done')
 
     @verify()
-    def task_clear_succeeded(self, task_type):
+    def task_clear_succeeded(self, task_type: TaskTypeModify):
         """清除已成功的任务"""
         self.task_type_verify(task_type)
         return locals(), self.post(f'/api/admin/task/{task_type}/clear_succeeded')
 
     @verify()
-    def task_retry(self, task_type, task_id):
+    def task_retry(self, task_type: TaskTypeModify, task_id):
         """重试任务"""
         self.task_type_verify(task_type)
         return locals(), self.post(f'/api/admin/task/{task_type}/retry', params={"tid": task_id})
 
-
-    # ================= Admin/Stroages 相关 ==========================
+    # ================= admin/storages 相关 ==========================
 
     @verify()
     def storage_list(self):
         """列出存储器列表"""
         return locals(), self.get("/api/admin/storage/list")
-    
+
     @verify()
-    def storage_create(self, storage:dict| Storage):
+    def storage_create(self, storage: dict | Storage):
         """创建一个存储器后端"""
         if isinstance(storage, dict):
             storage = Storage(**storage)
         return locals(), self.post(
             "/api/admin/storage/create",
-            json=storage.model_dump(exclude=['id', 'modified'])
+            json=storage.model_dump(exclude={'id', 'modified'})
         )

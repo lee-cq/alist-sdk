@@ -2,7 +2,7 @@ import datetime
 import logging
 import os
 from pathlib import PurePosixPath
-from typing import Optional
+from typing import Optional, Literal
 
 from json import JSONDecodeError
 
@@ -21,9 +21,13 @@ __all__ = [
     "DirItem", "SearchItem", "Me",
     "Task", "Resp", "HashInfo", "NoneType",
     "Storage", "ListContents",
-    "Verify", "verify", "AsyncVerify", "async_verify"
+    "Verify", "verify", "AsyncVerify", "async_verify",
+
+    "TaskTypeModify"
 ]
 NoneType = type(None)
+
+TaskTypeModify = Literal['copy', 'upload', 'aria2_down', 'aria2_transfer', 'qbit_down', 'qbit_transfer',]
 
 
 class BaseModel(_BaseModel):

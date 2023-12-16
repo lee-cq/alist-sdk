@@ -352,7 +352,7 @@ class TestSyncClient:
     def test_storage_create(self):
         """测试创建存储器"""
         import time
-        store_name = f'test_storage_{int(time.time())}'
+        store_name = f'test_storage_{int(time.time_ns())}'
         store_path = WORKDIR.joinpath(f'alist/{store_name}').absolute()
         store_path.mkdir(parents=True, exist_ok=True)
         local_storage = {
