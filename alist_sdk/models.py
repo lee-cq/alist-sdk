@@ -36,6 +36,7 @@ __all__ = [
     "AsyncVerify",
     "async_verify",
 
+    "SearchScopeModify",
     "TaskTypeModify",
     "TaskStateModify",
     "TaskStatusModify",
@@ -43,11 +44,28 @@ __all__ = [
     "OrderByModify",
     "ExtractFolderModify",
 ]
+
 NoneType = type(None)
 
-TaskTypeModify = Literal['copy', 'upload', 'aria2_down', 'aria2_transfer', 'qbit_down', 'qbit_transfer',]
+SearchScopeModify = Literal[0, 1, 2]  # 0-全部 1-文件夹 2-文件
+
+TaskTypeModify = Literal[
+    'copy',
+    'upload',
+    'aria2_down',
+    'aria2_transfer',
+    'qbit_down',
+    'qbit_transfer',
+]
 TaskStateModify = Literal[0, 1, 2, 3, 4, 5]
-TaskStatusModify = Literal['', 'waiting', 'running', 'success', 'failed', 'getting src object']
+TaskStatusModify = Literal[
+    '',
+    'waiting',
+    'running',
+    'success',
+    'failed',
+    'getting src object'
+]
 
 OrderDirectionModify = Literal['', 'asc', 'desc']
 OrderByModify = Literal['', 'size', 'name',]
@@ -190,7 +208,8 @@ class Resp(_BaseModel):
     code: int
     message: str
     # data: ListItem
-    data: None | str | Me | list[DirItem] | ListItem | ListContents | RawItem | list[Task] | ID
+    data: None | str | Me | list[DirItem] | ListItem | ListContents | RawItem | list[
+        Task] | ID
 
 
 class Verify:
@@ -228,7 +247,8 @@ class Verify:
             except JSONDecodeError:
                 logger.warning(
                     "JsonDecodeError: [http_status: %d] ", self.res.status_code)
-                return Resp(code=self.res.status_code, message="JsonDecodeError", data=None)
+                return Resp(code=self.res.status_code, message="JsonDecodeError",
+                            data=None)
 
         return wrapper  # 返回函数
 
@@ -251,7 +271,8 @@ class AsyncVerify(Verify):
             except JSONDecodeError:
                 logger.warning(
                     "[Async]JsonDecodeError: [http_status: %d] ", self.res.status_code)
-                return Resp(code=self.res.status_code, message="[Async]JsonDecodeError", data=None)
+                return Resp(code=self.res.status_code, message="[Async]JsonDecodeError",
+                            data=None)
 
         return async_wrapper  # 返回函数
 

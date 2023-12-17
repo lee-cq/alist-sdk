@@ -1,7 +1,7 @@
 import asyncio
 import logging
 import urllib.parse
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 from httpx import AsyncClient as HttpClient
 
@@ -12,15 +12,22 @@ from .version import __version__
 
 logger = logging.getLogger("alist-sdk.async-client")
 
-__all__ = ['AsyncClient']
+__all__ = ["AsyncClient"]
 
 
 class AsyncClient(HttpClient):
-
-    def __init__(self, base_url, token=None, username=None, password=None, has_opt=False, **kwargs):
+    def __init__(
+        self,
+        base_url,
+        token=None,
+        username=None,
+        password=None,
+        has_opt=False,
+        **kwargs,
+    ):
         super().__init__(**kwargs)
         self.base_url = base_url
-        self.headers.setdefault('User-Agent', f"Alist-SDK/{__version__}")
+        self.headers.setdefault("User-Agent", f"Alist-SDK/{__version__}")
         if token or username:
             self.headers.update(
                 SyncClient(
@@ -29,7 +36,7 @@ class AsyncClient(HttpClient):
                     username=username,
                     password=password,
                     has_opt=has_opt,
-                    **kwargs
+                    **kwargs,
                 ).headers
             )
 
@@ -42,13 +49,13 @@ class AsyncClient(HttpClient):
             asyncio.run(con)
 
     async def verify_login_status(self) -> bool:
-        """验证登陆状态, """
-        me = (await self.get('/api/me')).json()
+        """验证登陆状态,"""
+        me = (await self.get("/api/me")).json()
         if me.get("code") != 200:
             logger.error("异步客户端登陆失败[%d], %s", me.get("code"), me.get("message"))
             return False
 
-        username = me['data'].get('username')
+        username = me["data"].get("username")
         if username not in [None]:
             logger.info("异步客户端登陆成功： 当前用户： %s", username)
             return True
@@ -62,18 +69,18 @@ class AsyncClient(HttpClient):
 
     @verify()
     async def verify_request(
-            self,
-            method: str,
-            url,
-            *,
-            content=None,
-            data=None,
-            files=None,
-            json=None,
-            params=None,
-            headers=None,
-            follow_redirects=True,
-            **kwargs
+        self,
+        method: str,
+        url,
+        *,
+        content=None,
+        data=None,
+        files=None,
+        json=None,
+        params=None,
+        headers=None,
+        follow_redirects=True,
+        **kwargs,
     ):
         return {}, await self.request(
             method=method,
@@ -85,26 +92,26 @@ class AsyncClient(HttpClient):
             params=params,
             headers=headers,
             follow_redirects=follow_redirects,
-            **kwargs
+            **kwargs,
         )
 
     @verify()
     async def me(self):
-        return locals(), await self.get('/api/me')
+        return locals(), await self.get("/api/me")
 
     async def login(self, username, password, has_opt=False) -> bool:
         """登陆，成功返回Ture"""
-        endpoint = '/api/auth/login'
+        endpoint = "/api/auth/login"
         res = await self.post(
             url=endpoint,
             json={
                 "username": username,
                 "password": password,
-                "opt_code": input("请输入当前OPT代码：") if has_opt else ""
+                "opt_code": input("请输入当前OPT代码：") if has_opt else "",
             },
         )
 
-        if res.status_code == 200 and res.json()['code'] == 200:
+        if res.status_code == 200 and res.json()["code"] == 200:
             return await self.set_token(res.json()["data"]["token"])
         logger.warning("登陆失败[%d]：%s", res.status_code, res.text)
         return False
@@ -112,69 +119,94 @@ class AsyncClient(HttpClient):
     # ================ FS 相关方法 =================
 
     @verify()
-    async def mkdir(self, path):
-        return locals(), await self.post('/api/fs/mkdir', json={"path": path})
+    async def mkdir(self, path: str | PurePosixPath):
+        return locals(), await self.post("/api/fs/mkdir", json={"path": str(path)})
 
     @verify()
-    async def rename(self, new_name, path):
-        return locals(), await self.post('/api/fs/rename', json={
-            "name": new_name,
-            "path": path,
-        })
-
-    @verify()
-    async def upload_file_form_data(self, data, path, as_task=False):
-        """表单上传"""
-        return locals(), await self.put(
-            '/api/fs/form',
-            headers={"As-Task": 'true' if as_task else 'false',
-                     "File-Path": urllib.parse.quote_plus(path)
-                     },
-            # content=data,
-            files={
-                "upload-file": data
-            }
+    async def rename(self, new_name, full_path: str | PurePosixPath):
+        return locals(), await self.post(
+            "/api/fs/rename",
+            json={
+                "name": new_name,
+                "path": str(full_path),
+            },
         )
 
     @verify()
-    async def upload_file_put(self, local_path, path, as_task=False):
+    async def upload_file_form_data(
+        self, data, path: str | PurePosixPath, as_task=False
+    ):
+        """表单上传"""
+        return locals(), await self.put(
+            "/api/fs/form",
+            headers={
+                "As-Task": "true" if as_task else "false",
+                "File-Path": urllib.parse.quote_plus(str(path)),
+            },
+            # content=data,
+            files={"upload-file": data},
+        )
+
+    @verify()
+    async def upload_file_put(
+        self, local_path: str | Path, path: str | PurePosixPath, as_task=False
+    ):
         """流式上传文件"""
         local_path = Path(local_path)
         if not local_path.exists():
             raise FileNotFoundError(local_path)
 
         return locals(), await self.put(
-            '/api/fs/put',
-            headers={"As-Task": 'true' if as_task else 'false',
-                     "Content-Type": 'application/octet-stream',
-                     "Last-Modified": str(int(local_path.stat(follow_symlinks=True).st_mtime * 1000)),
-                     "File-Path": urllib.parse.quote_plus(path)
-                     },
-            content=open(local_path, 'rb').read(),
+            "/api/fs/put",
+            headers={
+                "As-Task": "true" if as_task else "false",
+                "Content-Type": "application/octet-stream",
+                "Last-Modified": str(
+                    int(local_path.stat(follow_symlinks=True).st_mtime * 1000)
+                ),
+                "File-Path": urllib.parse.quote_plus(str(path)),
+            },
+            content=open(local_path, "rb").read(),
         )
 
     @verify()
-    async def list_files(self, path, password=None, page=1, per_page=0, refresh=False):
+    async def list_files(
+        self,
+        path: str | PurePosixPath,
+        password=None,
+        page=1,
+        per_page=0,
+        refresh=False,
+    ):
         """POST 列出文件目录"""
-        return locals(), await self.post('/api/fs/list', json={
-            "path": path,
-            "password": password,
-            "page": page,
-            "per_page": per_page,
-            "refresh": refresh
-        })
+        return locals(), await self.post(
+            "/api/fs/list",
+            json={
+                "path": str(path),
+                "password": password,
+                "page": page,
+                "per_page": per_page,
+                "refresh": refresh,
+            },
+        )
 
     @verify()
-    async def get_item_info(self, path, password=None):
+    async def get_item_info(self, path: str | PurePosixPath, password=None):
         """POST 获取某个文件/目录信息"""
-        return locals(), await self.post('/api/fs/get', json={
-            "path": path,
-            "password": password
-        })
+        return locals(), await self.post(
+            "/api/fs/get", json={"path": str(path), "password": password}
+        )
 
     @verify()
-    async def search(self, path, keyword, scope,
-                     page: int = None, per_page: int = None, password: str = None):
+    async def search(
+        self,
+        path: str | PurePosixPath,
+        keyword: str,
+        scope: SearchScopeModify = 0,
+        page: int = None,
+        per_page: int = None,
+        password: str = None,
+    ):
         """POST 搜索文件或文件夹
 
         :param password:
@@ -187,30 +219,38 @@ class AsyncClient(HttpClient):
         return locals(), await self.post(
             "/api/fs/search",
             json={
-                "parent": path,
+                "parent": str(path),
                 "keywords": keyword,
                 "scope": scope,
                 "page": page,
                 "per_page": per_page,
-                "password": password
+                "password": password,
             },
         )
 
     @verify()
-    async def get_dir(self, path, password=None, page: int = 1, per_page: int = 10, refresh: bool = False):
+    async def get_dir(
+        self,
+        path: str | PurePosixPath,
+        password=None,
+        page: int = 1,
+        per_page: int = 10,
+        refresh: bool = False,
+    ):
         """POST 获取目录 /api/fs/dirs
 
         :return:
         """
         return locals(), await self.post(
-            '/api/fs/dirs',
+            "/api/fs/dirs",
             json={
-                "path": path,
+                "path": str(path),
                 "password": password,
                 "page": page,
                 "per_page": per_page,
-                "refresh": refresh
-            })
+                "refresh": refresh,
+            },
+        )
 
     @verify()
     async def batch_rename(self):
@@ -221,122 +261,145 @@ class AsyncClient(HttpClient):
 
     @verify()
     async def regex_rename(self):
-        """POST 正则重命名   /api/fs/regex_rename  """
+        """POST 正则重命名   /api/fs/regex_rename"""
         raise NotImplemented
 
     @verify()
-    async def move(self, src_dir, dst_dir, files: list[str]):
+    async def move(
+        self,
+        src_dir: str | PurePosixPath,
+        dst_dir: str | PurePosixPath,
+        files: list[str] | str,
+    ):
         """POST 移动文件  /api/fs/move"""
         return locals(), await self.post(
-            '/api/fs/move',
+            "/api/fs/move",
             json={
-                "src_dir": src_dir,
-                "dst_dir": dst_dir,
-                "names": files
-            }
+                "src_dir": str(src_dir),
+                "dst_dir": str(dst_dir),
+                "names": [files] if isinstance(files, str) else files,
+            },
         )
 
     @verify()
-    async def recursive_move(self, src_dir, dst_dir):
+    async def recursive_move(
+        self, src_dir: str | PurePosixPath, dst_dir: str | PurePosixPath
+    ):
         """POST 聚合移动"""
         return locals(), await self.post(
-            '/api/fs/recursive_move',
+            "/api/fs/recursive_move",
             json={
-                "src_dir": src_dir,
-                "dst_dir": dst_dir,
-            }
+                "src_dir": str(src_dir),
+                "dst_dir": str(dst_dir),
+            },
         )
 
     @verify()
-    async def copy(self, src_dir, dst_dir, files: list[str]):
-        return locals(), await self.post(
-            '/api/fs/copy',
-            json={
-                "src_dir": src_dir,
-                "dst_dir": dst_dir,
-                "names": files
-            })
+    async def copy(
+        self,
+        src_dir: str | PurePosixPath,
+        dst_dir: str | PurePosixPath,
+        files: list[str] | str,
+    ):
+        """POST 复制文件  /api/fs/copy"""
 
-    @verify()
-    async def remove(self, path, names):
         return locals(), await self.post(
-            '/api/fs/remove',
-            json={"names": names,
-                  "dir": path
-                  }
+            "/api/fs/copy",
+            json={
+                "src_dir": str(src_dir),
+                "dst_dir": str(dst_dir),
+                "names": [
+                    files,
+                ]
+                if isinstance(files, str)
+                else files,
+            },
         )
 
     @verify()
-    async def remove_empty_directory(self, path):
+    async def remove(self, path: str | PurePosixPath, names: list[str] | str):
+        return locals(), await self.post(
+            "/api/fs/remove",
+            json={
+                "names": [names] if isinstance(names, str) else names,
+                "dir": str(path),
+            },
+        )
+
+    @verify()
+    async def remove_empty_directory(self, path: str | PurePosixPath):
         """/api/fs/remove_empty_directory"""
         return locals(), await self.post(
-            '/api/fs/remove_empty_directory',
-            json={"src_dir": path}
+            "/api/fs/remove_empty_directory", json={"src_dir": str(path)}
         )
 
     @verify()
-    async def add_aria2(self, path, urls: list[str]):
+    async def add_aria2(self, path: str | PurePosixPath, urls: list[str] | str):
         return locals(), await self.post(
-            '/api/fs/add_aria2',
+            "/api/fs/add_aria2",
             json={
-                "urls": urls,
-                "path": path
-            }
+                "urls": [urls] if isinstance(urls, str) else urls,
+                "path": path,
+            },
         )
 
     @verify()
-    async def add_qbit(self, path, urls: list[str]):
+    async def add_qbit(self, path: str | PurePosixPath, urls: list[str]):
         return locals(), await self.post(
-            '/api/fs/add_qbit',
+            "/api/fs/add_qbit",
             json={
-                "urls": urls,
-                "path": path
-            }
+                "urls": [urls] if isinstance(urls, str) else urls,
+                "path": str(path),
+            },
         )
 
     # ================ admin/task 相关API ============================
 
     @staticmethod
     def task_type_verify(task_type: TaskTypeModify):
-        ok = ['upload', 'copy', 'aria2_down', 'aria2_transfer', 'qbit_down', 'qbit_transfer']
-        if task_type not in ok:
-            raise ValueError(f"{task_type = }, not in {ok}")
+        if task_type in TaskTypeModify.__args__:  # type: ignore
+            return True
+        raise ValueError(f"{task_type = }, not in {TaskTypeModify}")
 
     @verify()
     async def task_done(self, task_type: TaskTypeModify):
         """获取已经完成的任务"""
         self.task_type_verify(task_type)
-        return locals(), await self.get(f'/api/admin/task/{task_type}/done')
+        return locals(), await self.get(f"/api/admin/task/{task_type}/done")
 
     @verify()
     async def task_undone(self, task_type: TaskTypeModify):
         """获取未完成的任务"""
         self.task_type_verify(task_type)
-        return locals(), await self.get(f'/api/admin/task/{task_type}/undone')
+        return locals(), await self.get(f"/api/admin/task/{task_type}/undone")
 
     @verify()
     async def task_delete(self, task_type: TaskTypeModify, task_id):
         """删除任务"""
         self.task_type_verify(task_type)
-        return locals(), await self.post(f'/api/admin/task/{task_type}/delete', params={"tid": task_id})
+        return locals(), await self.post(
+            f"/api/admin/task/{task_type}/delete", params={"tid": task_id}
+        )
 
     @verify()
     async def task_cancel(self, task_type: TaskTypeModify, task_id):
         """取消任务"""
         self.task_type_verify(task_type)
-        return locals(), await self.post(f'/api/admin/task/{task_type}/cancel', params={"tid": task_id})
+        return locals(), await self.post(
+            f"/api/admin/task/{task_type}/cancel", params={"tid": task_id}
+        )
 
     @verify()
     async def task_clear_done(self, task_type: TaskTypeModify):
         """清除已经完成的任务"""
         self.task_type_verify(task_type)
-        return locals(), await self.post(f'/api/admin/task/{task_type}/clear_done')
+        return locals(), await self.post(f"/api/admin/task/{task_type}/clear_done")
 
     @verify()
     async def task_clear_succeeded(self, task_type: TaskTypeModify):
         """清除已成功的任务"""
         self.task_type_verify(task_type)
-        return locals(), await self.post(f'/api/admin/task/{task_type}/clear_succeeded')
+        return locals(), await self.post(f"/api/admin/task/{task_type}/clear_succeeded")
 
     @verify()
     async def task_retry(self, task_type: TaskTypeModify, task_id):
@@ -345,7 +408,9 @@ class AsyncClient(HttpClient):
         :return Resp -> data: task_id
         """
         self.task_type_verify(task_type)
-        return locals(), await self.post(f'/api/admin/task/{task_type}/retry', params={"tid": task_id})
+        return locals(), await self.post(
+            f"/api/admin/task/{task_type}/retry", params={"tid": task_id}
+        )
 
     # ================= admin/storages 相关 ==========================
 
@@ -361,5 +426,5 @@ class AsyncClient(HttpClient):
             storage = Storage(**storage)
         return locals(), await self.post(
             "/api/admin/storage/create",
-            json=storage.model_dump(exclude={'id', 'modified'})
+            json=storage.model_dump(exclude={"id", "modified"}),
         )

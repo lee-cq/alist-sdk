@@ -38,7 +38,8 @@ def create_storage_local(client_, mount_name, local_path: Path):
         "down_proxy_url": ""
     }
     if f'/{mount_name}' not in [
-        i['mount_path'] for i in client_.get("/api/admin/storage/list").json()['data']['content']
+        i['mount_path'] for i in
+        client_.get("/api/admin/storage/list").json()['data']['content']
     ]:
         assert client_.post(
             "/api/admin/storage/create",
@@ -253,6 +254,22 @@ class TestSyncClient:
         assert DATA_DIR.joinpath('test_copy_dst/test.txt').exists()
         assert DATA_DIR.joinpath('test_copy_src/test.txt').exists()
 
+    def test_copy_path(self):
+        DATA_DIR.joinpath('test_copy_src').mkdir()
+        DATA_DIR.joinpath('test_copy_src/test.txt').write_text('abc')
+        DATA_DIR.joinpath('test_copy_dst').mkdir()
+
+        res = self.run(
+            self.client.copy,
+            src_dir=PurePosixPath('/local/test_copy_src'),
+            dst_dir=PurePosixPath('/local/test_copy_dst'),
+            files='test.txt'
+        )
+
+        assert res.code == 200
+        assert DATA_DIR.joinpath('test_copy_dst/test.txt').exists()
+        assert DATA_DIR.joinpath('test_copy_src/test.txt').exists()
+
     def test_remove_file(self):
         DATA_DIR.joinpath('test_remove_file.txt').write_text('abc')
         res = self.run(
@@ -362,8 +379,8 @@ class TestSyncClient:
             "cache_expiration": 0,
             "status": "work",
             "addition": "{\"root_folder_path\":\"%s\",\"thumbnail\":false,"
-            "\"thumb_cache_folder\":\"\",\"show_hidden\":true,"
-            "\"mkdir_perm\":\"750\"}" % store_path.as_posix(),
+                        "\"thumb_cache_folder\":\"\",\"show_hidden\":true,"
+                        "\"mkdir_perm\":\"750\"}" % store_path.as_posix(),
             "remark": "",
             "modified": "2023-11-20T15:00:31.608106706Z",
             "disabled": False,
