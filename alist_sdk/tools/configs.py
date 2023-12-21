@@ -2,13 +2,19 @@ import json
 import logging
 from pathlib import Path
 
-from .models import Resp
-from .client import Client
+from alist_sdk.models import Resp
+from alist_sdk.client import Client
+from alist_sdk.tools.models import Configs
 
 logger = logging.getLogger('alist-sdk.tools')
 
+__all__ = ["import_configs_from_dict",
+           "import_configs_from_json_str",
+           "import_configs_from_json_file",
+           ]
 
-def printf(key, data, res: Resp):
+
+def __printf(key, data, res: Resp):
     """记录"""
     name = '' if isinstance(data, list) else (
             data.get("mount_path") or data.get('path') or data.get('username')
@@ -19,10 +25,8 @@ def printf(key, data, res: Resp):
         print(f'Error: {key} [{name}]: {res.code}: {res.message}')
 
 
-def input_config_from_json(client: Client, config_file: str):
+def import_configs_from_dict(client: Client, configs: dict):
     """从JSON中导入配置"""
-    configs: dict = json.loads(Path(config_file).read_text())
-
     apis = {
         'settings': '/api/admin/setting/save',
         'users': '/api/admin/user/create',
@@ -37,7 +41,7 @@ def input_config_from_json(client: Client, config_file: str):
                 apis[k],
                 json=vs
             )
-            printf(k, vs, res)
+            __printf(k, vs, res)
             continue
         else:
             for v in vs:
@@ -46,4 +50,26 @@ def input_config_from_json(client: Client, config_file: str):
                     apis[k],
                     json=v
                 )
-                printf(k, v, res)
+                __printf(k, v, res)
+
+
+def import_configs_from_json_str(client, json_data: str):
+    """"""
+    return import_configs_from_dict(client, json.loads(json_data))
+
+
+def import_configs_from_json_file(client, json_file):
+    """"""
+    if not Path(json_file).exists():
+        raise FileNotFoundError()
+    return import_configs_from_json_str(client, Path(json_file).read_text())
+
+
+def export_configs(client: Client) -> Configs:
+    """"""
+    apis = {
+        'settings': '/api/admin/setting/list',
+        'users': '/api/admin/user/list',
+        'storages': '/api/admin/storage/list',
+        'metas': '/api/admin/meta/list',
+    }

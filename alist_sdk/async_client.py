@@ -5,10 +5,10 @@ from pathlib import Path, PurePosixPath
 
 from httpx import AsyncClient as HttpClient
 
-from .models import *
-from .models import async_verify as verify
-from .client import Client as SyncClient
-from .version import __version__
+from alist_sdk.models import *
+from alist_sdk.verify import async_verify as verify
+from alist_sdk.client import Client as SyncClient
+from alist_sdk.version import __version__
 
 logger = logging.getLogger("alist-sdk.async-client")
 

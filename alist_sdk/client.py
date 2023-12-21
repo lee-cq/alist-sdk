@@ -7,8 +7,9 @@ import urllib.parse
 from pathlib import Path, PurePosixPath
 
 from httpx import Client as HttpClient
-from .models import *
-from .version import __version__
+from alist_sdk.models import *
+from alist_sdk.verify import verify
+from alist_sdk.version import __version__
 
 logger = logging.getLogger("alist-sdk.client")
 
