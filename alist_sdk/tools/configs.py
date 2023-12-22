@@ -2,7 +2,7 @@ import json
 import logging
 from pathlib import Path
 
-from alist_sdk.models import Resp
+from alist_sdk.models import Resp, Storage
 from alist_sdk.client import Client
 from alist_sdk.tools.models import Configs
 
@@ -68,8 +68,37 @@ def import_configs_from_json_file(client, json_file):
 def export_configs(client: Client) -> Configs:
     """"""
     apis = {
-        'settings': '/api/admin/setting/list',
-        'users': '/api/admin/user/list',
-        'storages': '/api/admin/storage/list',
-        'metas': '/api/admin/meta/list',
+        'settings': client.admin_setting_list().data,
+        'users': client.admin_user_list().data.content,
+        'storages': client.admin_storage_list().data.content,
+        'metas': client.admin_meta_list().data.content,
     }
+    return Configs(**apis)
+
+
+def export_configs_to_dict(client: Client, *args, **kwargs) -> dict:
+    return export_configs(client).model_dump(*args, **kwargs)
+
+
+def export_configs_to_json(client: Client, *args, **kwargs) -> str:
+    return export_configs(client).model_dump_json(*args, **kwargs)
+
+
+def copy_configs(source_client: Client, target_client: Client):
+    """"""
+    return import_configs_from_dict(
+        target_client,
+        export_configs_to_dict(source_client),
+    )
+
+
+def copy_storages(source_client: Client, target_client: Client, *storage_names):
+    """"""
+    storages: list[Storage] = source_client.admin_storage_list().data.content
+    if not storage_names:
+        storage_names = [_.mount_path.strip('/') for _ in storages]
+    for _s in storages:
+        if _s.mount_path.strip('/') not in storage_names:
+            continue
+        target_client.admin_storage_create(_s)
+
