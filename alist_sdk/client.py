@@ -16,7 +16,7 @@ logger = logging.getLogger("alist-sdk.client")
 __all__ = ["Client"]
 
 
-class Client(HttpClient):
+class _ClientBase(HttpClient):
     def __init__(
             self,
             base_url,
@@ -109,6 +109,8 @@ class Client(HttpClient):
 
     # ================ FS 相关方法 =================
 
+
+class _SyncFs(_ClientBase):
     @verify()
     def mkdir(self, path: str | PurePosixPath):
         return locals(), self.post("/api/fs/mkdir", json={"path": str(path)})
@@ -338,6 +340,8 @@ class Client(HttpClient):
 
     # ================ admin/task 相关API ============================
 
+
+class _SyncAdminTask(_ClientBase):
     @staticmethod
     def task_type_verify(task_type: TaskTypeModify):
         if task_type in TaskTypeModify.__args__:
@@ -394,6 +398,8 @@ class Client(HttpClient):
 
     # ================= admin/storages 相关 ==========================
 
+
+class _SyncAdminStorages(_ClientBase):
     @verify()
     def admin_storage_list(self):
         """列出存储器列表"""
@@ -410,6 +416,9 @@ class Client(HttpClient):
         )
 
     # ============== admin/user 相关==================
+
+
+class _SyncAdminUser(_ClientBase):
     @verify()
     def admin_user_list(self):
         return locals(), self.get('/api/admin/user/list')
@@ -420,13 +429,30 @@ class Client(HttpClient):
         raise NotImplemented
 
     # ================== admin/meta 相关 ==============
+
+
+class _SyncAdminMeta(_ClientBase):
     @verify()
     def admin_meta_list(self):
         return locals(), self.get('/api/admin/meta/list')
 
     # ================== admin/setting 相关 =============
+
+
+class _SyncAdminSetting(_ClientBase):
     @verify()
     def admin_setting_list(self, group: int = None):
         """"""
         query = {"group": group} if group else {}
         return locals(), self.get('/api/admin/setting/list', params=query)
+
+
+class Client(
+    _SyncFs,
+    _SyncAdminSetting,
+    _SyncAdminUser,
+    _SyncAdminStorages,
+    _SyncAdminMeta,
+    _SyncAdminTask
+):
+    pass

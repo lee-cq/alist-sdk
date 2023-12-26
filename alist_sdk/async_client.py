@@ -15,7 +15,7 @@ logger = logging.getLogger("alist-sdk.async-client")
 __all__ = ["AsyncClient"]
 
 
-class AsyncClient(HttpClient):
+class AsyncClientBase(HttpClient):
     def __init__(
             self,
             base_url,
@@ -117,6 +117,9 @@ class AsyncClient(HttpClient):
         return False
 
     # ================ FS 相关方法 =================
+
+
+class _AsyncFS(AsyncClientBase):
 
     @verify()
     async def mkdir(self, path: str | PurePosixPath):
@@ -355,6 +358,9 @@ class AsyncClient(HttpClient):
 
     # ================ admin/task 相关API ============================
 
+
+class _AsyncAdminTask(AsyncClientBase):
+
     @staticmethod
     def task_type_verify(task_type: TaskTypeModify):
         if task_type in TaskTypeModify.__args__:  # type: ignore
@@ -414,6 +420,9 @@ class AsyncClient(HttpClient):
 
     # ================= admin/storages 相关 ==========================
 
+
+class _AsyncAdminStorage(AsyncClientBase):
+
     @verify()
     async def admin_storage_list(self):
         """列出存储器列表"""
@@ -430,6 +439,9 @@ class AsyncClient(HttpClient):
         )
 
     # ============== admin/user 相关==================
+
+
+class _AsyncAdminUser(AsyncClientBase):
     @verify()
     async def admin_user_list(self):
         return locals(), await self.get('/api/admin/user/list')
@@ -440,14 +452,31 @@ class AsyncClient(HttpClient):
         raise NotImplemented
 
     # ================== admin/meta 相关 ==============
+
+
+class _AsyncAdminMeta(AsyncClientBase):
     @verify()
     async def admin_meta_list(self):
         return locals(), await self.get('/api/admin/meta/list')
 
     # ================== admin/setting 相关 =============
+
+
+class _AsyncAdminSettings(AsyncClientBase):
     @verify()
     async def admin_setting_list(self, group: int = None):
         """"""
-        
+
         query = {"group": group} if group else {}
         return locals(), await self.get('/api/admin/setting/list', params=query)
+
+
+class AsyncClient(
+    _AsyncFS,
+    _AsyncAdminSettings,
+    _AsyncAdminMeta,
+    _AsyncAdminTask,
+    _AsyncAdminStorage,
+    _AsyncAdminUser,
+):
+    pass
