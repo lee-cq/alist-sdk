@@ -42,7 +42,10 @@ class Verify:
         @wraps(func)
         def wrapper(*args, **kwargs):
             self.locals, self.res = func(*args, **kwargs)
-            logger.debug(f"收到响应: [{self.res.status_code}]\n {json.dumps(self.res.json(), indent=2, ensure_ascii=False)}")
+            logger.debug(
+                f"收到响应: [{self.res.status_code}]\n "
+                f"{json.dumps(self.res.json(), indent=2, ensure_ascii=False)}"
+            )
             try:
                 res_dict = self.res.json()
                 resp = Resp(**res_dict)
@@ -67,7 +70,10 @@ class AsyncVerify(Verify):
         @wraps(func)
         async def async_wrapper(*args, **kwargs) -> Resp:
             self.locals, self.res = await func(*args, **kwargs)
-            logger.debug(f"收到响应: [{self.res.status_code}]\n {json.dumps(self.res.text, indent=2, ensure_ascii=False)}")
+            logger.debug(
+                f"收到响应: [{self.res.status_code}]\n "
+                f"{json.dumps(self.res.text, indent=2, ensure_ascii=False)}"
+            )
             try:
                 res_dict = self.res.json()
                 resp = Resp(**res_dict)
