@@ -178,7 +178,7 @@ class ID(_BaseModel):
 
 
 
-class Setting(BaseModel):
+class Setting(_BaseModel):
     """/api/admin/setting/list .data.[]"""
     key: str
     value: Any
@@ -211,7 +211,7 @@ class Storage(_BaseModel):
     down_proxy_url: str = ''
 
 
-class User(BaseModel):
+class User(_BaseModel):
     """/api/admin/user/list .data.content.[] """
     id: int
     username: str
@@ -247,6 +247,5 @@ class ListContents(_BaseModel):
 class Resp(_BaseModel):
     code: int
     message: str
-    # data: ListItem
-    data: None | str | Me | list[DirItem] | ListItem | ListContents | RawItem | list[
-        Task] | ID
+    # data: list[Setting]
+    data: None | str | Me | list[DirItem] | list[Setting] | ListItem | ListContents | RawItem | list[Task] | ID
