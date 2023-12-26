@@ -1,7 +1,4 @@
-import json
-import os
 import asyncio
-from datetime import datetime
 from pathlib import Path, PurePosixPath
 
 import pytest
@@ -355,7 +352,7 @@ class TestSyncClient:
 
     def test_storage_list(self):
         res = self.run(
-            self.client.storage_list
+            self.client.admin_storage_list
         )
         assert res.code == 200
         assert isinstance(res.data, models.ListContents)
@@ -393,10 +390,22 @@ class TestSyncClient:
             "down_proxy_url": ""
         }
         res = self.run(
-            self.client.storage_create,
+            self.client.admin_storage_create,
             local_storage
         )
         assert res.code == 200, res.message
+
+    def test_admin_setting_list(self):
+        res = self.run(self.client.admin_setting_list)
+        assert res.code == 200
+
+    def test_admin_user_list(self):
+        res = self.run(self.client.admin_user_list)
+        assert res.code == 200
+
+    def test_admin_meta_list(self):
+        res = self.run(self.client.admin_meta_list)
+        assert res.code == 200
 
 
 class TestAsyncClient(TestSyncClient):

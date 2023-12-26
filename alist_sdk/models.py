@@ -2,9 +2,7 @@ import datetime
 import logging
 import os
 from pathlib import PurePosixPath
-from typing import Optional, Literal
-
-from json import JSONDecodeError
+from typing import Optional, Literal, Any
 
 from pydantic import (
     BaseModel as _BaseModel,
@@ -12,11 +10,18 @@ from pydantic import (
     field_serializer,
 )
 
-from functools import wraps
-
 logger = logging.getLogger('alist-sdk.fs.model')
 
 __all__ = [
+
+    "SearchScopeModify",
+    "TaskTypeModify",
+    "TaskStateModify",
+    "TaskStatusModify",
+    "OrderDirectionModify",
+    "OrderByModify",
+    "ExtractFolderModify",
+
     "BaseModel",
     "Item",
     "RawItem",
@@ -28,21 +33,13 @@ __all__ = [
     "Resp",
     "HashInfo",
     "NoneType",
-    "Storage",
+
     "ListContents",
+    "User",
+    "Storage",
+    "Meta",
 
-    "Verify",
-    "verify",
-    "AsyncVerify",
-    "async_verify",
-
-    "SearchScopeModify",
-    "TaskTypeModify",
-    "TaskStateModify",
-    "TaskStatusModify",
-    "OrderDirectionModify",
-    "OrderByModify",
-    "ExtractFolderModify",
+    "Setting",
 ]
 
 NoneType = type(None)
@@ -68,7 +65,7 @@ TaskStatusModify = Literal[
 ]
 
 OrderDirectionModify = Literal['', 'asc', 'desc']
-OrderByModify = Literal['', 'size', 'name',]
+OrderByModify = Literal['', 'size', 'name']
 ExtractFolderModify = Literal['', 'front', 'back', 'none']
 
 
@@ -81,7 +78,7 @@ class BaseModel(_BaseModel):
         return PurePosixPath(self.parent).joinpath(self.name)
 
     @field_serializer('full_name', mode="wrap")
-    def serializer_path(self, value: PurePosixPath, info) -> str:
+    def serializer_path(self, value: PurePosixPath, _) -> str:
         return value.as_posix()
 
 
@@ -146,7 +143,9 @@ class DirItem(BaseModel):
 
 
 class Me(_BaseModel):
-    """"""
+    """
+    /api/me
+    """
     id: int
     username: str
     password: str | None
@@ -178,8 +177,21 @@ class ID(_BaseModel):
     id: int | str | None
 
 
+
+class Setting(_BaseModel):
+    """/api/admin/setting/list .data.[]"""
+    key: str
+    value: Any
+    help: str  # 帮助信息
+    type: str  # TODO 类型指导
+    options: str
+    group: int
+    flag: int
+
+
 class Storage(_BaseModel):
-    # /api/admin/storage/list
+    # /api/admin/storage/list .data.content.[]
+    # ListContent.content[Storage]
     id: Optional[int] = None
     mount_path: str | os.PathLike
     order: int
@@ -199,82 +211,41 @@ class Storage(_BaseModel):
     down_proxy_url: str = ''
 
 
+class User(_BaseModel):
+    """/api/admin/user/list .data.content.[] """
+    id: int
+    username: str
+    password: str
+    base_path: PurePosixPath = PurePosixPath('/')
+    role: int  #
+    disabled: bool
+    permission: int
+    sso_id: str
+
+
+class Meta(BaseModel):
+    """/api/admin/meta/list .data.content.[] """
+    id: int
+    path: PurePosixPath
+    password: str
+    p_sub: bool
+    write: bool
+    w_sub: bool
+    hide: str
+    h_sub: bool
+    readme: str
+    r_sub: bool
+    header: str
+    header_sub: bool
+
+
 class ListContents(_BaseModel):
-    content: list[Storage | SearchItem] | None
+    content: list[SearchItem | Storage | User | Meta] | None
     total: int
 
 
 class Resp(_BaseModel):
     code: int
     message: str
-    # data: ListItem
-    data: None | str | Me | list[DirItem] | ListItem | ListContents | RawItem | list[
-        Task] | ID
-
-
-class Verify:
-    def __init__(self):
-        self.locals: dict = {}
-        # self.res: Response
-
-    def add_parent(self, res_dict: dict):
-        res_dict.setdefault('parent', self.locals.get('path'))
-
-    @property
-    def ex_action(self):
-        """"""
-        return {
-            ListItem: [self.add_parent],
-            Item: [self.add_parent],
-            RawItem: [self.add_parent],
-            dict: [],
-            BaseModel: []
-        }
-
-    def acting(self, resp: Resp):
-        """对Resp做额外的修饰"""
-        return resp
-
-    def __call__(self, func):
-        @wraps(func)
-        def wrapper(*args, **kwargs):
-            self.locals, self.res = func(*args, **kwargs)
-            try:
-                res_dict = self.res.json()
-                resp = Resp(**res_dict)
-                return self.acting(resp)
-
-            except JSONDecodeError:
-                logger.warning(
-                    "JsonDecodeError: [http_status: %d] ", self.res.status_code)
-                return Resp(code=self.res.status_code, message="JsonDecodeError",
-                            data=None)
-
-        return wrapper  # 返回函数
-
-
-verify = Verify
-
-
-class AsyncVerify(Verify):
-    """"""
-
-    def __call__(self, func):
-        @wraps(func)
-        async def async_wrapper(*args, **kwargs):
-            self.locals, self.res = await func(*args, **kwargs)
-            try:
-                res_dict = self.res.json()
-                resp = Resp(**res_dict)
-                return self.acting(resp)
-
-            except JSONDecodeError:
-                logger.warning(
-                    "[Async]JsonDecodeError: [http_status: %d] ", self.res.status_code)
-                return Resp(code=self.res.status_code, message="[Async]JsonDecodeError",
-                            data=None)
-
-        return async_wrapper  # 返回函数
-
-
-async_verify = AsyncVerify
+    # data: list[Setting]
+    data: None | str | Me | list[DirItem] | list[Setting] | ListItem | ListContents | RawItem | list[Task] | ID

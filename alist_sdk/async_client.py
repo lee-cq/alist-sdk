@@ -5,25 +5,25 @@ from pathlib import Path, PurePosixPath
 
 from httpx import AsyncClient as HttpClient
 
-from .models import *
-from .models import async_verify as verify
-from .client import Client as SyncClient
-from .version import __version__
+from alist_sdk.models import *
+from alist_sdk.verify import async_verify as verify
+from alist_sdk.client import Client as SyncClient
+from alist_sdk.version import __version__
 
 logger = logging.getLogger("alist-sdk.async-client")
 
 __all__ = ["AsyncClient"]
 
 
-class AsyncClient(HttpClient):
+class AsyncClientBase(HttpClient):
     def __init__(
-        self,
-        base_url,
-        token=None,
-        username=None,
-        password=None,
-        has_opt=False,
-        **kwargs,
+            self,
+            base_url,
+            token=None,
+            username=None,
+            password=None,
+            has_opt=False,
+            **kwargs,
     ):
         super().__init__(**kwargs)
         self.base_url = base_url
@@ -69,18 +69,18 @@ class AsyncClient(HttpClient):
 
     @verify()
     async def verify_request(
-        self,
-        method: str,
-        url,
-        *,
-        content=None,
-        data=None,
-        files=None,
-        json=None,
-        params=None,
-        headers=None,
-        follow_redirects=True,
-        **kwargs,
+            self,
+            method: str,
+            url,
+            *,
+            content=None,
+            data=None,
+            files=None,
+            json=None,
+            params=None,
+            headers=None,
+            follow_redirects=True,
+            **kwargs,
     ):
         return {}, await self.request(
             method=method,
@@ -118,6 +118,9 @@ class AsyncClient(HttpClient):
 
     # ================ FS 相关方法 =================
 
+
+class _AsyncFS(AsyncClientBase):
+
     @verify()
     async def mkdir(self, path: str | PurePosixPath):
         return locals(), await self.post("/api/fs/mkdir", json={"path": str(path)})
@@ -134,7 +137,7 @@ class AsyncClient(HttpClient):
 
     @verify()
     async def upload_file_form_data(
-        self, data, path: str | PurePosixPath, as_task=False
+            self, data, path: str | PurePosixPath, as_task=False
     ):
         """表单上传"""
         return locals(), await self.put(
@@ -149,7 +152,7 @@ class AsyncClient(HttpClient):
 
     @verify()
     async def upload_file_put(
-        self, local_path: str | Path, path: str | PurePosixPath, as_task=False
+            self, local_path: str | Path, path: str | PurePosixPath, as_task=False
     ):
         """流式上传文件"""
         local_path = Path(local_path)
@@ -171,12 +174,12 @@ class AsyncClient(HttpClient):
 
     @verify()
     async def list_files(
-        self,
-        path: str | PurePosixPath,
-        password=None,
-        page=1,
-        per_page=0,
-        refresh=False,
+            self,
+            path: str | PurePosixPath,
+            password=None,
+            page=1,
+            per_page=0,
+            refresh=False,
     ):
         """POST 列出文件目录"""
         return locals(), await self.post(
@@ -199,13 +202,13 @@ class AsyncClient(HttpClient):
 
     @verify()
     async def search(
-        self,
-        path: str | PurePosixPath,
-        keyword: str,
-        scope: SearchScopeModify = 0,
-        page: int = None,
-        per_page: int = None,
-        password: str = None,
+            self,
+            path: str | PurePosixPath,
+            keyword: str,
+            scope: SearchScopeModify = 0,
+            page: int = None,
+            per_page: int = None,
+            password: str = None,
     ):
         """POST 搜索文件或文件夹
 
@@ -230,12 +233,12 @@ class AsyncClient(HttpClient):
 
     @verify()
     async def get_dir(
-        self,
-        path: str | PurePosixPath,
-        password=None,
-        page: int = 1,
-        per_page: int = 10,
-        refresh: bool = False,
+            self,
+            path: str | PurePosixPath,
+            password=None,
+            page: int = 1,
+            per_page: int = 10,
+            refresh: bool = False,
     ):
         """POST 获取目录 /api/fs/dirs
 
@@ -266,10 +269,10 @@ class AsyncClient(HttpClient):
 
     @verify()
     async def move(
-        self,
-        src_dir: str | PurePosixPath,
-        dst_dir: str | PurePosixPath,
-        files: list[str] | str,
+            self,
+            src_dir: str | PurePosixPath,
+            dst_dir: str | PurePosixPath,
+            files: list[str] | str,
     ):
         """POST 移动文件  /api/fs/move"""
         return locals(), await self.post(
@@ -283,7 +286,7 @@ class AsyncClient(HttpClient):
 
     @verify()
     async def recursive_move(
-        self, src_dir: str | PurePosixPath, dst_dir: str | PurePosixPath
+            self, src_dir: str | PurePosixPath, dst_dir: str | PurePosixPath
     ):
         """POST 聚合移动"""
         return locals(), await self.post(
@@ -296,10 +299,10 @@ class AsyncClient(HttpClient):
 
     @verify()
     async def copy(
-        self,
-        src_dir: str | PurePosixPath,
-        dst_dir: str | PurePosixPath,
-        files: list[str] | str,
+            self,
+            src_dir: str | PurePosixPath,
+            dst_dir: str | PurePosixPath,
+            files: list[str] | str,
     ):
         """POST 复制文件  /api/fs/copy"""
 
@@ -354,6 +357,9 @@ class AsyncClient(HttpClient):
         )
 
     # ================ admin/task 相关API ============================
+
+
+class _AsyncAdminTask(AsyncClientBase):
 
     @staticmethod
     def task_type_verify(task_type: TaskTypeModify):
@@ -414,13 +420,16 @@ class AsyncClient(HttpClient):
 
     # ================= admin/storages 相关 ==========================
 
+
+class _AsyncAdminStorage(AsyncClientBase):
+
     @verify()
-    async def storage_list(self):
+    async def admin_storage_list(self):
         """列出存储器列表"""
         return locals(), await self.get("/api/admin/storage/list")
 
     @verify()
-    async def storage_create(self, storage: dict | Storage):
+    async def admin_storage_create(self, storage: dict | Storage):
         """创建一个存储器后端"""
         if isinstance(storage, dict):
             storage = Storage(**storage)
@@ -428,3 +437,46 @@ class AsyncClient(HttpClient):
             "/api/admin/storage/create",
             json=storage.model_dump(exclude={"id", "modified"}),
         )
+
+    # ============== admin/user 相关==================
+
+
+class _AsyncAdminUser(AsyncClientBase):
+    @verify()
+    async def admin_user_list(self):
+        return locals(), await self.get('/api/admin/user/list')
+
+    @verify()
+    async def admin_user_add(self):
+        """"""
+        raise NotImplemented
+
+    # ================== admin/meta 相关 ==============
+
+
+class _AsyncAdminMeta(AsyncClientBase):
+    @verify()
+    async def admin_meta_list(self):
+        return locals(), await self.get('/api/admin/meta/list')
+
+    # ================== admin/setting 相关 =============
+
+
+class _AsyncAdminSettings(AsyncClientBase):
+    @verify()
+    async def admin_setting_list(self, group: int = None):
+        """"""
+
+        query = {"group": group} if group else {}
+        return locals(), await self.get('/api/admin/setting/list', params=query)
+
+
+class AsyncClient(
+    _AsyncFS,
+    _AsyncAdminSettings,
+    _AsyncAdminMeta,
+    _AsyncAdminTask,
+    _AsyncAdminStorage,
+    _AsyncAdminUser,
+):
+    pass

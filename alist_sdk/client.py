@@ -7,23 +7,24 @@ import urllib.parse
 from pathlib import Path, PurePosixPath
 
 from httpx import Client as HttpClient
-from .models import *
-from .version import __version__
+from alist_sdk.models import *
+from alist_sdk.verify import verify
+from alist_sdk.version import __version__
 
 logger = logging.getLogger("alist-sdk.client")
 
 __all__ = ["Client"]
 
 
-class Client(HttpClient):
+class _ClientBase(HttpClient):
     def __init__(
-        self,
-        base_url,
-        token=None,
-        username=None,
-        password=None,
-        has_opt=False,
-        **kwargs,
+            self,
+            base_url,
+            token=None,
+            username=None,
+            password=None,
+            has_opt=False,
+            **kwargs,
     ):
         super().__init__(**kwargs)
         self.base_url = base_url
@@ -59,18 +60,18 @@ class Client(HttpClient):
 
     @verify()
     def verify_request(
-        self,
-        method: str,
-        url,
-        *,
-        content=None,
-        data=None,
-        files=None,
-        json=None,
-        params=None,
-        headers=None,
-        follow_redirects=True,
-        **kwargs,
+            self,
+            method: str,
+            url,
+            *,
+            content=None,
+            data=None,
+            files=None,
+            json=None,
+            params=None,
+            headers=None,
+            follow_redirects=True,
+            **kwargs,
     ):
         return {}, self.request(
             method=method,
@@ -108,6 +109,8 @@ class Client(HttpClient):
 
     # ================ FS 相关方法 =================
 
+
+class _SyncFs(_ClientBase):
     @verify()
     def mkdir(self, path: str | PurePosixPath):
         return locals(), self.post("/api/fs/mkdir", json={"path": str(path)})
@@ -138,7 +141,7 @@ class Client(HttpClient):
 
     @verify()
     def upload_file_put(
-        self, local_path: str | Path, path: str | PurePosixPath, as_task=False
+            self, local_path: str | Path, path: str | PurePosixPath, as_task=False
     ):
         """流式上传文件"""
         local_path = Path(local_path)
@@ -160,7 +163,7 @@ class Client(HttpClient):
 
     @verify()
     def list_files(
-        self, path: str | PurePosixPath, password="", page=1, per_page=0, refresh=False
+            self, path: str | PurePosixPath, password="", page=1, per_page=0, refresh=False
     ):
         """POST 列出文件目录"""
         return locals(), self.post(
@@ -183,13 +186,13 @@ class Client(HttpClient):
 
     @verify()
     def search(
-        self,
-        path: str | PurePosixPath,
-        keyword,
-        scope: SearchScopeModify = 0,
-        page: int = None,
-        per_page: int = None,
-        password: str = None,
+            self,
+            path: str | PurePosixPath,
+            keyword,
+            scope: SearchScopeModify = 0,
+            page: int = None,
+            per_page: int = None,
+            password: str = None,
     ):
         """POST 搜索文件或文件夹
 
@@ -214,12 +217,12 @@ class Client(HttpClient):
 
     @verify()
     def get_dir(
-        self,
-        path: str | PurePosixPath,
-        password=None,
-        page: int = 1,
-        per_page: int = 10,
-        refresh: bool = False,
+            self,
+            path: str | PurePosixPath,
+            password=None,
+            page: int = 1,
+            per_page: int = 10,
+            refresh: bool = False,
     ):
         """POST 获取目录 /api/fs/dirs
 
@@ -250,10 +253,10 @@ class Client(HttpClient):
 
     @verify()
     def move(
-        self,
-        src_dir: str | PurePosixPath,
-        dst_dir: str | PurePosixPath,
-        files: list[str],
+            self,
+            src_dir: str | PurePosixPath,
+            dst_dir: str | PurePosixPath,
+            files: list[str],
     ):
         """POST 移动文件  /api/fs/move"""
         return locals(), self.post(
@@ -271,7 +274,7 @@ class Client(HttpClient):
 
     @verify()
     def recursive_move(
-        self, src_dir: str | PurePosixPath, dst_dir: str | PurePosixPath
+            self, src_dir: str | PurePosixPath, dst_dir: str | PurePosixPath
     ):
         """POST 聚合移动"""
         return locals(), self.post(
@@ -284,10 +287,10 @@ class Client(HttpClient):
 
     @verify()
     def copy(
-        self,
-        src_dir: str | PurePosixPath,
-        dst_dir: str | PurePosixPath,
-        files: list[str] | str,
+            self,
+            src_dir: str | PurePosixPath,
+            dst_dir: str | PurePosixPath,
+            files: list[str] | str,
     ):
         """POST 复制文件"""
         return locals(), self.post(
@@ -301,9 +304,9 @@ class Client(HttpClient):
 
     @verify()
     def remove(
-        self,
-        path: str | PurePosixPath,
-        names,
+            self,
+            path: str | PurePosixPath,
+            names,
     ):
         return locals(), self.post(
             "/api/fs/remove",
@@ -337,6 +340,8 @@ class Client(HttpClient):
 
     # ================ admin/task 相关API ============================
 
+
+class _SyncAdminTask(_ClientBase):
     @staticmethod
     def task_type_verify(task_type: TaskTypeModify):
         if task_type in TaskTypeModify.__args__:
@@ -393,13 +398,15 @@ class Client(HttpClient):
 
     # ================= admin/storages 相关 ==========================
 
+
+class _SyncAdminStorages(_ClientBase):
     @verify()
-    def storage_list(self):
+    def admin_storage_list(self):
         """列出存储器列表"""
         return locals(), self.get("/api/admin/storage/list")
 
     @verify()
-    def storage_create(self, storage: dict | Storage):
+    def admin_storage_create(self, storage: dict | Storage):
         """创建一个存储器后端"""
         if isinstance(storage, dict):
             storage = Storage(**storage)
@@ -407,3 +414,45 @@ class Client(HttpClient):
             "/api/admin/storage/create",
             json=storage.model_dump(exclude={"id", "modified"}),
         )
+
+    # ============== admin/user 相关==================
+
+
+class _SyncAdminUser(_ClientBase):
+    @verify()
+    def admin_user_list(self):
+        return locals(), self.get('/api/admin/user/list')
+
+    @verify()
+    def admin_user_add(self):
+        """"""
+        raise NotImplemented
+
+    # ================== admin/meta 相关 ==============
+
+
+class _SyncAdminMeta(_ClientBase):
+    @verify()
+    def admin_meta_list(self):
+        return locals(), self.get('/api/admin/meta/list')
+
+    # ================== admin/setting 相关 =============
+
+
+class _SyncAdminSetting(_ClientBase):
+    @verify()
+    def admin_setting_list(self, group: int = None):
+        """"""
+        query = {"group": group} if group else {}
+        return locals(), self.get('/api/admin/setting/list', params=query)
+
+
+class Client(
+    _SyncFs,
+    _SyncAdminSetting,
+    _SyncAdminUser,
+    _SyncAdminStorages,
+    _SyncAdminMeta,
+    _SyncAdminTask
+):
+    pass
