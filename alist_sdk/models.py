@@ -177,10 +177,6 @@ class ID(_BaseModel):
     id: int | str | None
 
 
-class ListContents(_BaseModel):
-    content: list[SearchItem | 'Storage' | 'User' | 'Meta'] | None
-    total: int
-
 
 class Setting(BaseModel):
     """/api/admin/setting/list .data.[]"""
@@ -241,6 +237,11 @@ class Meta(BaseModel):
     r_sub: bool
     header: str
     header_sub: bool
+
+
+class ListContents(_BaseModel):
+    content: list[SearchItem | Storage | User | Meta] | None
+    total: int
 
 
 class Resp(_BaseModel):
