@@ -49,12 +49,18 @@ def create_storage_local(client_, mount_name, local_path: Path):
 def clear_dir(path: Path):
     if not path.exists():
         return
-    for item in path.iterdir():
-        if item.is_dir():
+    if path.is_dir():
+        for item in path.iterdir():
             clear_dir(item)
-        else:
-            item.unlink()
-    path.rmdir()
+        path.rmdir()
+    else:
+        try:
+            path.unlink(missing_ok=True)
+        except PermissionError:
+            time.sleep(1)
+            clear_dir(path)
+        except NotADirectoryError | FileNotFoundError:
+            pass
 
 
 def setup_module() -> None:
@@ -329,7 +335,11 @@ class TestSyncClient:
         res = self.run(self.client.add_qbit, "/local", [""])
         assert res.code == 200
 
-    def test_task_done(self):
+    @pytest.mark.parametrize(
+        "task_type",
+        TaskType,
+    )
+    def test_task_done(self, task_type):
         """"""
         DATA_DIR.joinpath('test.txt').write_text('abc')
 

@@ -4,7 +4,6 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "alist-sdk"
-#version = "0.0.2"
 authors = [{ name = "LeeCQ", email = "lcq@leecq.cn" }]
 description = "Alist API 简单封装."
 readme = "README.md"

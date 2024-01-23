@@ -5,7 +5,7 @@ cd "$(dirname "$0")" || exit
 mkdir -p alist
 cd alist || exit
 
-alist_version=${ALIST_VERSION:-"3.29.1"}
+alist_version=${ALIST_VERSION:-"3.30.0"}
 
 if [ ! -f alist ]; then
     echo "Install Alist Version: ${alist_version}."

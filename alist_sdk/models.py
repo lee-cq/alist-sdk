@@ -173,6 +173,10 @@ class Task(_BaseModel):
     error: str  # 错误信息
 
 
+class Tasks(_BaseModel):
+    tasks: list[Task]
+
+
 class ID(_BaseModel):
     id: int | str | None
 
@@ -248,4 +252,16 @@ class Resp(_BaseModel):
     code: int
     message: str
     # data: list[Setting]
-    data: None | str | Me | list[DirItem] | list[Setting] | ListItem | ListContents | RawItem | list[Task] | ID
+    data: (
+        None
+        | str
+        | Me
+        | list[DirItem]
+        | list[Setting]
+        | ListItem
+        | ListContents
+        | RawItem
+        | list[Task]
+        | Tasks
+        | ID
+    )
