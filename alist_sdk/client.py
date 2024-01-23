@@ -18,13 +18,13 @@ __all__ = ["Client"]
 
 class _ClientBase(HttpClient):
     def __init__(
-            self,
-            base_url,
-            token=None,
-            username=None,
-            password=None,
-            has_opt=False,
-            **kwargs,
+        self,
+        base_url,
+        token=None,
+        username=None,
+        password=None,
+        has_opt=False,
+        **kwargs,
     ):
         super().__init__(**kwargs)
         self.base_url = base_url
@@ -60,18 +60,18 @@ class _ClientBase(HttpClient):
 
     @verify()
     def verify_request(
-            self,
-            method: str,
-            url,
-            *,
-            content=None,
-            data=None,
-            files=None,
-            json=None,
-            params=None,
-            headers=None,
-            follow_redirects=True,
-            **kwargs,
+        self,
+        method: str,
+        url,
+        *,
+        content=None,
+        data=None,
+        files=None,
+        json=None,
+        params=None,
+        headers=None,
+        follow_redirects=True,
+        **kwargs,
     ):
         return {}, self.request(
             method=method,
@@ -141,7 +141,7 @@ class _SyncFs(_ClientBase):
 
     @verify()
     def upload_file_put(
-            self, local_path: str | Path, path: str | PurePosixPath, as_task=False
+        self, local_path: str | Path, path: str | PurePosixPath, as_task=False
     ):
         """流式上传文件"""
         local_path = Path(local_path)
@@ -163,7 +163,7 @@ class _SyncFs(_ClientBase):
 
     @verify()
     def list_files(
-            self, path: str | PurePosixPath, password="", page=1, per_page=0, refresh=False
+        self, path: str | PurePosixPath, password="", page=1, per_page=0, refresh=False
     ):
         """POST 列出文件目录"""
         return locals(), self.post(
@@ -186,13 +186,13 @@ class _SyncFs(_ClientBase):
 
     @verify()
     def search(
-            self,
-            path: str | PurePosixPath,
-            keyword,
-            scope: SearchScopeModify = 0,
-            page: int = None,
-            per_page: int = None,
-            password: str = None,
+        self,
+        path: str | PurePosixPath,
+        keyword,
+        scope: SearchScopeModify = 0,
+        page: int = None,
+        per_page: int = None,
+        password: str = None,
     ):
         """POST 搜索文件或文件夹
 
@@ -217,12 +217,12 @@ class _SyncFs(_ClientBase):
 
     @verify()
     def get_dir(
-            self,
-            path: str | PurePosixPath,
-            password=None,
-            page: int = 1,
-            per_page: int = 10,
-            refresh: bool = False,
+        self,
+        path: str | PurePosixPath,
+        password=None,
+        page: int = 1,
+        per_page: int = 10,
+        refresh: bool = False,
     ):
         """POST 获取目录 /api/fs/dirs
 
@@ -253,10 +253,10 @@ class _SyncFs(_ClientBase):
 
     @verify()
     def move(
-            self,
-            src_dir: str | PurePosixPath,
-            dst_dir: str | PurePosixPath,
-            files: list[str],
+        self,
+        src_dir: str | PurePosixPath,
+        dst_dir: str | PurePosixPath,
+        files: list[str],
     ):
         """POST 移动文件  /api/fs/move"""
         return locals(), self.post(
@@ -274,7 +274,7 @@ class _SyncFs(_ClientBase):
 
     @verify()
     def recursive_move(
-            self, src_dir: str | PurePosixPath, dst_dir: str | PurePosixPath
+        self, src_dir: str | PurePosixPath, dst_dir: str | PurePosixPath
     ):
         """POST 聚合移动"""
         return locals(), self.post(
@@ -287,10 +287,10 @@ class _SyncFs(_ClientBase):
 
     @verify()
     def copy(
-            self,
-            src_dir: str | PurePosixPath,
-            dst_dir: str | PurePosixPath,
-            files: list[str] | str,
+        self,
+        src_dir: str | PurePosixPath,
+        dst_dir: str | PurePosixPath,
+        files: list[str] | str,
     ):
         """POST 复制文件"""
         return locals(), self.post(
@@ -304,9 +304,9 @@ class _SyncFs(_ClientBase):
 
     @verify()
     def remove(
-            self,
-            path: str | PurePosixPath,
-            names,
+        self,
+        path: str | PurePosixPath,
+        names,
     ):
         return locals(), self.post(
             "/api/fs/remove",
@@ -421,7 +421,7 @@ class _SyncAdminStorages(_ClientBase):
 class _SyncAdminUser(_ClientBase):
     @verify()
     def admin_user_list(self):
-        return locals(), self.get('/api/admin/user/list')
+        return locals(), self.get("/api/admin/user/list")
 
     @verify()
     def admin_user_add(self):
@@ -434,7 +434,7 @@ class _SyncAdminUser(_ClientBase):
 class _SyncAdminMeta(_ClientBase):
     @verify()
     def admin_meta_list(self):
-        return locals(), self.get('/api/admin/meta/list')
+        return locals(), self.get("/api/admin/meta/list")
 
     # ================== admin/setting 相关 =============
 
@@ -444,7 +444,7 @@ class _SyncAdminSetting(_ClientBase):
     def admin_setting_list(self, group: int = None):
         """"""
         query = {"group": group} if group else {}
-        return locals(), self.get('/api/admin/setting/list', params=query)
+        return locals(), self.get("/api/admin/setting/list", params=query)
 
 
 class Client(
@@ -453,6 +453,6 @@ class Client(
     _SyncAdminUser,
     _SyncAdminStorages,
     _SyncAdminMeta,
-    _SyncAdminTask
+    _SyncAdminTask,
 ):
     pass

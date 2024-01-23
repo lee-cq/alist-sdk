@@ -17,13 +17,13 @@ __all__ = ["AsyncClient"]
 
 class AsyncClientBase(HttpClient):
     def __init__(
-            self,
-            base_url,
-            token=None,
-            username=None,
-            password=None,
-            has_opt=False,
-            **kwargs,
+        self,
+        base_url,
+        token=None,
+        username=None,
+        password=None,
+        has_opt=False,
+        **kwargs,
     ):
         super().__init__(**kwargs)
         self.base_url = base_url
@@ -69,18 +69,18 @@ class AsyncClientBase(HttpClient):
 
     @verify()
     async def verify_request(
-            self,
-            method: str,
-            url,
-            *,
-            content=None,
-            data=None,
-            files=None,
-            json=None,
-            params=None,
-            headers=None,
-            follow_redirects=True,
-            **kwargs,
+        self,
+        method: str,
+        url,
+        *,
+        content=None,
+        data=None,
+        files=None,
+        json=None,
+        params=None,
+        headers=None,
+        follow_redirects=True,
+        **kwargs,
     ):
         return {}, await self.request(
             method=method,
@@ -120,7 +120,6 @@ class AsyncClientBase(HttpClient):
 
 
 class _AsyncFS(AsyncClientBase):
-
     @verify()
     async def mkdir(self, path: str | PurePosixPath):
         return locals(), await self.post("/api/fs/mkdir", json={"path": str(path)})
@@ -137,7 +136,7 @@ class _AsyncFS(AsyncClientBase):
 
     @verify()
     async def upload_file_form_data(
-            self, data, path: str | PurePosixPath, as_task=False
+        self, data, path: str | PurePosixPath, as_task=False
     ):
         """表单上传"""
         return locals(), await self.put(
@@ -152,7 +151,7 @@ class _AsyncFS(AsyncClientBase):
 
     @verify()
     async def upload_file_put(
-            self, local_path: str | Path, path: str | PurePosixPath, as_task=False
+        self, local_path: str | Path, path: str | PurePosixPath, as_task=False
     ):
         """流式上传文件"""
         local_path = Path(local_path)
@@ -174,12 +173,12 @@ class _AsyncFS(AsyncClientBase):
 
     @verify()
     async def list_files(
-            self,
-            path: str | PurePosixPath,
-            password=None,
-            page=1,
-            per_page=0,
-            refresh=False,
+        self,
+        path: str | PurePosixPath,
+        password=None,
+        page=1,
+        per_page=0,
+        refresh=False,
     ):
         """POST 列出文件目录"""
         return locals(), await self.post(
@@ -202,13 +201,13 @@ class _AsyncFS(AsyncClientBase):
 
     @verify()
     async def search(
-            self,
-            path: str | PurePosixPath,
-            keyword: str,
-            scope: SearchScopeModify = 0,
-            page: int = None,
-            per_page: int = None,
-            password: str = None,
+        self,
+        path: str | PurePosixPath,
+        keyword: str,
+        scope: SearchScopeModify = 0,
+        page: int = None,
+        per_page: int = None,
+        password: str = None,
     ):
         """POST 搜索文件或文件夹
 
@@ -233,12 +232,12 @@ class _AsyncFS(AsyncClientBase):
 
     @verify()
     async def get_dir(
-            self,
-            path: str | PurePosixPath,
-            password=None,
-            page: int = 1,
-            per_page: int = 10,
-            refresh: bool = False,
+        self,
+        path: str | PurePosixPath,
+        password=None,
+        page: int = 1,
+        per_page: int = 10,
+        refresh: bool = False,
     ):
         """POST 获取目录 /api/fs/dirs
 
@@ -269,10 +268,10 @@ class _AsyncFS(AsyncClientBase):
 
     @verify()
     async def move(
-            self,
-            src_dir: str | PurePosixPath,
-            dst_dir: str | PurePosixPath,
-            files: list[str] | str,
+        self,
+        src_dir: str | PurePosixPath,
+        dst_dir: str | PurePosixPath,
+        files: list[str] | str,
     ):
         """POST 移动文件  /api/fs/move"""
         return locals(), await self.post(
@@ -286,7 +285,7 @@ class _AsyncFS(AsyncClientBase):
 
     @verify()
     async def recursive_move(
-            self, src_dir: str | PurePosixPath, dst_dir: str | PurePosixPath
+        self, src_dir: str | PurePosixPath, dst_dir: str | PurePosixPath
     ):
         """POST 聚合移动"""
         return locals(), await self.post(
@@ -299,10 +298,10 @@ class _AsyncFS(AsyncClientBase):
 
     @verify()
     async def copy(
-            self,
-            src_dir: str | PurePosixPath,
-            dst_dir: str | PurePosixPath,
-            files: list[str] | str,
+        self,
+        src_dir: str | PurePosixPath,
+        dst_dir: str | PurePosixPath,
+        files: list[str] | str,
     ):
         """POST 复制文件  /api/fs/copy"""
 
@@ -360,7 +359,6 @@ class _AsyncFS(AsyncClientBase):
 
 
 class _AsyncAdminTask(AsyncClientBase):
-
     @staticmethod
     def task_type_verify(task_type: TaskTypeModify):
         if task_type in TaskTypeModify.__args__:  # type: ignore
@@ -422,7 +420,6 @@ class _AsyncAdminTask(AsyncClientBase):
 
 
 class _AsyncAdminStorage(AsyncClientBase):
-
     @verify()
     async def admin_storage_list(self):
         """列出存储器列表"""
@@ -444,7 +441,7 @@ class _AsyncAdminStorage(AsyncClientBase):
 class _AsyncAdminUser(AsyncClientBase):
     @verify()
     async def admin_user_list(self):
-        return locals(), await self.get('/api/admin/user/list')
+        return locals(), await self.get("/api/admin/user/list")
 
     @verify()
     async def admin_user_add(self):
@@ -457,7 +454,7 @@ class _AsyncAdminUser(AsyncClientBase):
 class _AsyncAdminMeta(AsyncClientBase):
     @verify()
     async def admin_meta_list(self):
-        return locals(), await self.get('/api/admin/meta/list')
+        return locals(), await self.get("/api/admin/meta/list")
 
     # ================== admin/setting 相关 =============
 
@@ -468,7 +465,7 @@ class _AsyncAdminSettings(AsyncClientBase):
         """"""
 
         query = {"group": group} if group else {}
-        return locals(), await self.get('/api/admin/setting/list', params=query)
+        return locals(), await self.get("/api/admin/setting/list", params=query)
 
 
 class AsyncClient(
