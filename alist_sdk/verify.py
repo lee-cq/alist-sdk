@@ -4,6 +4,7 @@ from functools import wraps
 from json import JSONDecodeError
 
 import httpx
+from pydantic import ValidationError
 
 from alist_sdk.models import Resp, ListItem, Item, RawItem, BaseModel
 
@@ -49,7 +50,7 @@ class Verify:
         )
         try:
             res_dict = res.json()
-            resp = Resp(**res_dict)
+            resp = Resp.model_validate(res_dict)
             return self.acting(resp)
 
         except JSONDecodeError:
@@ -57,6 +58,23 @@ class Verify:
             return Resp(
                 code=res.status_code, message=f"JsonDecodeError: {res.text}", data=None
             )
+
+        except ValidationError as _e:
+            req_headers = "\n>>> ".join(
+                f"{k}: {v}" for k, v in res.request.headers.items()
+            )
+            res_headers = "\n<<< ".join(f"{k}: {v}" for k, v in res.headers.items())
+            logger.error(
+                f"RESP验证错误：\n"
+                f">>> {res.request.method} {res.request.url}"
+                f">>> {req_headers}\n\n"
+                f">>> {local_s = }\n"
+                f"========= Request End =========\n"
+                f"<<< {res_headers}\n\n"
+                f"{res.text} \n"
+                f"========= Resp End =========",
+            )
+            raise _e
 
     def __call__(self, func):
         @wraps(func)
