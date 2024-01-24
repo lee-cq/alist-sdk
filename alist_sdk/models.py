@@ -55,7 +55,7 @@ TaskTypeModify = Literal[
     "offline_download",
     "offline_download_transfer",
 ]
-TaskStateModify = Literal[0, 1, 2, 3, 4, 5]
+TaskStateModify = Literal[0, 1, 2, 3, 4, 5, 6, 7]
 TaskStatusModify = Literal[
     "", "waiting", "running", "success", "failed", "getting src object"
 ]
@@ -166,6 +166,14 @@ class Task(_BaseModel):
     »» status	string	false	none		none
     »» progress	integer	false	none	进度	none
     »» error	string	false	none	错误信息	none
+    {
+    "id":"0Vdzdi3BO_8vYujh72OTu",
+    "name":"copy [/local](/test.txt) to [/local_dst](/)",
+    "state":0,
+    "status":"",
+    "progress":0,
+    "error":""
+    }
     """
 
     id: str  # 任务ID
@@ -176,7 +184,7 @@ class Task(_BaseModel):
     error: str  # 错误信息
 
 
-class Tasks(_BaseModel):
+class ListTask(_BaseModel):
     tasks: list[Task]
 
 
@@ -256,17 +264,17 @@ class ListContents(_BaseModel):
 class Resp(_BaseModel):
     code: int
     message: str
-    # data: list[Setting]
+    # data: ListTask
     data: (
-        None
-        | str
-        | Me
-        | list[DirItem]
-        | list[Setting]
-        | ListItem
-        | ListContents
-        | RawItem
-        | list[Task]
-        | Tasks
-        | ID
+            None
+            | str
+            | Me
+            | list[DirItem]
+            | list[Setting]
+            | ListItem
+            | ListContents
+            | RawItem
+            | ListTask
+            | list[Task]
+            | ID
     )

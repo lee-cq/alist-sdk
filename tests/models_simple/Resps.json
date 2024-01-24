@@ -292,5 +292,515 @@
         ,
         "total": 5
     }
+}],
+  ["/api/admin/task/copy/done", "Task", {
+    "code": 200,
+    "message": "success",
+    "data": [
+        {
+            "id": "rh7L2GtOI6PblSDZ8BkLx",
+            "name": "copy [/local](/test.txt) to [/local_dst](/)",
+            "state": 2,
+            "status": "getting src object",
+            "progress": 0,
+            "error": ""
+        },
+        {
+            "id": "aV-LsGlfKVTeMAjrtf_8F",
+            "name": "copy [/local](/test.txt) to [/local_dst](/)",
+            "state": 2,
+            "status": "getting src object",
+            "progress": 0,
+            "error": ""
+        },
+        {
+            "id": "3cFCJZM4cscKyoagOxDq5",
+            "name": "copy [/local](/test.txt) to [/local_dst](/)",
+            "state": 2,
+            "status": "getting src object",
+            "progress": 0,
+            "error": ""
+        },
+        {
+            "id": "HYdgRIVdP_51IZUB_I1-f",
+            "name": "copy [/local](/test.txt) to [/local_dst](/)",
+            "state": 2,
+            "status": "getting src object",
+            "progress": 0,
+            "error": ""
+        },
+        {
+            "id": "GWfcPSniD6IbY2iW2_ky1",
+            "name": "copy [/local](/test.txt) to [/local_dst](/)",
+            "state": 2,
+            "status": "getting src object",
+            "progress": 0,
+            "error": ""
+        },
+        {
+            "id": "Eux6RwwAm8QIBUtMvzr5N",
+            "name": "copy [/local](/test.txt) to [/local_dst](/)",
+            "state": 2,
+            "status": "getting src object",
+            "progress": 0,
+            "error": ""
+        },
+        {
+            "id": "fzH6EFTWWD0BvQ_Wh4GJL",
+            "name": "copy [/local](/test.txt) to [/local_dst](/)",
+            "state": 2,
+            "status": "getting src object",
+            "progress": 0,
+            "error": ""
+        },
+        {
+            "id": "ncHNtAzeK4etHZw6ufl5a",
+            "name": "copy [/local](/test.txt) to [/local_dst](/)",
+            "state": 2,
+            "status": "getting src object",
+            "progress": 0,
+            "error": ""
+        },
+        {
+            "id": "hyi6W4loxrUHoy-CcnrZL",
+            "name": "copy [/local](/test.txt) to [/local_dst](/)",
+            "state": 2,
+            "status": "getting src object",
+            "progress": 0,
+            "error": ""
+        },
+        {
+            "id": "lcWs2c6pupVls6CMbK2yx",
+            "name": "copy [/local](/test.txt) to [/local_dst](/)",
+            "state": 2,
+            "status": "getting src object",
+            "progress": 0,
+            "error": ""
+        },
+        {
+            "id": "ui6poy37gVihVBu-g5xnv",
+            "name": "copy [/local](/test.txt) to [/local_dst](/)",
+            "state": 2,
+            "status": "getting src object",
+            "progress": 0,
+            "error": ""
+        },
+        {
+            "id": "UuwqLOD_gdWe8grZg4Prn",
+            "name": "copy [/local](/test.txt) to [/local_dst](/)",
+            "state": 2,
+            "status": "getting src object",
+            "progress": 0,
+            "error": ""
+        },
+        {
+            "id": "HQq2vk_VDS7Gh2y1VoH8r",
+            "name": "copy [/local](/test.txt) to [/local_dst](/)",
+            "state": 2,
+            "status": "getting src object",
+            "progress": 0,
+            "error": ""
+        },
+        {
+            "id": "17PhFfIPizsbVdAqDuYWB",
+            "name": "copy [/local](/test.txt) to [/local_dst](/)",
+            "state": 2,
+            "status": "getting src object",
+            "progress": 0,
+            "error": ""
+        },
+        {
+            "id": "tMpDr60gbLtNX92mUAeE_",
+            "name": "copy [/local](/test.txt) to [/local_dst](/)",
+            "state": 2,
+            "status": "getting src object",
+            "progress": 0,
+            "error": ""
+        },
+        {
+            "id": "4ZJTEUXeDmws9m-lMWz9O",
+            "name": "copy [/local](/test.txt) to [/local_dst](/)",
+            "state": 2,
+            "status": "getting src object",
+            "progress": 0,
+            "error": ""
+        },
+        {
+            "id": "b8oN6ElVCfhujlxYzJ-6N",
+            "name": "copy [/local](/test.txt) to [/local_dst](/)",
+            "state": 2,
+            "status": "getting src object",
+            "progress": 0,
+            "error": ""
+        },
+        {
+            "id": "DbFk21hOLxdpVDyXA_RQG",
+            "name": "copy [/local](/test.txt) to [/local_dst](/)",
+            "state": 2,
+            "status": "getting src object",
+            "progress": 0,
+            "error": ""
+        },
+        {
+            "id": "asnK_mHKq4tFxaQ24maGN",
+            "name": "copy [/local](/test.txt) to [/local_dst](/)",
+            "state": 2,
+            "status": "getting src object",
+            "progress": 0,
+            "error": ""
+        },
+        {
+            "id": "PyBNsXhlCIk16Z9IRGkAD",
+            "name": "copy [/local](/test.txt) to [/local_dst](/)",
+            "state": 2,
+            "status": "getting src object",
+            "progress": 0,
+            "error": ""
+        },
+        {
+            "id": "tEbFdUtt8FC-ay1k2P31f",
+            "name": "copy [/local](/test.txt) to [/local_dst](/)",
+            "state": 2,
+            "status": "getting src object",
+            "progress": 0,
+            "error": ""
+        },
+        {
+            "id": "8OEZuh_bngXuHkWbQUEVy",
+            "name": "copy [/local](/test.txt) to [/local_dst](/)",
+            "state": 2,
+            "status": "getting src object",
+            "progress": 0,
+            "error": ""
+        },
+        {
+            "id": "-zg0w8VmfcS_8KgdJz7v9",
+            "name": "copy [/local](/test.txt) to [/local_dst](/)",
+            "state": 2,
+            "status": "getting src object",
+            "progress": 0,
+            "error": ""
+        },
+        {
+            "id": "m0qata9_981OpxGLjC6tg",
+            "name": "copy [/local](/test.txt) to [/local_dst](/)",
+            "state": 2,
+            "status": "getting src object",
+            "progress": 0,
+            "error": ""
+        },
+        {
+            "id": "ebn8UXV_fStJz7-WC5MLu",
+            "name": "copy [/local](/test.txt) to [/local_dst](/)",
+            "state": 2,
+            "status": "getting src object",
+            "progress": 0,
+            "error": ""
+        },
+        {
+            "id": "LCi_MbEOXHXc9FwL-JyV1",
+            "name": "copy [/local](/test.txt) to [/local_dst](/)",
+            "state": 2,
+            "status": "getting src object",
+            "progress": 0,
+            "error": ""
+        },
+        {
+            "id": "RfwQROic3R9IWdfuLFkHG",
+            "name": "copy [/local](/test.txt) to [/local_dst](/)",
+            "state": 2,
+            "status": "getting src object",
+            "progress": 0,
+            "error": ""
+        },
+        {
+            "id": "dV9TlY3WxGs7FZRiMAyLJ",
+            "name": "copy [/local](/test.txt) to [/local_dst](/)",
+            "state": 2,
+            "status": "getting src object",
+            "progress": 0,
+            "error": ""
+        },
+        {
+            "id": "c2yw3pp79a-HrdJvytCHA",
+            "name": "copy [/local](/test.txt) to [/local_dst](/)",
+            "state": 2,
+            "status": "getting src object",
+            "progress": 0,
+            "error": ""
+        },
+        {
+            "id": "QxvveFpgKxR7ahOKq80xO",
+            "name": "copy [/local](/test.txt) to [/local_dst](/)",
+            "state": 2,
+            "status": "getting src object",
+            "progress": 0,
+            "error": ""
+        },
+        {
+            "id": "OHlDOCIWXGQLEYAn0P88X",
+            "name": "copy [/local](/test.txt) to [/local_dst](/)",
+            "state": 2,
+            "status": "getting src object",
+            "progress": 0,
+            "error": ""
+        },
+        {
+            "id": "zoCYng19x5QcURUUs8Sb6",
+            "name": "copy [/local](/test.txt) to [/local_dst](/)",
+            "state": 2,
+            "status": "getting src object",
+            "progress": 0,
+            "error": ""
+        },
+        {
+            "id": "0EmH8TxYpZ1XR8gniwcUN",
+            "name": "copy [/local](/test.txt) to [/local_dst](/)",
+            "state": 2,
+            "status": "getting src object",
+            "progress": 0,
+            "error": ""
+        },
+        {
+            "id": "RtOGL9N5I37fMMDCjXC9n",
+            "name": "copy [/local](/test.txt) to [/local_dst](/)",
+            "state": 2,
+            "status": "getting src object",
+            "progress": 0,
+            "error": ""
+        },
+        {
+            "id": "M6HcDLHR1parezBm-nuI6",
+            "name": "copy [/local](/test.txt) to [/local_dst](/)",
+            "state": 2,
+            "status": "getting src object",
+            "progress": 0,
+            "error": ""
+        },
+        {
+            "id": "wc1vzcfPlVY14Jv8zMaxS",
+            "name": "copy [/local](/test.txt) to [/local_dst](/)",
+            "state": 2,
+            "status": "getting src object",
+            "progress": 0,
+            "error": ""
+        },
+        {
+            "id": "LelYtvJdVsUYVGYJOJ-r2",
+            "name": "copy [/local](/test.txt) to [/local_dst](/)",
+            "state": 2,
+            "status": "getting src object",
+            "progress": 0,
+            "error": ""
+        },
+        {
+            "id": "XsJ2mkOAIdoTwb75943gp",
+            "name": "copy [/local](/test.txt) to [/local_dst](/)",
+            "state": 2,
+            "status": "getting src object",
+            "progress": 0,
+            "error": ""
+        },
+        {
+            "id": "8RxSk4y-ji1cJ0pN-qvc9",
+            "name": "copy [/local](/a.txt) to [/local_dst](/)",
+            "state": 7,
+            "status": "getting src object",
+            "progress": 0,
+            "error": "failed get src [/a.txt] file: object not found"
+        },
+        {
+            "id": "r4P3XbLdCEA9zl-vPYmed",
+            "name": "copy [/local](/test.txt) to [/local_dst](/)",
+            "state": 2,
+            "status": "getting src object",
+            "progress": 0,
+            "error": ""
+        },
+        {
+            "id": "gxvNRfwGFClK5FHjCpOY3",
+            "name": "copy [/local](/test.txt) to [/local_dst](/)",
+            "state": 2,
+            "status": "getting src object",
+            "progress": 0,
+            "error": ""
+        },
+        {
+            "id": "rbxKVlh_WXW5Y6N6tJVvT",
+            "name": "copy [/local](/test.txt) to [/local_dst](/)",
+            "state": 2,
+            "status": "getting src object",
+            "progress": 0,
+            "error": ""
+        },
+        {
+            "id": "YcBejckNEuJSt8CbEAq1R",
+            "name": "copy [/local](/test.txt) to [/local_dst](/)",
+            "state": 2,
+            "status": "getting src object",
+            "progress": 0,
+            "error": ""
+        },
+        {
+            "id": "DFqk7c9DjIaRIC0QcMfhL",
+            "name": "copy [/local](/test.txt) to [/local_dst](/)",
+            "state": 2,
+            "status": "getting src object",
+            "progress": 0,
+            "error": ""
+        },
+        {
+            "id": "TU_MfHZXBCrWWpuX-lqb_",
+            "name": "copy [/local](/test.txt) to [/local_dst](/)",
+            "state": 2,
+            "status": "getting src object",
+            "progress": 0,
+            "error": ""
+        },
+        {
+            "id": "27cSH2ltvmlzt36hhNoen",
+            "name": "copy [/local](/test.txt) to [/local_dst](/)",
+            "state": 2,
+            "status": "getting src object",
+            "progress": 0,
+            "error": ""
+        },
+        {
+            "id": "UnaC3fNjTsbHvw15_Ppyw",
+            "name": "copy [/local](/test.txt) to [/local_dst](/)",
+            "state": 2,
+            "status": "getting src object",
+            "progress": 0,
+            "error": ""
+        },
+        {
+            "id": "yj-gLsMLyYYbc1SV1taml",
+            "name": "copy [/local](/test.txt) to [/local_dst](/)",
+            "state": 2,
+            "status": "getting src object",
+            "progress": 0,
+            "error": ""
+        },
+        {
+            "id": "WR5CbV2CxP5GFqYOAcwZe",
+            "name": "copy [/local](/test.txt) to [/local_dst](/)",
+            "state": 2,
+            "status": "getting src object",
+            "progress": 0,
+            "error": ""
+        },
+        {
+            "id": "T7bUeZeziVKrDNIsAMLWu",
+            "name": "copy [/local](/test.txt) to [/local_dst](/)",
+            "state": 2,
+            "status": "getting src object",
+            "progress": 0,
+            "error": ""
+        },
+        {
+            "id": "joaIAYhHPZ_7LilRmHdhp",
+            "name": "copy [/local](/test.txt) to [/local_dst](/)",
+            "state": 2,
+            "status": "getting src object",
+            "progress": 0,
+            "error": ""
+        },
+        {
+            "id": "hFETOiLlp9pETnwqcVU2j",
+            "name": "copy [/local](/test.txt) to [/local_dst](/)",
+            "state": 2,
+            "status": "getting src object",
+            "progress": 0,
+            "error": ""
+        },
+        {
+            "id": "bOXO-jvV2Hf38bf83V-KL",
+            "name": "copy [/local](/test.txt) to [/local_dst](/)",
+            "state": 2,
+            "status": "getting src object",
+            "progress": 0,
+            "error": ""
+        },
+        {
+            "id": "MUmvCrffzXniVdsPoV1sC",
+            "name": "copy [/local](/a.txt) to [/local_dst](/)",
+            "state": 7,
+            "status": "getting src object",
+            "progress": 0,
+            "error": "failed get src [/a.txt] file: object not found"
+        },
+        {
+            "id": "tLv0zH53DKy1I8yl2pMfk",
+            "name": "copy [/local](/test.txt) to [/local_dst](/)",
+            "state": 2,
+            "status": "getting src object",
+            "progress": 0,
+            "error": ""
+        },
+        {
+            "id": "T4fs1H9nQr5hrUIArbNV4",
+            "name": "copy [/local](/test.txt) to [/local_dst](/)",
+            "state": 2,
+            "status": "getting src object",
+            "progress": 0,
+            "error": ""
+        },
+        {
+            "id": "YgKk3nK17r2kC-Z3d_oDq",
+            "name": "copy [/local](/test.txt) to [/local_dst](/)",
+            "state": 2,
+            "status": "getting src object",
+            "progress": 0,
+            "error": ""
+        },
+        {
+            "id": "QfQNI9knD5vnmeRl_SSZp",
+            "name": "copy [/local](/test.txt) to [/local_dst](/)",
+            "state": 2,
+            "status": "getting src object",
+            "progress": 0,
+            "error": ""
+        },
+        {
+            "id": "Vj7P5Lq6pBr8ifcFcsJUY",
+            "name": "copy [/local](/test.txt) to [/local_dst](/)",
+            "state": 2,
+            "status": "getting src object",
+            "progress": 0,
+            "error": ""
+        },
+        {
+            "id": "Vqt0B3IG_BXXSfen0ifmq",
+            "name": "copy [/local](/test.txt) to [/local_dst](/)",
+            "state": 2,
+            "status": "getting src object",
+            "progress": 0,
+            "error": ""
+        },
+        {
+            "id": "B-X8fiXsk75M1Qrw1qTUo",
+            "name": "copy [/local](/test.txt) to [/local_dst](/)",
+            "state": 2,
+            "status": "getting src object",
+            "progress": 0,
+            "error": ""
+        }
+    ]
+}],
+  ["/api/fs/copy", "ListTask", {
+    "code": 200,
+    "message": "success",
+    "data": {
+        "tasks": [
+            {
+                "id": "-bfCelBY8ETo8vB_qlHCb",
+                "name": "copy [/local](/test.txt) to [/local_dst](/)",
+                "state": 0,
+                "status": "",
+                "progress": 0,
+                "error": ""
+            }
+        ]
+    }
 }]
 ]
