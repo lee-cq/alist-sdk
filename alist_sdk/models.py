@@ -123,10 +123,10 @@ class RawItem(BaseModel):
     sign: str
     thumb: str
     type: int
-    raw_url: str
-    readme: str
-    provider: str
-    related: str | None
+    raw_url: str = ""
+    readme: str = ""
+    provider: str = ""
+    related: str | None | list['RawItem'] = None
 
 
 class SearchItem(BaseModel):
@@ -266,15 +266,15 @@ class Resp(_BaseModel):
     message: str
     # data: ListTask
     data: (
-            None
-            | str
-            | Me
-            | list[DirItem]
-            | list[Setting]
-            | ListItem
-            | ListContents
-            | RawItem
-            | ListTask
-            | list[Task]
-            | ID
+        None
+        | str
+        | Me
+        | list[DirItem]
+        | list[Setting]
+        | ListItem
+        | ListContents
+        | RawItem
+        | ListTask
+        | list[Task]
+        | ID
     )
