@@ -3,6 +3,7 @@
 
 """
 import logging
+import time
 import urllib.parse
 from pathlib import Path, PurePosixPath
 
@@ -141,24 +142,28 @@ class _SyncFs(_ClientBase):
 
     @verify()
     def upload_file_put(
-        self, local_path: str | Path, path: str | PurePosixPath, as_task=False
+        self, local_path: str | Path | bytes, path: str | PurePosixPath, as_task=False
     ):
         """流式上传文件"""
-        local_path = Path(local_path)
-        if not local_path.exists():
-            raise FileNotFoundError(local_path)
+        if isinstance(local_path, bytes):
+            data = local_path
+            modified = int(time.time() * 1000)
+        else:
+            local_path = Path(local_path)
+            if not local_path.exists():
+                raise FileNotFoundError(local_path)
+            data = local_path.read_bytes()
+            modified = int(local_path.stat(follow_symlinks=True).st_mtime * 1000)
 
         return locals(), self.put(
             "/api/fs/put",
             headers={
                 "As-Task": "true" if as_task else "false",
                 "Content-Type": "application/octet-stream",
-                "Last-Modified": str(
-                    int(local_path.stat(follow_symlinks=True).st_mtime * 1000)
-                ),
-                "File-Path": urllib.parse.quote_plus(path),
+                "Last-Modified": str(modified),
+                "File-Path": urllib.parse.quote_plus(str(path)),
             },
-            content=open(local_path, "rb"),
+            content=data,
         )
 
     @verify()
