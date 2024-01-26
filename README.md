@@ -40,3 +40,16 @@ client = AsyncClient(
 
 asyncio.run(client.me())
 ```
+
+像使用pathlib一样操作Alist上的文件
+```python
+from alist_sdk.path_lib import login_server, AlistPath
+
+login_server("http://localhost:5244", username='admin', password='123456')
+
+path = AlistPath('http://localhost:5244/test')
+path.stat()
+path.is_dir()
+path.read_text()
+path.iterdir()
+```
