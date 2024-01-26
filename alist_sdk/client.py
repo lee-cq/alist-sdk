@@ -168,7 +168,12 @@ class _SyncFs(_ClientBase):
 
     @verify()
     def list_files(
-        self, path: str | PurePosixPath, password="", page=1, per_page=0, refresh=False
+        self,
+        path: str | PurePosixPath,
+        password="",
+        page=1,
+        per_page=0,
+        refresh=False,
     ):
         """POST 列出文件目录"""
         return locals(), self.post(
