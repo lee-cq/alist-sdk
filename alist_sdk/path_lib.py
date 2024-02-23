@@ -309,14 +309,14 @@ class AlistPath(PureAlistPath):
         """"""
         return self._client.get(self.as_download_uri()).content
 
-    def write_text(self, data: str):
+    def write_text(self, data: str, as_task=False):
         """"""
-        return self.write_bytes(data.encode())
+        return self.write_bytes(data.encode(), as_task=as_task)
 
-    def write_bytes(self, data: bytes):
+    def write_bytes(self, data: bytes, as_task=False):
         """"""
 
-        _res = self._client.upload_file_put(data, self.as_posix(), False)
+        _res = self._client.upload_file_put(data, self.as_posix(), as_task=as_task)
         if _res.code == 200:
             return self.stat()
         return None
