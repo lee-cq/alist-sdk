@@ -320,15 +320,3 @@ class AlistPath(PureAlistPath):
         if _res.code == 200:
             return self.stat()
         return None
-
-
-if __name__ == "__main__":
-    login_server(
-        "https://alist.leecq.cn",
-        username="admin_test",
-        password="admin_test",
-        verify=False,
-    )
-    print(AlistPath("https://alis.leecq.cn/onedrive/Music").stat())
-    for i in AlistPath("https://alist.leecq.cn/onedrive/Music").iterdir():
-        print(i.as_uri())
