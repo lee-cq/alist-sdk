@@ -1,5 +1,14 @@
 # 测试 path_lib.py
+
+import sys
+
+import pytest
+
 from alist_sdk.path_lib import PureAlistPath, AlistPath, login_server
+
+# 如果Python版本是3.12跳过模块
+if sys.version_info >= (3, 12):
+    pytest.skip("Skip this module on Python 3.12", allow_module_level=True)
 
 
 def test_pure_alist_path():

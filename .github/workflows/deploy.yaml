@@ -8,9 +8,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      max-parallel: 4
-      fail-fast: false
     permissions:
       id-token: write
 
@@ -30,8 +27,6 @@ jobs:
 
     - name: Install AList
       run: bash -ex tests/init_alist.sh
-      env:
-        ALIST_VERSION: "3.29.1"
 
     - name: Run Tests
       run: |
