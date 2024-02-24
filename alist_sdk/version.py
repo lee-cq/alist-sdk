@@ -5,6 +5,7 @@
 
 0.30.5:
     path_lib.AlistPath.read_* 自动跟随重定向，确保读取真实文件内容
+    path_lib.AlistPath.as_download_uri() 返回添加签名
     
 """
 

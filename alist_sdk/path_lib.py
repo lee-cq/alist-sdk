@@ -257,7 +257,7 @@ class AlistPath(PureAlistPath):
             raise ValueError("relative path can't be expressed as a file URI")
         if self.is_dir():
             raise IsADirectoryError()
-        return self.drive + "/d" + self.as_posix()
+        return self.drive + "/d" + self.as_posix() + "?sign=" + self.stat().sign
 
     @lru_cache()
     def stat(self) -> RawItem:

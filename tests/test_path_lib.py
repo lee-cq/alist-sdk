@@ -30,8 +30,10 @@ def test_pure_alist_path_method():
 
 def test_alist_path():
     from tests.test_client import DATA_DIR
-    login_server("https://localhost:5244", username="admin", password="123456", )
-    DATA_DIR.joinpath("test_dir/test.txt").write_text("123")
 
-    path = AlistPath("https://localhost:5244")
+    login_server("http://localhost:5244", username="admin", password="123456", )
+    DATA_DIR.joinpath("test.txt").write_text("123")
+
+    path = AlistPath("http://localhost:5244/local/test.txt")
     assert path.read_text() == "123"
+    assert path.read_bytes() == b"123"
