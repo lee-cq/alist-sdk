@@ -41,7 +41,7 @@ client = AsyncClient(
 asyncio.run(client.me())
 ```
 
-像使用pathlib一样操作Alist上的文件
+像使用pathlib一样操作Alist上的文件，但是需要注意的是，AlistPath的方法都是同步的，如果需要异步操作，可以使用`asyncio.to_thread`将同步方法转为异步方法。
 ```python
 from alist_sdk.path_lib import login_server, AlistPath
 

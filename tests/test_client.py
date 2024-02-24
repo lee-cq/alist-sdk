@@ -6,7 +6,6 @@ import pytest
 
 from alist_sdk import Client, AsyncClient
 from alist_sdk import models
-from models import TaskType
 
 WORKDIR = Path(__file__).parent
 DATA_DIR = WORKDIR.joinpath("alist/test_dir")
@@ -305,7 +304,7 @@ class TestSyncClient:
 
     @pytest.mark.parametrize(
         "task_type",
-        TaskType,
+        models.TaskType,
     )
     def test_task_done(self, task_type):
         """"""
