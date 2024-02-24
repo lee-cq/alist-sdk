@@ -303,11 +303,11 @@ class AlistPath(PureAlistPath):
 
     def read_text(self):
         """"""
-        return self._client.get(self.as_download_uri()).text
+        return self._client.get(self.as_download_uri(), follow_redirects=True).text
 
     def read_bytes(self):
         """"""
-        return self._client.get(self.as_download_uri()).content
+        return self._client.get(self.as_download_uri(), follow_redirects=True).content
 
     def write_text(self, data: str, as_task=False):
         """"""
