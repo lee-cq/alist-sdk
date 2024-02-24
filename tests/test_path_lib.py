@@ -27,8 +27,3 @@ def test_pure_alist_path_method():
     assert path.joinpath("another", "file", "path") == PureAlistPath("https://server/path/to/file/another/file/path")
     assert path.joinpath("another/file/path") == PureAlistPath("https://server/path/to/file/another/file/path")
 
-
-def test_alist_path():
-    login_server("https://alist.leecq.cn", username="admin_test", password="admin_test", )
-    path = AlistPath("https://alist.leecq.cn/onedrive/code/ddns/upip.py")
-    print(path.read_text())

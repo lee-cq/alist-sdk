@@ -29,12 +29,12 @@ ALIST_SERVER_INFO: dict[str, AlistServer] = dict()
 
 
 def login_server(
-    server: str,
-    token=None,
-    username=None,
-    password=None,
-    has_opt=False,
-    **kwargs,
+        server: str,
+        token=None,
+        username=None,
+        password=None,
+        has_opt=False,
+        **kwargs,
 ):
     """"""
     if token is None:
@@ -153,7 +153,7 @@ class _AlistFlavour:
         return "file://" + urlquote_from_bytes(bpath)
 
 
-# noinspection PyProtectedMember
+# noinspection PyProtectedMember,PyUnresolvedReferences
 class PureAlistPath(PurePosixPath):
     _flavour = _AlistFlavour()
 
@@ -179,7 +179,7 @@ class PureAlistPath(PurePosixPath):
 
     @classmethod
     def _from_parts(cls, args):
-        # We need to call _parse_args on the instance, so as to get the
+        # We need to call _parse_args on the instance, to get the
         # right flavour.
         args = list(args)
         self = object.__new__(cls)
@@ -221,27 +221,6 @@ class PureAlistPath(PurePosixPath):
     def __new__(cls, *args):
         return cls._from_parts(args)
 
-
-class AlistPath(PureAlistPath):
-    """"""
-
-    @cached_property
-    def _client(self) -> Client:
-        if self.server == "":
-            raise AlistError("当前对象没有设置server")
-
-        try:
-            _server = ALIST_SERVER_INFO[self.server]
-            return Client(
-                _server.server,
-                token=_server.token,
-                **_server.kwargs,
-            )
-        except KeyError:
-            raise AlistError(f"当前服务器[{self.server}]尚未登陆")
-
-    # def is_absolute(self) -> bool:
-
     def as_posix(self) -> str:
         return str(self).replace(self.drive, "")
 
@@ -250,12 +229,35 @@ class AlistPath(PureAlistPath):
             raise ValueError("relative path can't be expressed as a file URI")
         return str(self)
 
+    def relative_to(self, *other):
+        raise NotImplementedError("AlistPath不支持relative_to")
+
+
+class AlistPath(PureAlistPath):
+    """"""
+
+    @cached_property
+    def _client(self) -> Client:
+        if self.drive == "":
+            raise AlistError("当前对象没有设置server")
+
+        try:
+            _server = ALIST_SERVER_INFO[self.drive]
+            return Client(
+                _server.server,
+                token=_server.token,
+                **_server.kwargs,
+            )
+        except KeyError:
+            raise AlistError(f"当前服务器[{self.drive}]尚未登陆")
+
+    # def is_absolute(self) -> bool:
     def as_download_uri(self):
         if not self.is_absolute():
             raise ValueError("relative path can't be expressed as a file URI")
         if self.is_dir():
             raise IsADirectoryError()
-        return self.server + "/d" + self.as_posix()
+        return self.drive + "/d" + self.as_posix()
 
     @lru_cache()
     def stat(self) -> RawItem:
@@ -264,7 +266,7 @@ class AlistPath(PureAlistPath):
             data = _raw.data
             return data
         if _raw.code == 500 and (
-            "object not found" in _raw.message or "storage not found" in _raw.message
+                "object not found" in _raw.message or "storage not found" in _raw.message
         ):
             raise FileNotFoundError(_raw.message)
         raise AlistError(_raw.message)
@@ -287,17 +289,13 @@ class AlistPath(PureAlistPath):
         except FileNotFoundError:
             return False
 
-    def joinpath(self, *other) -> "AlistPath":
-        """"""
-        return self._make_child(other)
-
     def iterdir(self) -> Iterator["AlistPath"]:
         """"""
         if not self.is_dir():
             raise
 
         for item in (
-            self._client.list_files(self.as_posix(), refresh=True).data.content or []
+                self._client.list_files(self.as_posix(), refresh=True).data.content or []
         ):
             yield self.joinpath(item.name)
 
