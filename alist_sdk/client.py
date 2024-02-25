@@ -316,12 +316,12 @@ class _SyncFs(_ClientBase):
     def remove(
         self,
         path: str | PurePosixPath,
-        names,
+        names: list[str] | str,
     ):
         return locals(), self.post(
             "/api/fs/remove",
             json={
-                "names": names,
+                "names": [names] if isinstance(names, str) else names,
                 "dir": str(path),
             },
         )

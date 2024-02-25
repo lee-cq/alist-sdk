@@ -158,3 +158,30 @@ class AlistPath(PureAlistPath):
         if _res.code == 200:
             return self.stat()
         return None
+
+    def mkdir(self, parents=False, exist_ok=False):
+        """"""
+        if parents:
+            raise NotImplementedError("AlistPath不支持递归创建目录")
+        if self.exists():
+            if exist_ok:
+                return
+            raise FileExistsError(f"相同名称已存在: {self.as_posix()}")
+        return self._client.mkdir(self.as_posix())
+
+    def touch(self, exist_ok=True):
+        """"""
+        if not exist_ok and self.exists():
+            raise FileExistsError(f"文件已存在: {self.as_posix()}")
+        return self.write_bytes(b"", as_task=False)
+
+    def unlink(self, missing_ok=False):
+        """"""
+        if not self.exists():
+            if missing_ok:
+                return
+            raise FileNotFoundError(f"文件不存在: {self.as_posix()}")
+        _data = self._client.remove(self.parent.as_posix(), self.name)
+        if _data.code == 200:
+            return
+        raise AlistError(_data.message)

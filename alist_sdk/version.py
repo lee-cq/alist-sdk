@@ -10,8 +10,13 @@
 0.30.6:
     path_lib.py 重构，以支持3.12
     将AlistPath* 添加到 __init__.py 中。
+
+0.30.7:
+    AlistPath 实现了 mkdir, touch, unlink 方法, 并测试
+    BUGFIX: client remove 方法参数错误
+
 """
 
-__version__ = "0.30.6"
+__version__ = "0.30.7"
 
 ALIST_VERSION = "v3.30.0"
