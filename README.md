@@ -5,8 +5,11 @@ Alist API 简单封装
 ## [Alist API 文档](https://alist.nn.ci/zh/guide/api/)
 
 ## 安装
-
+从PyPI安装最新release版本  
 `pip install alist-sdk`
+
+从GitHub安装dev版本  
+`pip install git+https://github.com/lee-cq/alist-sdk.git`
 
 ## 使用
 
