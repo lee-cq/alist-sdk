@@ -310,12 +310,6 @@ class TestSyncClient:
         """"""
         DATA_DIR.joinpath("test.txt").write_text("abc")
 
-        # res = self.run(
-        #     self.client.copy, src_dir="/local", dst_dir="/local_dst", files=["test.txt"]
-        # )
-
-        # assert res.code == 200, res.message
-
         res = self.run(self.client.task_done, task_type)
         assert res.code == 200, res.message
         assert isinstance(res.data, list)

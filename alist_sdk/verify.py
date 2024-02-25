@@ -6,7 +6,7 @@ from json import JSONDecodeError
 import httpx
 from pydantic import ValidationError
 
-from alist_sdk.models import Resp, ListItem, Item, RawItem, BaseModel
+from alist_sdk.models import Resp, ListItem, Item, RawItem, BaseModel, TaskType
 
 logger = logging.getLogger("alist-sdk.verify")
 
@@ -21,7 +21,7 @@ __all__ = [
 class Verify:
     def __init__(self):
         self.locals: dict = {}
-        # self.res: Response
+        self.request: httpx.Request | None = None
 
     def add_parent(self, res_dict: dict):
         res_dict.setdefault("parent", self.locals.get("path"))
@@ -37,12 +37,30 @@ class Verify:
             BaseModel: [],
         }
 
-    def acting(self, resp: Resp):
+    def acting(self, resp: Resp) -> Resp:
         """对Resp做额外的修饰"""
+        if not isinstance(self.request, httpx.Request):
+            return resp
+
+        if (
+            self.request.url.path
+            in [
+                *[
+                    f"/api/admin/task/{tt}/{ts}"
+                    for tt in TaskType
+                    for ts in ["done", "undone"]
+                ],
+                "/user/info",
+            ]
+            and resp.code == 200
+        ):
+            resp.data = resp.data or []
+
         return resp
 
     def _verify(self, local_s, res: httpx.Response):
-        _ = local_s
+        self.locals.update(local_s)
+        self.request = res.request
         url = res.request.url.path
         logger.debug(
             f"收到响应: {url}[{res.status_code}]\n "

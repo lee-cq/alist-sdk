@@ -4,9 +4,10 @@
 """
 
 from functools import lru_cache, cached_property
-from typing import Iterator
+from pathlib import Path
+from typing import Iterator, Annotated
 
-from pydantic import BaseModel
+from pydantic import BaseModel, AfterValidator, PlainSerializer, WithJsonSchema
 
 from alist_sdk import alistpath
 from alist_sdk.py312_pathlib import PurePosixPath
@@ -21,6 +22,13 @@ class AlistServer(BaseModel):
 
 
 ALIST_SERVER_INFO: dict[str, AlistServer] = dict()
+
+AlistPathType = Annotated[
+    Path | str,
+    AfterValidator(lambda x: x if isinstance(x, AlistPath) else AlistPath(x)),
+    PlainSerializer(lambda x: f"{x:.1e}", return_type=str),
+    WithJsonSchema({"type": "string"}, mode="serialization"),
+]
 
 
 def login_server(

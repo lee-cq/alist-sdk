@@ -14,6 +14,8 @@
 0.30.7:
     AlistPath 实现了 mkdir, touch, unlink 方法, 并测试
     BUGFIX: client remove 方法参数错误
+    path_lib 添加AlistPathType 以适配 Pydantic 。
+    验证器现在将 /api/admin/task/ 返回None的data转换为[]
 
 """
 

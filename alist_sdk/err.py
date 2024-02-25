@@ -1,3 +1,6 @@
+__all__ = ["AlistError", "NotLogin", "RequestError"]
+
+
 class AlistError(Exception):
     """基本错误"""
 
