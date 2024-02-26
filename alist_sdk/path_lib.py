@@ -77,8 +77,19 @@ class PureAlistPath(PurePosixPath):
             raise ValueError("relative path can't be expressed as a file URI")
         return str(self)
 
-    def relative_to(self, *other):
-        raise NotImplementedError("AlistPath不支持relative_to")
+    def relative_to(self, other, /, *_deprecated, walk_up=False) -> str:
+        other = self.with_segments(other, *_deprecated)
+        for step, path in enumerate([other] + list(other.parents)):
+            if self.is_relative_to(path):
+                break
+
+            elif path.name == "..":
+                raise ValueError(f"'..' segment in {str(other)!r} cannot be walked")
+
+        else:
+            raise ValueError(f"{str(self)!r} and {str(other)!r} have different anchors")
+        parts = [".."] * step + self._tail[len(path._tail) :]
+        return PurePosixPath(*parts).as_posix()
 
 
 class AlistPath(PureAlistPath):

@@ -1,6 +1,7 @@
 import asyncio
 import time
 from pathlib import Path, PurePosixPath
+from functools import cached_property
 
 import pytest
 
@@ -80,11 +81,9 @@ def setup_module() -> None:
 
 # noinspection PyMethodMayBeStatic
 class TestSyncClient:
-    __client = Client("http://localhost:5244", username="admin", password="123456")
-
-    @property
+    @cached_property
     def client(self) -> Client:
-        return self.__client
+        return Client("http://localhost:5244", username="admin", password="123456")
 
     def setup_method(self) -> None:
         print("--- setup_method ---")

@@ -17,8 +17,11 @@
     path_lib 添加AlistPathType 以适配 Pydantic 。
     验证器现在将 /api/admin/task/ 返回None的data转换为[]
 
+0.30.8:
+    AlistPath: 实现relative_to -> str
+
 """
 
-__version__ = "0.30.7"
+__version__ = "0.30.8"
 
 ALIST_VERSION = "v3.30.0"

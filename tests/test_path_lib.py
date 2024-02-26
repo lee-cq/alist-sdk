@@ -36,20 +36,11 @@ class TestPureAlistPath:
             "https://server/path/to/file/another/file/path"
         )
 
-    def test_pure_alist_path_method(self):
+    def test_relative_to(self):
         path = PureAlistPath("https://server/path/to/file")
-        assert path.as_posix() == "/path/to/file"
-        assert path.as_uri() == "https://server/path/to/file"
-        assert path.joinpath("another") == PureAlistPath(
-            "https://server/path/to/file/another"
-        )
-        assert path.joinpath("another", "file", "path") == PureAlistPath(
-            "https://server/path/to/file/another/file/path"
-        )
-        assert path.joinpath("another/file/path") == PureAlistPath(
-            "https://server/path/to/file/another/file/path"
-        )
+        p = PureAlistPath("https://server/path")
 
+        assert path.relative_to(p) == ("to/file")
 
 class TestAlistPath:
 
