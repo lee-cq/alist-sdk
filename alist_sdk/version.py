@@ -19,6 +19,7 @@
 
 0.30.8:
     AlistPath: 实现relative_to -> str
+    AlistPath: 实现rename
 
 """
 

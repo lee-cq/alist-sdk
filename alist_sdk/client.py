@@ -274,11 +274,7 @@ class _SyncFs(_ClientBase):
             json={
                 "src_dir": str(src_dir),
                 "dst_dir": str(dst_dir),
-                "names": [
-                    files,
-                ]
-                if isinstance(files, str)
-                else files,
+                "names": [files] if isinstance(files, str) else files,
             },
         )
 
@@ -327,11 +323,11 @@ class _SyncFs(_ClientBase):
         )
 
     @verify()
-    def remove_empty_directory(self, path):
+    def remove_empty_directory(self, path: str | PurePosixPath):
         """/api/fs/remove_empty_directory"""
         return locals(), self.post(
             "/api/fs/remove_empty_directory",
-            json={"src_dir": path},
+            json={"src_dir": str(path)},
         )
 
     @verify()

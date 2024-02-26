@@ -88,6 +88,7 @@ class PureAlistPath(PurePosixPath):
 
         else:
             raise ValueError(f"{str(self)!r} and {str(other)!r} have different anchors")
+        # noinspection PyProtectedMember
         parts = [".."] * step + self._tail[len(path._tail) :]
         return PurePosixPath(*parts).as_posix()
 
@@ -201,6 +202,41 @@ class AlistPath(PureAlistPath):
                 return
             raise FileNotFoundError(f"文件不存在: {self.as_posix()}")
         _data = self._client.remove(self.parent.as_posix(), self.name)
-        if _data.code == 200:
+        if _data.code != 200:
+            raise AlistError(_data.message)
+
+    def rmdir(self, missing_ok=False):
+        """"""
+        if not self.exists():
+            if missing_ok:
+                return
+            raise FileNotFoundError(f"文件不存在: {self.as_posix()}")
+        _data = self._client.remove_empty_directory(self.as_posix())
+        if _data.code != 200:
+            raise AlistError(_data.message)
+
+    def rename(self, target: "AlistPath"):
+        """"""
+        if self == target:
             return
-        raise AlistError(_data.message)
+        if not self.exists():
+            raise FileNotFoundError(f"文件不存在: {self.as_uri()}")
+
+        if self.parent != target.parent:
+            _data = self._client.move(
+                self.parent.as_posix(),
+                target.parent.as_posix(),
+                self.name,
+            )
+            if _data.code != 200:
+                raise AlistError(_data.message)
+
+        if self.name != target.name:
+            _data = self._client.rename(
+                target.name,
+                target.parent.joinpath(self.name).as_posix(),
+            )
+            if _data.code != 200:
+                raise AlistError(_data.message)
+
+        return target

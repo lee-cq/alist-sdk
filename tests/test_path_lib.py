@@ -1,5 +1,5 @@
 # 测试 path_lib.py
-
+import pytest
 
 from alist_sdk.path_lib import PureAlistPath, AlistPath, login_server
 from tests.test_client import DATA_DIR
@@ -41,6 +41,7 @@ class TestPureAlistPath:
         p = PureAlistPath("https://server/path")
 
         assert path.relative_to(p) == ("to/file")
+
 
 class TestAlistPath:
 
@@ -85,3 +86,17 @@ class TestAlistPath:
         path = AlistPath("http://localhost:5244/local/test_unlink.txt")
         path.unlink()
         assert not DATA_DIR.joinpath("test_unlink.txt").exists()
+
+    @pytest.mark.skip("Alist 接口不生效")
+    def test_rmdir(self):
+        DATA_DIR.joinpath("test_rmdir").mkdir()
+        path = AlistPath("http://localhost:5244/local/test_rmdir")
+        path.rmdir()
+        assert not DATA_DIR.joinpath("test_rmdir").exists()
+
+    def test_rename(self):
+        DATA_DIR.joinpath("test_rename.txt").write_text("123")
+        path = AlistPath("http://localhost:5244/local/test_rename.txt")
+        path.rename(AlistPath("http://localhost:5244/local/test_rename_new.txt"))
+        assert not DATA_DIR.joinpath("test_rename.txt").exists()
+        assert DATA_DIR.joinpath("test_rename_new.txt").read_text() == "123"
