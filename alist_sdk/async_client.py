@@ -68,6 +68,13 @@ class AsyncClientBase(HttpClient):
         self.headers.update({"Authorization": token})
         return await self.verify_login_status()
 
+    def get_token(self):
+        return self.headers.get("Authorization")
+
+    @property
+    def server_info(self) -> tuple[str, str, int | None]:
+        return self.base_url.scheme, self.base_url.host, self.base_url.port
+
     @verify()
     async def verify_request(
         self,

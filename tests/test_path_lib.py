@@ -114,7 +114,7 @@ def test_pydantic():
     class T(BaseModel):
         p: AlistPathType
 
-    T(p="http://leecq.cn")
+    T(p="https://leecq.cn")
     T(p="ss/c")
 
 

@@ -6,6 +6,7 @@ import logging
 import time
 import urllib.parse
 from pathlib import Path, PurePosixPath
+from functools import cached_property
 
 from httpx import Client as HttpClient
 from alist_sdk.models import *
@@ -58,6 +59,17 @@ class _ClientBase(HttpClient):
         """更新Token，Token验证成功，返回True"""
         self.headers.update({"Authorization": token})
         return self.verify_login_status()
+
+    def get_token(self):
+        return self.headers.get("Authorization")
+
+    @cached_property
+    def login_username(self):
+        return self.me().data.username
+
+    @property
+    def server_info(self) -> tuple[str, str, int | None]:
+        return self.base_url.scheme, self.base_url.host, self.base_url.port
 
     @verify()
     def verify_request(

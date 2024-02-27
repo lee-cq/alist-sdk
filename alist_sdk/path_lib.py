@@ -6,6 +6,7 @@
 from functools import lru_cache, cached_property
 from typing import Iterator, Annotated, Any
 
+from httpx import URL
 from pydantic import BaseModel
 from pydantic.json_schema import JsonSchemaValue
 from pydantic_core import core_schema
@@ -22,11 +23,11 @@ class AlistServer(BaseModel):
     kwargs: dict = {}
 
 
-ALIST_SERVER_INFO: dict[str, AlistServer] = dict()
+ALIST_SERVER_INFO: dict[tuple[str, str, int], Client] = dict()
 
 
 def login_server(
-    server: str,
+    server: str | Client,
     token=None,
     username=None,
     password=None,
@@ -34,20 +35,17 @@ def login_server(
     **kwargs,
 ):
     """"""
-    if token is None:
-        client = Client(
+    if isinstance(server, str):
+        _client = Client(
             server,
             username=username,
             password=password,
             has_opt=has_opt,
             **kwargs,
         )
-        token = client.headers.get("Authorization")
-    ALIST_SERVER_INFO[server] = AlistServer(
-        server=server,
-        token=token,
-        kwargs=kwargs,
-    )
+    else:
+        _client = server
+    ALIST_SERVER_INFO[_client.server_info] = _client
 
 
 class PureAlistPath(PurePosixPath):
@@ -93,18 +91,33 @@ class PureAlistPath(PurePosixPath):
 class AlistPath(PureAlistPath):
     """"""
 
+    @classmethod
+    def from_client(cls, client: Client, path: str | PurePosixPath) -> "AlistPath":
+        """从客户端实例构造
+
+        :param client: 客户端实例
+        :param path: （可能）位于该实例的绝对路径
+        """
+        if not isinstance(client, Client):
+            raise TypeError()
+
+        if not str(path).startswith('/'):
+            raise ValueError(f"path必须是一个绝对路径 {path = }")
+
+        if client.server_info not in ALIST_SERVER_INFO:
+            login_server(client)
+
+        return cls()
+
     @cached_property
-    def _client(self) -> Client:
+    def client(self) -> Client:
         if self.drive == "":
             raise AlistError("当前对象没有设置server")
 
         try:
-            _server = ALIST_SERVER_INFO[self.drive]
-            return Client(
-                _server.server,
-                token=_server.token,
-                **_server.kwargs,
-            )
+            _u = URL(self.drive)
+            _server_info = _u.scheme, _u.host, _u.port
+            return ALIST_SERVER_INFO[_server_info]
         except KeyError:
             raise AlistError(f"当前服务器[{self.drive}]尚未登陆")
 
@@ -118,7 +131,7 @@ class AlistPath(PureAlistPath):
 
     @lru_cache()
     def stat(self) -> RawItem:
-        _raw = self._client.get_item_info(self.as_posix())
+        _raw = self.client.get_item_info(self.as_posix())
         if _raw.code == 200:
             data = _raw.data
             return data
@@ -156,17 +169,17 @@ class AlistPath(PureAlistPath):
             raise
 
         for item in (
-            self._client.list_files(self.as_posix(), refresh=True).data.content or []
+            self.client.list_files(self.as_posix(), refresh=True).data.content or []
         ):
             yield self.joinpath(item.name)
 
     def read_text(self):
         """"""
-        return self._client.get(self.as_download_uri(), follow_redirects=True).text
+        return self.client.get(self.as_download_uri(), follow_redirects=True).text
 
     def read_bytes(self):
         """"""
-        return self._client.get(self.as_download_uri(), follow_redirects=True).content
+        return self.client.get(self.as_download_uri(), follow_redirects=True).content
 
     def write_text(self, data: str, as_task=False):
         """"""
@@ -175,7 +188,7 @@ class AlistPath(PureAlistPath):
     def write_bytes(self, data: bytes, as_task=False):
         """"""
 
-        _res = self._client.upload_file_put(data, self.as_posix(), as_task=as_task)
+        _res = self.client.upload_file_put(data, self.as_posix(), as_task=as_task)
         if _res.code == 200:
             return self.stat()
         raise AlistError()
@@ -188,7 +201,7 @@ class AlistPath(PureAlistPath):
             if exist_ok:
                 return
             raise FileExistsError(f"相同名称已存在: {self.as_posix()}")
-        return self._client.mkdir(self.as_posix())
+        return self.client.mkdir(self.as_posix())
 
     def touch(self, exist_ok=True):
         """"""
@@ -202,7 +215,7 @@ class AlistPath(PureAlistPath):
             if missing_ok:
                 return
             raise FileNotFoundError(f"文件不存在: {self.as_posix()}")
-        _data = self._client.remove(self.parent.as_posix(), self.name)
+        _data = self.client.remove(self.parent.as_posix(), self.name)
         if _data.code != 200:
             raise AlistError(_data.message)
 
@@ -212,7 +225,7 @@ class AlistPath(PureAlistPath):
             if missing_ok:
                 return
             raise FileNotFoundError(f"文件不存在: {self.as_posix()}")
-        _data = self._client.remove_empty_directory(self.as_posix())
+        _data = self.client.remove_empty_directory(self.as_posix())
         if _data.code != 200:
             raise AlistError(_data.message)
 
@@ -224,7 +237,7 @@ class AlistPath(PureAlistPath):
             raise FileNotFoundError(f"文件不存在: {self.as_uri()}")
 
         if self.parent != target.parent:
-            _data = self._client.move(
+            _data = self.client.move(
                 self.parent.as_posix(),
                 target.parent.as_posix(),
                 self.name,
@@ -233,7 +246,7 @@ class AlistPath(PureAlistPath):
                 raise AlistError(_data.message)
 
         if self.name != target.name:
-            _data = self._client.rename(
+            _data = self.client.rename(
                 target.name,
                 target.parent.joinpath(self.name).as_posix(),
             )
