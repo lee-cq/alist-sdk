@@ -128,6 +128,10 @@ class AlistPath(PureAlistPath):
             raise FileNotFoundError(_raw.message)
         raise AlistError(_raw.message)
 
+    def re_stat(self) -> RawItem:
+        self.stat.cache_clear()
+        return self.stat()
+
     def is_dir(self):
         """"""
         return self.stat().is_dir
@@ -174,7 +178,7 @@ class AlistPath(PureAlistPath):
         _res = self._client.upload_file_put(data, self.as_posix(), as_task=as_task)
         if _res.code == 200:
             return self.stat()
-        return None
+        raise AlistError()
 
     def mkdir(self, parents=False, exist_ok=False):
         """"""

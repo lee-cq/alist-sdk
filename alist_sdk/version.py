@@ -21,6 +21,8 @@
     AlistPath: 实现relative_to -> str
     AlistPath: 实现rename
     pydantic类型支持： AbsAlistPathType, AlistPathType
+    AlistPath: 实现re_stat() 以强制刷新缓存
+    测试的alist端口更新为5245，防止多个服务冲突。
 
 """
 

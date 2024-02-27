@@ -15,4 +15,5 @@ fi
 
 rm -rf alist/data/ alist/test_dir/ alist/test_dir_dst/
 ./alist admin set 123456
+sed -i 's/: 5244/: 5245/' data/config.json
 ./alist restart

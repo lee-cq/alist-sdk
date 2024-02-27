@@ -74,7 +74,7 @@ def setup_module() -> None:
     DATA_DIR.mkdir(exist_ok=True)
     DATA_DIR_DST.mkdir(exist_ok=True)
 
-    _client = Client("http://localhost:5244", username="admin", password="123456")
+    _client = Client("http://localhost:5245", username="admin", password="123456")
     create_storage_local(_client, "local", DATA_DIR)
     create_storage_local(_client, "local_dst", DATA_DIR_DST)
 
@@ -83,7 +83,7 @@ def setup_module() -> None:
 class TestSyncClient:
     @cached_property
     def client(self) -> Client:
-        return Client("http://localhost:5244", username="admin", password="123456")
+        return Client("http://localhost:5245", username="admin", password="123456")
 
     def setup_method(self) -> None:
         print("--- setup_method ---")
@@ -100,7 +100,7 @@ class TestSyncClient:
         return res
 
     def test_login(self):
-        _client = Client("http://localhost:5244", verify=False)
+        _client = Client("http://localhost:5245", verify=False)
         assert _client.login(
             username="admin",
             password="123456",
@@ -369,7 +369,7 @@ class TestSyncClient:
 class TestAsyncClient(TestSyncClient):
     @property
     def client(self) -> AsyncClient:
-        return AsyncClient("http://localhost:5244", username="admin", password="123456")
+        return AsyncClient("http://localhost:5245", username="admin", password="123456")
 
     def run(self, func, *args, **kwargs):
         print("--- type", type(func))

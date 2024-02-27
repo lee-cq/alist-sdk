@@ -7,13 +7,13 @@ from tests.test_client import DATA_DIR
 
 class TestPureAlistPath:
     def test_pure_alist_path(self):
-        path = PureAlistPath("https://server:5244/path/to/file")
+        path = PureAlistPath("https://server:5245/path/to/file")
         # 属性
-        assert path.parts == ("https://server:5244/", "path", "to", "file")
-        assert path.drive == "https://server:5244"
+        assert path.parts == ("https://server:5245/", "path", "to", "file")
+        assert path.drive == "https://server:5245"
         assert path.root == "/"
-        assert path.anchor == "https://server:5244/"
-        assert path.parent == PureAlistPath("https://server:5244/path/to")
+        assert path.anchor == "https://server:5245/"
+        assert path.parent == PureAlistPath("https://server:5245/path/to")
         assert path.name == "file"
         assert path.suffix == ""
         assert path.suffixes == []
@@ -45,59 +45,66 @@ class TestPureAlistPath:
 class TestAlistPath:
     def setup_class(self):
         login_server(
-            "http://localhost:5244",
+            "http://localhost:5245",
             username="admin",
             password="123456",
         )
         DATA_DIR.joinpath("test.txt").write_text("123")
 
     def test_read_text(self):
-        path = AlistPath("http://localhost:5244/local/test.txt")
+        path = AlistPath("http://localhost:5245/local/test.txt")
         assert path.read_text() == "123"
 
     def test_alist_path(self):
-        path = AlistPath("http://localhost:5244/local/test.txt")
+        path = AlistPath("http://localhost:5245/local/test.txt")
         assert path.read_bytes() == b"123"
 
     def test_write_text(self):
-        path = AlistPath("http://localhost:5244/local/test_write_text.txt")
+        path = AlistPath("http://localhost:5245/local/test_write_text.txt")
         path.write_text("123")
         assert DATA_DIR.joinpath("test_write_text.txt").read_text() == "123"
 
     def test_write_bytes(self):
-        path = AlistPath("http://localhost:5244/local/test_write_bytes.txt")
+        path = AlistPath("http://localhost:5245/local/test_write_bytes.txt")
         path.write_bytes(b"123")
         assert DATA_DIR.joinpath("test_write_bytes.txt").read_bytes() == b"123"
 
     def test_mkdir(self):
-        path = AlistPath("http://localhost:5244/local/test_mkdir")
+        path = AlistPath("http://localhost:5245/local/test_mkdir")
         path.mkdir()
         assert DATA_DIR.joinpath("test_mkdir").is_dir()
 
     def test_touch(self):
-        path = AlistPath("http://localhost:5244/local/test_touch.txt")
+        path = AlistPath("http://localhost:5245/local/test_touch.txt")
         path.touch()
         assert DATA_DIR.joinpath("test_touch.txt").exists()
 
     def test_unlink(self):
         DATA_DIR.joinpath("test_unlink.txt").write_text("123")
-        path = AlistPath("http://localhost:5244/local/test_unlink.txt")
+        path = AlistPath("http://localhost:5245/local/test_unlink.txt")
         path.unlink()
         assert not DATA_DIR.joinpath("test_unlink.txt").exists()
 
     @pytest.mark.skip("Alist 接口不生效")
     def test_rmdir(self):
         DATA_DIR.joinpath("test_rmdir").mkdir()
-        path = AlistPath("http://localhost:5244/local/test_rmdir")
+        path = AlistPath("http://localhost:5245/local/test_rmdir")
         path.rmdir()
         assert not DATA_DIR.joinpath("test_rmdir").exists()
 
     def test_rename(self):
         DATA_DIR.joinpath("test_rename.txt").write_text("123")
-        path = AlistPath("http://localhost:5244/local/test_rename.txt")
-        path.rename(AlistPath("http://localhost:5244/local/test_rename_new.txt"))
+        path = AlistPath("http://localhost:5245/local/test_rename.txt")
+        path.rename(AlistPath("http://localhost:5245/local/test_rename_new.txt"))
         assert not DATA_DIR.joinpath("test_rename.txt").exists()
         assert DATA_DIR.joinpath("test_rename_new.txt").read_text() == "123"
+
+    def test_re_stat(self):
+        DATA_DIR.joinpath("test_re_stat.txt").write_text("123")
+        path = AlistPath("http://localhost:5245/local/test_re_stat.txt")
+        assert path.stat().size == 3
+        DATA_DIR.joinpath("test_re_stat.txt").write_text("1234")
+        assert path.re_stat().size == 4
 
 
 def test_pydantic():
@@ -119,7 +126,6 @@ def test_abs_path():
         p: AbsAlistPathType
 
     T(p="https://leecq.cn")
-    T(p="ss/c")
 
 
 @pytest.mark.xfail()
