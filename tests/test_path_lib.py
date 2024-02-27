@@ -6,7 +6,6 @@ from tests.test_client import DATA_DIR
 
 
 class TestPureAlistPath:
-
     def test_pure_alist_path(self):
         path = PureAlistPath("https://server:5244/path/to/file")
         # 属性
@@ -44,7 +43,6 @@ class TestPureAlistPath:
 
 
 class TestAlistPath:
-
     def setup_class(self):
         login_server(
             "http://localhost:5244",
@@ -100,3 +98,36 @@ class TestAlistPath:
         path.rename(AlistPath("http://localhost:5244/local/test_rename_new.txt"))
         assert not DATA_DIR.joinpath("test_rename.txt").exists()
         assert DATA_DIR.joinpath("test_rename_new.txt").read_text() == "123"
+
+
+def test_pydantic():
+    from pydantic import BaseModel
+    from alist_sdk.path_lib import AlistPathType
+
+    class T(BaseModel):
+        p: AlistPathType
+
+    T(p="http://leecq.cn")
+    T(p="ss/c")
+
+
+def test_abs_path():
+    from pydantic import BaseModel
+    from alist_sdk.path_lib import AbsAlistPathType
+
+    class T(BaseModel):
+        p: AbsAlistPathType
+
+    T(p="https://leecq.cn")
+    T(p="ss/c")
+
+
+@pytest.mark.xfail()
+def test_abs_path_err():
+    from pydantic import BaseModel
+    from alist_sdk.path_lib import AbsAlistPathType
+
+    class T(BaseModel):
+        p: AbsAlistPathType
+
+    T(p="ss/c")

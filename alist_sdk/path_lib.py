@@ -4,10 +4,11 @@
 """
 
 from functools import lru_cache, cached_property
-from pathlib import Path
-from typing import Iterator, Annotated
+from typing import Iterator, Annotated, Any
 
-from pydantic import BaseModel, AfterValidator, PlainSerializer, WithJsonSchema
+from pydantic import BaseModel
+from pydantic.json_schema import JsonSchemaValue
+from pydantic_core import core_schema
 
 from alist_sdk import alistpath
 from alist_sdk.py312_pathlib import PurePosixPath
@@ -22,13 +23,6 @@ class AlistServer(BaseModel):
 
 
 ALIST_SERVER_INFO: dict[str, AlistServer] = dict()
-
-AlistPathType = Annotated[
-    Path | str,
-    AfterValidator(lambda x: x if isinstance(x, AlistPath) else AlistPath(x)),
-    PlainSerializer(lambda x: f"{x:.1e}", return_type=str),
-    WithJsonSchema({"type": "string"}, mode="serialization"),
-]
 
 
 def login_server(
@@ -58,6 +52,9 @@ def login_server(
 
 class PureAlistPath(PurePosixPath):
     _flavour = alistpath
+
+    # def __get_pydantic_core_schema__(self, source_type: Any, handler):
+    #     """"""
 
     def is_absolute(self):
         """True if the path is absolute (has both a root and, if applicable,
@@ -240,3 +237,42 @@ class AlistPath(PureAlistPath):
                 raise AlistError(_data.message)
 
         return target
+
+
+class AlistPathPydanticAnnotation:
+    @classmethod
+    def validate_alist_path(cls, v: Any, handler) -> AlistPath:
+        if isinstance(v, AlistPath):
+            return v
+        s = handler(v)
+        return AlistPath(s)
+
+    @classmethod
+    def __get_pydantic_core_schema__(
+        cls, source_type, _handler
+    ) -> core_schema.CoreSchema:
+        assert source_type is AlistPath
+        return core_schema.no_info_wrap_validator_function(
+            cls.validate_alist_path,
+            core_schema.str_schema(),
+            serialization=core_schema.to_string_ser_schema(),
+        )
+
+    @classmethod
+    def __get_pydantic_json_schema__(cls, _core_schema, handler) -> JsonSchemaValue:
+        return handler(core_schema.str_schema())
+
+
+class AbsAlistPathPydanticAnnotation(AlistPathPydanticAnnotation):
+    @classmethod
+    def validate_alist_path(cls, v: Any, handler) -> AlistPath:
+        _path = super().validate_alist_path(v, handler)
+        if _path.drive:
+            return _path
+        else:
+            raise ValueError("Invalid AlistPath")
+
+
+AlistPathType = Annotated[AlistPath, AlistPathPydanticAnnotation]
+
+AbsAlistPathType = Annotated[AlistPath, AbsAlistPathPydanticAnnotation]
