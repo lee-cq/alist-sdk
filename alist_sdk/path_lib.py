@@ -33,9 +33,15 @@ def login_server(
     password=None,
     has_opt=False,
     **kwargs,
-):
+) -> Client:
     """"""
+
     if isinstance(server, str):
+        _so = URL(server)
+        server_info = _so.scheme, _so.host, _so.port
+        if server_info in ALIST_SERVER_INFO:
+            return ALIST_SERVER_INFO[server_info]
+
         _client = Client(
             server,
             token=token,

@@ -25,8 +25,12 @@
     测试的alist端口更新为5245，防止多个服务冲突。
     AlistPath 添加构造器 - from_client
 
+0.30.9:
+    1. 现在AlistPath.write_bytes() 支持接收Path对象，读取文件并写入远程
+    2. UPDATE:path_lib.login_server() 防止重复登陆
+
 """
 
-__version__ = "0.30.9"
+__version__ = "0.30.9-2"
 
 ALIST_VERSION = "v3.31.0"
