@@ -29,9 +29,10 @@
     1. 现在AlistPath.write_bytes() 支持接收Path对象，读取文件并写入远程
     2. UPDATE:path_lib.login_server() 防止重复登陆
     3. BUGFIX: AlistPath.exists() 现在引用 re_stat()，以检查最新的状态
+    4. AlistPath 允许递归创建目录
 
 """
 
-__version__ = "0.30.9-3"
+__version__ = "0.30.9-4"
 
 ALIST_VERSION = "v3.31.0"

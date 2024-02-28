@@ -204,12 +204,14 @@ class AlistPath(PureAlistPath):
 
     def mkdir(self, parents=False, exist_ok=False):
         """"""
-        if parents:
-            raise NotImplementedError("AlistPath不支持递归创建目录")
         if self.exists():
             if exist_ok:
                 return
             raise FileExistsError(f"相同名称已存在: {self.as_posix()}")
+
+        if parents is False and not self.parent.exists():
+            raise FileNotFoundError()
+
         return self.client.mkdir(self.as_posix())
 
     def touch(self, exist_ok=True):
