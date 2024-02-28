@@ -44,7 +44,7 @@ class TestPureAlistPath:
 
 class TestAlistPath:
     def setup_class(self):
-        login_server(
+        self.client = login_server(
             "http://localhost:5245",
             username="admin",
             password="123456",
@@ -68,6 +68,7 @@ class TestAlistPath:
         path = AlistPath("http://localhost:5245/local/test_write_bytes.txt")
         path.write_bytes(b"123")
         assert DATA_DIR.joinpath("test_write_bytes.txt").read_bytes() == b"123"
+
 
     def test_mkdir(self):
         path = AlistPath("http://localhost:5245/local/test_mkdir")
@@ -105,6 +106,12 @@ class TestAlistPath:
         assert path.stat().size == 3
         DATA_DIR.joinpath("test_re_stat.txt").write_text("1234")
         assert path.re_stat().size == 4
+
+    def test_from_client(self):
+        DATA_DIR.joinpath("test_from_client.txt").write_text("123")
+        path = AlistPath.from_client(self.client, "/local/test_from_client.txt")
+        assert path.exists()
+        assert path.client is self.client
 
 
 def test_pydantic():

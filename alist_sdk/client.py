@@ -164,7 +164,7 @@ class _SyncFs(_ClientBase):
             local_path = Path(local_path)
             if not local_path.exists():
                 raise FileNotFoundError(local_path)
-            data = local_path.read_bytes()
+            data = local_path.open('rb')
             modified = int(local_path.stat(follow_symlinks=True).st_mtime * 1000)
 
         return locals(), self.put(

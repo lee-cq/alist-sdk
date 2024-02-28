@@ -2,8 +2,8 @@
 
 像使用Path一样的易于使用Alist中的文件
 """
-
 from functools import lru_cache, cached_property
+from pathlib import Path
 from typing import Iterator, Annotated, Any
 
 from httpx import URL
@@ -38,6 +38,7 @@ def login_server(
     if isinstance(server, str):
         _client = Client(
             server,
+            token=token,
             username=username,
             password=password,
             has_opt=has_opt,
@@ -46,6 +47,7 @@ def login_server(
     else:
         _client = server
     ALIST_SERVER_INFO[_client.server_info] = _client
+    return _client
 
 
 class PureAlistPath(PurePosixPath):
@@ -101,13 +103,14 @@ class AlistPath(PureAlistPath):
         if not isinstance(client, Client):
             raise TypeError()
 
-        if not str(path).startswith('/'):
+        if not str(path).startswith("/"):
             raise ValueError(f"path必须是一个绝对路径 {path = }")
 
         if client.server_info not in ALIST_SERVER_INFO:
             login_server(client)
 
-        return cls()
+        f_path = client.base_url.join(path)
+        return cls(f_path.__str__())
 
     @cached_property
     def client(self) -> Client:
@@ -185,7 +188,7 @@ class AlistPath(PureAlistPath):
         """"""
         return self.write_bytes(data.encode(), as_task=as_task)
 
-    def write_bytes(self, data: bytes, as_task=False):
+    def write_bytes(self, data: bytes | Path, as_task=False):
         """"""
 
         _res = self.client.upload_file_put(data, self.as_posix(), as_task=as_task)
