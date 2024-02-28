@@ -168,7 +168,7 @@ class AlistPath(PureAlistPath):
     def exists(self):
         """"""
         try:
-            return bool(self.stat())
+            return bool(self.re_stat())
         except FileNotFoundError:
             return False
 
