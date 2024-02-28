@@ -17,7 +17,7 @@
     path_lib 添加AlistPathType 以适配 Pydantic 。
     验证器现在将 /api/admin/task/ 返回None的data转换为[]
 
-0.30.8:
+0.30.8 & 0.30.9:
     AlistPath: 实现relative_to -> str
     AlistPath: 实现rename
     pydantic类型支持： AbsAlistPathType, AlistPathType
@@ -25,14 +25,15 @@
     测试的alist端口更新为5245，防止多个服务冲突。
     AlistPath 添加构造器 - from_client
 
-0.30.9:
+0.30.10:
     1. 现在AlistPath.write_bytes() 支持接收Path对象，读取文件并写入远程
     2. UPDATE:path_lib.login_server() 防止重复登陆
     3. BUGFIX: AlistPath.exists() 现在引用 re_stat()，以检查最新的状态
     4. AlistPath 允许递归创建目录
+    5. AlistPath.as_download_uri -> get_download_uri, 获取方式更新。
 
 """
 
-__version__ = "0.30.9-4"
+__version__ = "0.30.10-5"
 
 ALIST_VERSION = "v3.31.0"

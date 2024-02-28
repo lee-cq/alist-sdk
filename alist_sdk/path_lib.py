@@ -2,6 +2,7 @@
 
 像使用Path一样的易于使用Alist中的文件
 """
+
 from functools import lru_cache, cached_property
 from pathlib import Path
 from typing import Iterator, Annotated, Any
@@ -131,12 +132,15 @@ class AlistPath(PureAlistPath):
             raise AlistError(f"当前服务器[{self.drive}]尚未登陆")
 
     # def is_absolute(self) -> bool:
-    def as_download_uri(self):
+    def get_download_uri(self):
         if not self.is_absolute():
             raise ValueError("relative path can't be expressed as a file URI")
         if self.is_dir():
             raise IsADirectoryError()
-        return self.drive + "/d" + self.as_posix() + "?sign=" + self.stat().sign
+        return self.stat().download_uri
+
+    def as_download_uri(self):
+        return self.get_download_uri()
 
     @lru_cache()
     def stat(self) -> RawItem:
