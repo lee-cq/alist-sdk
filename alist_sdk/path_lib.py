@@ -132,12 +132,12 @@ class AlistPath(PureAlistPath):
             raise AlistError(f"当前服务器[{self.drive}]尚未登陆")
 
     # def is_absolute(self) -> bool:
-    def get_download_uri(self):
+    def get_download_uri(self) -> str:
         if not self.is_absolute():
             raise ValueError("relative path can't be expressed as a file URI")
         if self.is_dir():
             raise IsADirectoryError()
-        return self.stat().download_uri
+        return self.stat().raw_url
 
     def as_download_uri(self):
         return self.get_download_uri()

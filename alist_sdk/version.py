@@ -31,6 +31,7 @@
     3. BUGFIX: AlistPath.exists() 现在引用 re_stat()，以检查最新的状态
     4. AlistPath 允许递归创建目录
     5. AlistPath.as_download_uri -> get_download_uri, 获取方式更新。
+    6. BUGFIX: 获取下载URL错误
 
 """
 

@@ -45,14 +45,24 @@ class _ClientBase(HttpClient):
         """验证登陆状态,"""
         me = self.get("/api/me").json()
         if me.get("code") != 200:
-            logger.error("登陆失败[%d], %s", me.get("code"), me.get("message"))
+            logger.error(
+                "登陆失败[%s] %d, %s",
+                self.base_url,
+                me.get("code"),
+                me.get("message"),
+            )
             return False
 
         username = me["data"].get("username")
         if username not in [None]:
             logger.info("登陆成功： 当前用户： %s", username)
             return True
-        logger.warning("登陆失败")
+        logger.error(
+            "登陆失败[%s] %d: %s",
+            self.base_url,
+            me.get("code"),
+            me.get("message"),
+        )
         return False
 
     def set_token(self, token) -> bool:
@@ -117,7 +127,7 @@ class _ClientBase(HttpClient):
 
         if res.status_code == 200 and res.json()["code"] == 200:
             return self.set_token(res.json()["data"]["token"])
-        logger.warning("登陆失败[%d]：%s", res.status_code, res.text)
+        logger.error("登陆失败[%s] %d: %s", self.base_url, res.status_code, res.text)
         return False
 
     # ================ FS 相关方法 =================
@@ -164,7 +174,7 @@ class _SyncFs(_ClientBase):
             local_path = Path(local_path)
             if not local_path.exists():
                 raise FileNotFoundError(local_path)
-            data = local_path.open('rb')
+            data = local_path.open("rb")
             modified = int(local_path.stat(follow_symlinks=True).st_mtime * 1000)
 
         return locals(), self.put(
