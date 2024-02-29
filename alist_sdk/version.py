@@ -32,9 +32,10 @@
     4. AlistPath 允许递归创建目录
     5. AlistPath.as_download_uri -> get_download_uri, 获取方式更新。
     6. BUGFIX: 获取下载URL错误
+    7. 客户端添加方法：admin_storage_update, admin_storage_delete
 
 """
 
-__version__ = "0.30.10-5"
+__version__ = "0.30.10-7"
 
 ALIST_VERSION = "v3.31.0"

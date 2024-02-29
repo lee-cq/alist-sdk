@@ -440,7 +440,25 @@ class _SyncAdminStorages(_ClientBase):
             storage = Storage(**storage)
         return locals(), self.post(
             "/api/admin/storage/create",
-            json=storage.model_dump(exclude={"id", "modified"}),
+            json=storage.model_dump(mode="json", exclude={"id", "modified"}),
+        )
+
+    @verify()
+    def admin_storage_update(self, storage: dict | Storage):
+        """更新存储器后端"""
+        if isinstance(storage, dict):
+            storage = Storage(**storage)
+        return locals(), self.post(
+            "/api/admin/storage/update",
+            json=storage.model_dump(mode="json"),
+        )
+
+    @verify()
+    def admin_storage_delete(self, storage_id: int):
+        """删除存储器后端"""
+        return locals(), self.post(
+            "/api/admin/storage/delete",
+            params={"id": storage_id},
         )
 
     # ============== admin/user 相关==================
