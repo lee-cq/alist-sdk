@@ -8,17 +8,17 @@ authors = [{ name = "LeeCQ", email = "lcq@leecq.cn" }]
 description = "Alist API 简单封装."
 readme = "README.md"
 requires-python = ">=3.10"
-dependencies = ["httpx~=0.25.1", "pydantic~=2.5.1"]
+dependencies = ["httpx>=0.25.1", "pydantic>=2.5.1"]
 dynamic = ["version"]
 
 classifiers = [
-  "Development Status :: 1 - Planning",
-  "Environment :: Console",
-  "Framework :: Pydantic :: 2",
-  "Natural Language :: Chinese (Simplified)",
-  "Programming Language :: Python :: 3",
-  "License :: OSI Approved :: MIT License",
-  "Operating System :: OS Independent",
+    "Development Status :: 1 - Planning",
+    "Environment :: Console",
+    "Framework :: Pydantic :: 2",
+    "Natural Language :: Chinese (Simplified)",
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
 ]
 
 [project.urls]
@@ -26,7 +26,7 @@ Homepage = "https://github.com/lee-cq/alist-sdk"
 Issues = "https://github.com/lee-cq/alist-sdk/issues"
 
 [tool.setuptools]
-packages = ["alist_sdk"]
+packages = ["alist_sdk", "alist_sdk.tools"]
 
 [tool.setuptools.dynamic]
-version = {attr = "alist_sdk.version.__version__"}
+version = { attr = "alist_sdk.version.__version__" }
