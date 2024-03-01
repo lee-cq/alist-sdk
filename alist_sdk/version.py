@@ -40,6 +40,6 @@
 
 """
 
-__version__ = "0.30.10-11"
+__version__ = "0.30.10"
 
 ALIST_VERSION = "v3.31.0"
