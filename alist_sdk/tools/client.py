@@ -25,4 +25,6 @@ class ExtraClient(Client):
         other_client = self.__class__(
             base_url, token, username, password, has_opt, **kwargs
         )
-        return self.import_configs(other_client.export_configs().model_dump())
+        return self.import_configs(
+            other_client.export_configs().model_dump(mode="json")
+        )

@@ -239,7 +239,7 @@ class User(_BaseModel):
     sso_id: str
 
 
-class Meta(BaseModel):
+class Meta(_BaseModel):
     """/api/admin/meta/list .data.content.[]"""
 
     id: int

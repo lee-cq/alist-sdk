@@ -1,4 +1,4 @@
-from alist_sdk.models import BaseModel
+from pydantic import BaseModel
 from alist_sdk.models import Storage, Setting, User, Meta
 
 

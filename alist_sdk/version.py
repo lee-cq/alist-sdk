@@ -38,8 +38,12 @@
     10. 现在 tools.config.import_config 将忽略本地存储和任何key=id
     11. 当新文件出现在新的存储器中的时候,需要强制刷新list
 
+
+0.30.11:
+    1. BUGFIX: 从其他站点导入配置时，数据模型错误。
+
 """
 
-__version__ = "0.30.10"
+__version__ = "0.30.11a1"
 
 ALIST_VERSION = "v3.31.0"
