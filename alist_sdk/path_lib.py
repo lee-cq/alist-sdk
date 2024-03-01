@@ -166,6 +166,7 @@ class AlistPath(PureAlistPath):
             raise _e
 
     def re_stat(self, retry=2, timeout=1) -> RawItem:
+        self.client.list_files(self.parent.as_posix(), per_page=1, refresh=True)
         return self.stat(force=True, retry=retry, timeout=timeout)
 
     def is_dir(self):
@@ -198,11 +199,19 @@ class AlistPath(PureAlistPath):
 
     def read_text(self):
         """"""
-        return self.client.get(self.as_download_uri(), follow_redirects=True).text
+        return self.client.get(
+            self.as_download_uri(),
+            follow_redirects=True,
+            headers={"authorization": ""},
+        ).text
 
     def read_bytes(self):
         """"""
-        return self.client.get(self.as_download_uri(), follow_redirects=True).content
+        return self.client.get(
+            self.as_download_uri(),
+            follow_redirects=True,
+            headers={"authorization": ""},
+        ).content
 
     def write_text(self, data: str, as_task=False):
         """"""

@@ -36,9 +36,10 @@
     8. 现在AlistPath.stat(force=False, retry=1, timeout=0.1): 在默认情况下获取不到文件,对象将会在0.1秒后重试一次.
     9. 现在AlistPath.re_stat(retry=1, timeout=1) == stat(True, 1, 1)
     10. 现在 tools.config.import_config 将忽略本地存储和任何key=id
+    11. 当新文件出现在新的存储器中的时候,需要强制刷新list
 
 """
 
-__version__ = "0.30.10-10"
+__version__ = "0.30.10-11"
 
 ALIST_VERSION = "v3.31.0"
