@@ -2,7 +2,7 @@
 
 像使用Path一样的易于使用Alist中的文件
 """
-
+import time
 from functools import lru_cache, cached_property
 from pathlib import Path
 from typing import Iterator, Annotated, Any
@@ -143,7 +143,7 @@ class AlistPath(PureAlistPath):
         return self.get_download_uri()
 
     @lru_cache()
-    def stat(self) -> RawItem:
+    def _stat(self) -> RawItem:
         _raw = self.client.get_item_info(self.as_posix())
         if _raw.code == 200:
             data = _raw.data
@@ -154,9 +154,19 @@ class AlistPath(PureAlistPath):
             raise FileNotFoundError(_raw.message)
         raise AlistError(_raw.message)
 
-    def re_stat(self) -> RawItem:
-        self.stat.cache_clear()
-        return self.stat()
+    def stat(self, force=False, retry=1, timeout=0.1) -> RawItem:
+        if force:
+            self._stat.cache_clear()
+        try:
+            return self._stat()
+        except FileNotFoundError as _e:
+            if retry > 0:
+                time.sleep(timeout)
+                return self.stat(force, retry - 1)
+            raise _e
+
+    def re_stat(self, retry=2, timeout=1) -> RawItem:
+        return self.stat(force=True, retry=retry, timeout=timeout)
 
     def is_dir(self):
         """"""

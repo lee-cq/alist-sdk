@@ -33,9 +33,11 @@
     5. AlistPath.as_download_uri -> get_download_uri, 获取方式更新。
     6. BUGFIX: 获取下载URL错误
     7. 客户端添加方法：admin_storage_update, admin_storage_delete
+    8. 现在AlistPath.stat(force=False, retry=1, timeout=0.1): 在默认情况下获取不到文件,对象将会在0.1秒后重试一次.
+    9. 现在AlistPath.re_stat(retry=1, timeout=1) == stat(True, 1, 1)
 
 """
 
-__version__ = "0.30.10-7"
+__version__ = "0.30.10-9"
 
 ALIST_VERSION = "v3.31.0"
