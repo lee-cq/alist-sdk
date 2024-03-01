@@ -35,9 +35,10 @@
     7. 客户端添加方法：admin_storage_update, admin_storage_delete
     8. 现在AlistPath.stat(force=False, retry=1, timeout=0.1): 在默认情况下获取不到文件,对象将会在0.1秒后重试一次.
     9. 现在AlistPath.re_stat(retry=1, timeout=1) == stat(True, 1, 1)
+    10. 现在 tools.config.import_config 将忽略本地存储和任何key=id
 
 """
 
-__version__ = "0.30.10-9"
+__version__ = "0.30.10-10"
 
 ALIST_VERSION = "v3.31.0"
