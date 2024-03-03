@@ -41,9 +41,10 @@
 
 0.30.11:
     1. BUGFIX: 从其他站点导入配置时，数据模型错误。
+    2. BUGFIX: http://localhost:5244 无法正常识别
 
 """
 
-__version__ = "0.30.11a1"
+__version__ = "0.30.11a2"
 
 ALIST_VERSION = "v3.31.0"

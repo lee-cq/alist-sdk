@@ -27,23 +27,25 @@ def splitroot(p):
     """
     p = os.fspath(p)
     if isinstance(p, bytes):
-        sep = b"/"
+        _sep = b"/"
         empty = b""
     else:
-        sep = "/"
+        _sep = "/"
         empty = ""
 
     if p.startswith("http://") or p.startswith("https://"):
         # Absolute path, e.g.: 'http://server/path/to/file'
+        if p.count("/") < 3:
+            p += "/"
         return "/".join(p.split("/", 3)[:3]), "/", p.split("/", 3)[-1]
 
-    elif p[:1] != sep:
+    elif p[:1] != _sep:
         # Relative path, e.g.: 'foo'
         return empty, empty, p
 
-    elif p[1:2] != sep or p[2:3] == sep:
+    elif p[1:2] != _sep or p[2:3] == _sep:
         # Absolute path, e.g.: '/foo', '///foo', '////foo', etc.
-        return empty, sep, p[1:]
+        return empty, _sep, p[1:]
 
     else:
         # Precisely two leading slashes, e.g.: '//foo'. Implementation defined per POSIX, see
