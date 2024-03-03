@@ -2,6 +2,7 @@
 
 像使用Path一样的易于使用Alist中的文件
 """
+
 import time
 from functools import lru_cache, cached_property
 from pathlib import Path
@@ -60,8 +61,8 @@ def login_server(
 class PureAlistPath(PurePosixPath):
     _flavour = alistpath
 
-    # def __get_pydantic_core_schema__(self, source_type: Any, handler):
-    #     """"""
+    def __repr__(self):
+        return "{}({!r})".format(self.__class__.__name__, self.as_uri())
 
     def is_absolute(self):
         """True if the path is absolute (has both a root and, if applicable,
@@ -95,6 +96,11 @@ class PureAlistPath(PurePosixPath):
         # noinspection PyProtectedMember
         parts = [".."] * step + self._tail[len(path._tail) :]
         return PurePosixPath(*parts).as_posix()
+
+    # def match(self, path_pattern, *, case_sensitive=True):
+    #     _pps = path_pattern.split("**")
+    #
+    #     return self._flavour.fnmatch(str(self), path_pattern, case_sensitive)
 
 
 class AlistPath(PureAlistPath):

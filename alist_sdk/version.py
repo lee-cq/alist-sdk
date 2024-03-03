@@ -42,9 +42,10 @@
 0.30.11:
     1. BUGFIX: 从其他站点导入配置时，数据模型错误。
     2. BUGFIX: http://localhost:5244 无法正常识别
+    3. UPDATE: 更新AplistPath.__repl__方法
 
 """
 
-__version__ = "0.30.11a2"
+__version__ = "0.30.11a3"
 
 ALIST_VERSION = "v3.31.0"
