@@ -13,9 +13,8 @@ from pydantic import BaseModel
 from pydantic.json_schema import JsonSchemaValue
 from pydantic_core import core_schema
 
-from alist_sdk import alistpath
+from alist_sdk import alistpath, Item, AlistError, RawItem
 from alist_sdk.py312_pathlib import PurePosixPath
-from alist_sdk import AlistError, RawItem
 from alist_sdk.client import Client
 
 
@@ -143,13 +142,13 @@ class AlistPath(PureAlistPath):
             raise ValueError("relative path can't be expressed as a file URI")
         if self.is_dir():
             raise IsADirectoryError()
-        return self.stat().raw_url
+        return self.raw_stat().raw_url
 
     def as_download_uri(self):
         return self.get_download_uri()
 
     @lru_cache()
-    def _stat(self) -> RawItem:
+    def _raw_stat(self) -> RawItem:
         _raw = self.client.get_item_info(self.as_posix())
         if _raw.code == 200:
             data = _raw.data
@@ -160,20 +159,29 @@ class AlistPath(PureAlistPath):
             raise FileNotFoundError(_raw.message)
         raise AlistError(_raw.message)
 
-    def stat(self, force=False, retry=1, timeout=0.1) -> RawItem:
+    def raw_stat(self, force=False, retry=1, timeout=0.1) -> RawItem:
         if force:
-            self._stat.cache_clear()
+            self._raw_stat.cache_clear()
         try:
-            return self._stat()
+            return self._raw_stat()
         except FileNotFoundError as _e:
             if retry > 0:
                 time.sleep(timeout)
-                return self.stat(force, retry - 1)
+                return self.raw_stat(force, retry - 1)
             raise _e
 
+    def stat(self) -> RawItem | Item:
+        return getattr(self, "_stat", self.re_stat())
+
+    def set_stat(self, value: RawItem | Item):
+        # noinspection PyAttributeOutsideInit
+        self._stat = value
+
     def re_stat(self, retry=2, timeout=1) -> RawItem:
+        if hasattr(self, "_stat"):
+            delattr(self, "_stat")
         self.client.list_files(self.parent.as_posix(), per_page=1, refresh=True)
-        return self.stat(force=True, retry=retry, timeout=timeout)
+        return self.raw_stat(force=True, retry=retry, timeout=timeout)
 
     def is_dir(self):
         """"""
@@ -201,7 +209,9 @@ class AlistPath(PureAlistPath):
         for item in (
             self.client.list_files(self.as_posix(), refresh=True).data.content or []
         ):
-            yield self.joinpath(item.name)
+            _ = self.joinpath(item.name)
+            _.set_stat(item)
+            yield _
 
     def read_text(self):
         """"""

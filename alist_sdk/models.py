@@ -111,22 +111,13 @@ class Item(BaseModel):
     type: int  # 类型
 
 
-class RawItem(BaseModel):
+class RawItem(Item):
     """一个对象的全部信息"""
 
-    name: str
-    size: int
-    is_dir: bool
-    hashinfo: Optional[str] = "null"  # v3.29.0
-    hash_info: Optional[HashInfo | None] = None  # v3.29.0
-    modified: datetime.datetime
-    sign: str
-    thumb: str
-    type: int
     raw_url: str = ""
     readme: str = ""
     provider: str = ""
-    related: str | None | list['RawItem'] = None
+    related: str | None | list["RawItem"] = None
 
 
 class SearchItem(BaseModel):

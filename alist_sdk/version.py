@@ -42,10 +42,13 @@
 0.30.11:
     1. BUGFIX: 从其他站点导入配置时，数据模型错误。
     2. BUGFIX: http://localhost:5244 无法正常识别
-    3. UPDATE: 更新AplistPath.__repl__方法
+    3. UPDATE: 更新AplistPath.__repl__方法.
+    4. UPDATE: 更新AlistPath.添加新的方法 set_stat，可以自定义设置stat属性，加快速度。
+    5. UPDATE: 更新AlistPath.iterdir，在迭代时添加stat数据，加快速度。
+
 
 """
 
-__version__ = "0.30.11a3"
+__version__ = "0.30.11a5"
 
 ALIST_VERSION = "v3.31.0"
