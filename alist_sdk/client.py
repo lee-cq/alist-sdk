@@ -501,4 +501,23 @@ class Client(
     _SyncAdminMeta,
     _SyncAdminTask,
 ):
-    pass
+    _cached_path_list = dict()
+
+    def dict_files_item(self, path: str | PurePosixPath, password="", refresh=False):
+        """列出文件目录"""
+
+        def _dict_files(_path: str | PurePosixPath, _password="") -> dict[str, Item]:
+            _res = self.list_files(_path, _password, refresh=True)
+            if _res.code == 200:
+                _ = {d.name: d for d in _res.data.content or []}
+                self._cached_path_list[_path] = _
+                return _
+            return {}
+
+        path = str(path)
+        if refresh:
+            self._cached_path_list.pop(path, None)
+        if len(self._cached_path_list) >= 100:
+            self._cached_path_list.pop(0)  # Python 3中的字典是按照插入顺序保存的
+
+        return self._cached_path_list.get(path, _dict_files(path, password))

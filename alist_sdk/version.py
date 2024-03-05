@@ -45,10 +45,10 @@
     3. UPDATE: 更新AplistPath.__repl__方法.
     4. UPDATE: 更新AlistPath.添加新的方法 set_stat，可以自定义设置stat属性，加快速度。
     5. UPDATE: 更新AlistPath.iterdir，在迭代时添加stat数据，加快速度。
-
+    6. UPDATE: 更新AlistPath.stat，不再使用/api/fs/get 接口
 
 """
 
-__version__ = "0.30.11a5"
+__version__ = "0.30.11a6"
 
 ALIST_VERSION = "v3.31.0"

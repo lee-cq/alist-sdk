@@ -170,14 +170,20 @@ class AlistPath(PureAlistPath):
                 return self.raw_stat(force, retry - 1)
             raise _e
 
-    def stat(self) -> RawItem | Item:
-        return getattr(self, "_stat", self.re_stat())
+    def stat(self) -> Item:
+        def _stat() -> Item:
+            _r = self.client.dict_files_item(self.parent.as_posix()).get(self.name)
+            if not _r:
+                raise FileNotFoundError(f"文件不存在: {self.as_posix()} ")
+            return _r
+
+        return getattr(self, "_stat", _stat())
 
     def set_stat(self, value: RawItem | Item):
         # noinspection PyAttributeOutsideInit
         self._stat = value
 
-    def re_stat(self, retry=2, timeout=1) -> RawItem:
+    def re_stat(self, retry=2, timeout=1) -> Item:
         if hasattr(self, "_stat"):
             delattr(self, "_stat")
         self.client.list_files(self.parent.as_posix(), per_page=1, refresh=True)
