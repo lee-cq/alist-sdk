@@ -46,9 +46,10 @@
     4. UPDATE: 更新AlistPath.添加新的方法 set_stat，可以自定义设置stat属性，加快速度。
     5. UPDATE: 更新AlistPath.iterdir，在迭代时添加stat数据，加快速度。
     6. UPDATE: 更新AlistPath.stat，不再使用/api/fs/get 接口
+    7. UPDATE: 限制alist_sdk.Client 和 alist_sdk.AsyncClient在多线程和协程中的并发量，默认30.
 
 """
 
-__version__ = "0.30.11a6"
+__version__ = "0.30.11a7"
 
 ALIST_VERSION = "v3.31.0"

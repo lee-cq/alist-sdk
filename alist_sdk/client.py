@@ -7,8 +7,9 @@ import time
 import urllib.parse
 from pathlib import Path, PurePosixPath
 from functools import cached_property
+from threading import Semaphore
 
-from httpx import Client as HttpClient
+from httpx import Client as HttpClient, Response
 from alist_sdk.models import *
 from alist_sdk.verify import verify
 from alist_sdk.version import __version__
@@ -26,11 +27,13 @@ class _ClientBase(HttpClient):
         username=None,
         password=None,
         has_opt=False,
+        max_connect=30,
         **kwargs,
     ):
         super().__init__(**kwargs)
         self.base_url = base_url
         self.headers.setdefault("User-Agent", f"Alist-SDK/{__version__}")
+        self.request_semaphore = Semaphore(max_connect)
         if token:
             self.set_token(token)
 
@@ -80,6 +83,10 @@ class _ClientBase(HttpClient):
     @property
     def server_info(self) -> tuple[str, str, int | None]:
         return self.base_url.scheme, self.base_url.host, self.base_url.port
+
+    def request(self, method: str, url, **kwargs) -> "Response":
+        with self.request_semaphore:
+            return super().request(method, url, **kwargs)
 
     @verify()
     def verify_request(

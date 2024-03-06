@@ -4,7 +4,7 @@ import time
 import urllib.parse
 from pathlib import Path, PurePosixPath
 
-from httpx import AsyncClient as HttpClient
+from httpx import AsyncClient as HttpClient, Response
 
 from alist_sdk.models import *
 from alist_sdk.verify import async_verify as verify
@@ -24,11 +24,13 @@ class AsyncClientBase(HttpClient):
         username=None,
         password=None,
         has_opt=False,
+        max_connect=30,
         **kwargs,
     ):
         super().__init__(**kwargs)
         self.base_url = base_url
         self.headers.setdefault("User-Agent", f"Alist-SDK/{__version__}")
+        self.request_semaphore = asyncio.Semaphore(max_connect)
         if token or username:
             self.headers.update(
                 SyncClient(
@@ -74,6 +76,10 @@ class AsyncClientBase(HttpClient):
     @property
     def server_info(self) -> tuple[str, str, int | None]:
         return self.base_url.scheme, self.base_url.host, self.base_url.port
+
+    async def request(self, method: str, url, **kwargs) -> "Response":
+        async with self.request_semaphore:
+            return await super().request(method, url, **kwargs)
 
     @verify()
     async def verify_request(
