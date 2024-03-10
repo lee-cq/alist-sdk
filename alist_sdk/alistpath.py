@@ -8,6 +8,7 @@
 """
 import os
 import posixpath
+from urllib.parse import unquote
 
 from posixpath import *
 
@@ -37,7 +38,9 @@ def splitroot(p):
         # Absolute path, e.g.: 'http://server/path/to/file'
         if p.count("/") < 3:
             p += "/"
-        return "/".join(p.split("/", 3)[:3]), "/", p.split("/", 3)[-1]
+        p = unquote(p)
+        sps = p.split("/", 3)
+        return "/".join(sps[:3]), "/", (sps[-1])
 
     elif p[:1] != _sep:
         # Relative path, e.g.: 'foo'

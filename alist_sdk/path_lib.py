@@ -4,7 +4,7 @@
 """
 
 import time
-from functools import lru_cache, cached_property
+from functools import cached_property
 from pathlib import Path
 from typing import Iterator, Annotated, Any
 
@@ -67,7 +67,6 @@ class PureAlistPath(PurePosixPath):
         """True if the path is absolute (has both a root and, if applicable,
         a drive)."""
         if self._flavour is alistpath:
-            # ntpath.isabs() is defective - see GH-44626.
             return bool(self.drive and self.root)
 
         else:
@@ -147,37 +146,39 @@ class AlistPath(PureAlistPath):
     def as_download_uri(self):
         return self.get_download_uri()
 
-    @lru_cache()
-    def _raw_stat(self) -> RawItem:
-        _raw = self.client.get_item_info(self.as_posix())
-        if _raw.code == 200:
-            data = _raw.data
-            return data
-        if _raw.code == 500 and (
-            "object not found" in _raw.message or "storage not found" in _raw.message
-        ):
-            raise FileNotFoundError(_raw.message)
-        raise AlistError(_raw.message)
+    def raw_stat(self, retry=1, timeout=0.1) -> RawItem:
 
-    def raw_stat(self, force=False, retry=1, timeout=0.1) -> RawItem:
-        if force:
-            self._raw_stat.cache_clear()
         try:
-            return self._raw_stat()
+            _raw = self.client.get_item_info(self.as_posix())
+            if _raw.code == 200:
+                data = _raw.data
+                self.set_stat(data)
+                return data
+            if _raw.code == 500 and (
+                "object not found" in _raw.message
+                or "storage not found" in _raw.message
+            ):
+                raise FileNotFoundError(_raw.message)
+            raise AlistError(_raw.message)
         except FileNotFoundError as _e:
             if retry > 0:
                 time.sleep(timeout)
-                return self.raw_stat(force, retry - 1)
+                return self.raw_stat(retry - 1)
             raise _e
 
-    def stat(self) -> Item:
-        def _stat() -> Item:
-            _r = self.client.dict_files_item(self.parent.as_posix()).get(self.name)
+    def stat(self) -> Item | RawItem:
+        def f_stat() -> Item | RawItem:
+            _r = self.client.dict_files_items(self.parent.as_posix()).get(self.name)
             if not _r:
                 raise FileNotFoundError(f"文件不存在: {self.as_posix()} ")
+            self.set_stat(_r)
             return _r
 
-        return getattr(self, "_stat", _stat())
+        _stat = getattr(self, "_stat", None)
+        if isinstance(_stat, Item | RawItem):
+            return _stat
+
+        return f_stat()
 
     def set_stat(self, value: RawItem | Item):
         # noinspection PyAttributeOutsideInit
@@ -187,7 +188,7 @@ class AlistPath(PureAlistPath):
         if hasattr(self, "_stat"):
             delattr(self, "_stat")
         self.client.list_files(self.parent.as_posix(), per_page=1, refresh=True)
-        return self.raw_stat(force=True, retry=retry, timeout=timeout)
+        return self.raw_stat(retry=retry, timeout=timeout)
 
     def is_dir(self):
         """"""
@@ -212,9 +213,9 @@ class AlistPath(PureAlistPath):
         if not self.is_dir():
             raise
 
-        for item in (
-            self.client.list_files(self.as_posix(), refresh=True).data.content or []
-        ):
+        for item in self.client.dict_files_items(
+            self.as_posix(), refresh=True
+        ).values():
             _ = self.joinpath(item.name)
             _.set_stat(item)
             yield _
@@ -244,7 +245,7 @@ class AlistPath(PureAlistPath):
 
         _res = self.client.upload_file_put(data, self.as_posix(), as_task=as_task)
         if _res.code == 200:
-            return self.stat()
+            return self.re_stat()
         raise AlistError()
 
     def mkdir(self, parents=False, exist_ok=False):

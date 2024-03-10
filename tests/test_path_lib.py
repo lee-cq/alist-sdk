@@ -51,7 +51,11 @@ class TestAlistPath:
         )
         DATA_DIR.joinpath("test.txt").write_text("123")
 
+    def setup_method(self):
+        self.client._cached_path_list = {}
+
     def test_read_text(self):
+        DATA_DIR.joinpath("test.txt").write_text("123")
         path = AlistPath("http://localhost:5245/local/test.txt")
         assert path.read_text() == "123"
 
@@ -68,7 +72,6 @@ class TestAlistPath:
         path = AlistPath("http://localhost:5245/local/test_write_bytes.txt")
         path.write_bytes(b"123")
         assert DATA_DIR.joinpath("test_write_bytes.txt").read_bytes() == b"123"
-
 
     def test_mkdir(self):
         path = AlistPath("http://localhost:5245/local/test_mkdir")

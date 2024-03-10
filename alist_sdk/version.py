@@ -48,8 +48,13 @@
     6. UPDATE: 更新AlistPath.stat，不再使用/api/fs/get 接口
     7. UPDATE: 限制alist_sdk.Client 和 alist_sdk.AsyncClient在多线程和协程中的并发量，默认30.
 
+
+0.32.12:
+    1. 添加Client.dict_files_items方法，以获取目录下的文件列表。
+    2. 解决AListPath使用URL编码问题，现在可以正常使用中文路径。
+    3. 修复AlistPath.stat() & AlistPath.raw_stat() 的缓存问题。
 """
 
-__version__ = "0.30.11"
+__version__ = "0.32.12a3"
 
 ALIST_VERSION = "v3.32.0"

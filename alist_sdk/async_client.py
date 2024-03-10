@@ -55,7 +55,9 @@ class AsyncClientBase(HttpClient):
         """验证登陆状态,"""
         me = (await self.get("/api/me")).json()
         if me.get("code") != 200:
-            logger.error("异步客户端登陆失败[%d], %s", me.get("code"), me.get("message"))
+            logger.error(
+                "异步客户端登陆失败[%d], %s", me.get("code"), me.get("message")
+            )
             return False
 
         username = me["data"].get("username")
@@ -328,11 +330,7 @@ class _AsyncFS(AsyncClientBase):
             json={
                 "src_dir": str(src_dir),
                 "dst_dir": str(dst_dir),
-                "names": [
-                    files,
-                ]
-                if isinstance(files, str)
-                else files,
+                "names": [files] if isinstance(files, str) else files,
             },
         )
 
@@ -494,4 +492,33 @@ class AsyncClient(
     _AsyncAdminStorage,
     _AsyncAdminUser,
 ):
-    pass
+    _cached_path_list = dict()
+    _succeed_cache = 0
+
+    async def dict_files_items(
+        self,
+        path: str | PurePosixPath,
+        password="",
+        refresh=False,
+    ) -> dict[str, Item]:
+        """列出文件目录"""
+        path = str(path)
+        if refresh:
+            self._cached_path_list.pop(path, None)
+
+        if path in self._cached_path_list:
+            self._succeed_cache += 1
+            logger.debug("缓存命中[times: %d]: %s", self._succeed_cache, path)
+            return self._cached_path_list[path]
+
+        if len(self._cached_path_list) >= 10000:
+            self._cached_path_list.pop(0)  # Python 3中的字典是按照插入顺序保存的
+
+        logger.debug("缓存未命中: %s", path)
+        _res = await self.list_files(path, password, refresh=True)
+        if _res.code == 200:
+            _ = {d.name: d for d in _res.data.content or []}
+            if _:  # 有数据才缓存
+                self._cached_path_list[path] = _
+            return _
+        return {}

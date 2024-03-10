@@ -509,22 +509,34 @@ class Client(
     _SyncAdminTask,
 ):
     _cached_path_list = dict()
+    _succeed_cache = 0
 
-    def dict_files_item(self, path: str | PurePosixPath, password="", refresh=False):
+    def dict_files_items(
+        self,
+        path: str | PurePosixPath,
+        password="",
+        refresh=False,
+        cache_empty=False,
+    ) -> dict[str, Item]:
         """列出文件目录"""
-
-        def _dict_files(_path: str | PurePosixPath, _password="") -> dict[str, Item]:
-            _res = self.list_files(_path, _password, refresh=True)
-            if _res.code == 200:
-                _ = {d.name: d for d in _res.data.content or []}
-                self._cached_path_list[_path] = _
-                return _
-            return {}
-
         path = str(path)
         if refresh:
             self._cached_path_list.pop(path, None)
-        if len(self._cached_path_list) >= 100:
+
+        if path in self._cached_path_list:
+            if not self._cached_path_list[path] or cache_empty:
+                self._succeed_cache += 1
+                logger.debug("缓存命中[times: %d]: %s", self._succeed_cache, path)
+                return self._cached_path_list[path]
+
+        if len(self._cached_path_list) >= 10000:
             self._cached_path_list.pop(0)  # Python 3中的字典是按照插入顺序保存的
 
-        return self._cached_path_list.get(path, _dict_files(path, password))
+        logger.debug("缓存未命中: %s", path)
+        _res = self.list_files(path, password, refresh=True)
+        if _res.code == 200:
+            _ = {d.name: d for d in _res.data.content or []}
+            if _ or cache_empty:  # 有数据才缓存
+                self._cached_path_list[path] = _
+            return _
+        return {}

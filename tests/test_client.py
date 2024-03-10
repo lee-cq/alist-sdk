@@ -95,8 +95,10 @@ class TestSyncClient:
     def run(self, func, *args, **kwargs):
         print("run", func.__name__, end=": ")
         res = func(*args, **kwargs)
-        res: models.Resp
-        print("RESP: ", res.model_dump_json())
+        if isinstance(res, models.Resp):
+            print("RESP: ", res.model_dump_json())
+        else:
+            print(res)
         return res
 
     def test_login(self):
@@ -158,6 +160,16 @@ class TestSyncClient:
         assert res.code == 200
         assert isinstance(res.data, models.ListItem)
         assert isinstance(res.data.content[0], models.Item)
+
+    def test_dict_list_dir(self):
+        DATA_DIR.joinpath("test_list_dir_dir").mkdir()
+        DATA_DIR.joinpath("test_list_dir_file").write_text("test")
+        res = self.run(
+            self.client.dict_files_items,
+            "/local",
+        )
+        assert isinstance(res, dict)
+        assert len(res) == 2
 
     def test_list_dir_null(self):
         DATA_DIR.joinpath("test_list_dir_null").mkdir()
