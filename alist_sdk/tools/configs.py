@@ -48,7 +48,7 @@ def import_configs_from_dict(client: Client, configs: dict):
         else:
             for v in vs:
                 v: dict
-                if k == "storages" and v.get("drive", "") == "Local":
+                if k == "storages" and v.get("driver", "") == "Local":
                     continue
                 v.pop("id", None)
                 res = client.verify_request("POST", apis[k], json=v)
