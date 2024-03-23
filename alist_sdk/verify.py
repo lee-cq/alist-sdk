@@ -62,10 +62,7 @@ class Verify:
         self.locals.update(local_s)
         self.request = res.request
         url = res.request.url.path
-        logger.debug(
-            f"收到响应: {url}[{res.status_code}]\n "
-            f"{json.dumps(res.text, indent=2, ensure_ascii=False)}"
-        )
+        logger.debug(f"收到响应: {url}[{res.status_code}]  {res.text}")
         try:
             res_dict = res.json()
             resp = Resp.model_validate(res_dict)
@@ -89,7 +86,7 @@ class Verify:
                 f">>> {local_s = }\n"
                 f"========= Request End =========\n"
                 f"<<< {res_headers}\n\n"
-                f"{res.text} \n"
+                f"{json.dumps(res.json(), indent=2, ensure_ascii=False)} \n"
                 f"========= Resp End =========",
             )
             raise _e

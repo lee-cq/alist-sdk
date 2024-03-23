@@ -55,8 +55,9 @@
     3. 修复AlistPath.stat() & AlistPath.raw_stat() 的缓存问题。
     4. 修复tools.config.import_configs_from_dict无法忽略本地存储的错误。
     5. Client Put AsTask 修复
+    6. Verify 日志优化
 """
 
-__version__ = "0.32.12a5"
+__version__ = "0.32.12a6"
 
 ALIST_VERSION = "v3.32.0"
