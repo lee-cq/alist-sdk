@@ -29,6 +29,8 @@ __all__ = [
     "SearchItem",
     "Me",
     "Task",
+    "ListTask",
+    "AsTask",
     "Resp",
     "HashInfo",
     "NoneType",
@@ -57,7 +59,13 @@ TaskTypeModify = Literal[
 ]
 TaskStateModify = Literal[0, 1, 2, 3, 4, 5, 6, 7]
 TaskStatusModify = Literal[
-    "", "waiting", "running", "success", "failed", "getting src object"
+    "",
+    "waiting",
+    "running",
+    "success",
+    "failed",
+    "getting src object",
+    "uploading",
 ]
 
 OrderDirectionModify = Literal["", "asc", "desc"]
@@ -175,6 +183,12 @@ class Task(_BaseModel):
     error: str  # 错误信息
 
 
+class AsTask(_BaseModel):
+    """/api/fs/put .headers"""
+
+    task: Task
+
+
 class ListTask(_BaseModel):
     tasks: list[Task]
 
@@ -267,5 +281,6 @@ class Resp(_BaseModel):
         | RawItem
         | ListTask
         | list[Task]
+        | AsTask
         | ID
     )

@@ -851,5 +851,6 @@
         ]
       }
     }
-  ]
+  ],
+  ["/api/fs/put", "AsTask", {"code":200,"message":"success","data":{"task":{"id":"GWoiexFvPJmJAWwnG0I71","name":"upload Python3810.zip to [/alist-sync](/)","state":0,"status":"uploading","progress":0,"error":""}}} ]
 ]

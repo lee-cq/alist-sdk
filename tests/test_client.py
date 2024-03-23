@@ -150,6 +150,17 @@ class TestSyncClient:
         assert res.code == 200
         assert alist_data_path.exists()
 
+    def test_upload_put_as_task(self):
+        alist_full_name = "/local/upload_file_form_data_task"
+        alist_data_path = DATA_DIR.joinpath("upload_file_form_data_task")
+
+        res = self.run(
+            self.client.upload_file_put, __file__, alist_full_name, as_task=True
+        )
+        assert res.code == 200
+        time.sleep(2)
+        assert alist_data_path.exists()
+
     def test_list_dir(self):
         DATA_DIR.joinpath("test_list_dir_dir").mkdir()
         DATA_DIR.joinpath("test_list_dir_file").write_text("test")

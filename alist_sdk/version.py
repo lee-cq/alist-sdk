@@ -54,8 +54,9 @@
     2. 解决AListPath使用URL编码问题，现在可以正常使用中文路径。
     3. 修复AlistPath.stat() & AlistPath.raw_stat() 的缓存问题。
     4. 修复tools.config.import_configs_from_dict无法忽略本地存储的错误。
+    5. Client Put AsTask 修复
 """
 
-__version__ = "0.32.12a4"
+__version__ = "0.32.12a5"
 
 ALIST_VERSION = "v3.32.0"
