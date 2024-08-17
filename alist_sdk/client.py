@@ -12,6 +12,7 @@ from threading import Semaphore
 from httpx import Client as HttpClient, Response
 from alist_sdk.models import *
 from alist_sdk.verify import verify
+from alist_sdk.err import *
 from alist_sdk.version import __version__
 
 logger = logging.getLogger("alist-sdk.client")
@@ -135,7 +136,7 @@ class _ClientBase(HttpClient):
         if res.status_code == 200 and res.json()["code"] == 200:
             return self.set_token(res.json()["data"]["token"])
         logger.error("登陆失败[%s] %d: %s", self.base_url, res.status_code, res.text)
-        return False
+        raise NotLogin("登陆失败[%s] %d: %s" % (self.base_url, res.status_code, res.text))
 
     # ================ FS 相关方法 =================
 

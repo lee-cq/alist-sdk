@@ -51,6 +51,7 @@ def login_server(
             has_opt=has_opt,
             **kwargs,
         )
+
     else:
         _client = server
     ALIST_SERVER_INFO[_client.server_info] = _client
@@ -104,6 +105,20 @@ class PureAlistPath(PurePosixPath):
 class AlistPath(PureAlistPath):
     """"""
 
+    def __init__(
+        self,
+        *args,
+        username: str = None,
+        password: str = None,
+        token: str = None,
+        **kwargs,
+    ):
+        super().__init__(*args)
+        if username:
+            login_server(
+                self.drive, username=username, password=password, token=token, **kwargs
+            )
+
     @classmethod
     def from_client(cls, client: Client, path: str | PurePosixPath) -> "AlistPath":
         """从客户端实例构造
@@ -133,7 +148,11 @@ class AlistPath(PureAlistPath):
             _server_info = _u.scheme, _u.host, _u.port
             return ALIST_SERVER_INFO[_server_info]
         except KeyError:
-            raise AlistError(f"当前服务器[{self.drive}]尚未登陆")
+            raise AlistError(
+                f"当前服务器[{self.drive}]尚未登陆。\n"
+                f"使用AlistPath.from_client构造。\n"
+                f"或构造AlistPath时传入username等相关信息。"
+            )
 
     # def is_absolute(self) -> bool:
     def get_download_uri(self) -> str:
@@ -147,7 +166,6 @@ class AlistPath(PureAlistPath):
         return self.get_download_uri()
 
     def raw_stat(self, retry=1, timeout=0.1) -> RawItem:
-
         try:
             _raw = self.client.get_item_info(self.as_posix())
             if _raw.code == 200:

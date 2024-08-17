@@ -56,8 +56,13 @@
     4. 修复tools.config.import_configs_from_dict无法忽略本地存储的错误。
     5. Client Put AsTask 修复
     6. Verify 日志优化
+
+0.36.13:
+    1. alist版本支持到3.36.0
+    2. 现在可以使用AlistPath(path, username="", password="", token="")的方式快速登录。
+    3. 登录失败现在抛出异常。
 """
 
-__version__ = "0.32.12a6"
+__version__ = "0.36.13a3"
 
-ALIST_VERSION = "v3.32.0"
+ALIST_VERSION = "v3.36.0"

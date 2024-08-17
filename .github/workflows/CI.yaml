@@ -14,7 +14,7 @@ jobs:
       max-parallel: 3
       matrix:
         python-version: ['3.10', '3.11', '3.12']
-        alist-version: [ '3.30.0', '3.31.0', '3.32.0']
+        alist-version: [ '3.34.0', '3.35.0', '3.36.0']
       fail-fast: false
 
     steps:
