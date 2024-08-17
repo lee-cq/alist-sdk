@@ -113,7 +113,7 @@ class Item(BaseModel):
     hashinfo: Optional[str] = "null"  # v3.29.0
     hash_info: Optional[HashInfo | None] = None  # v3.29.0
     modified: datetime.datetime  # 修改时间
-    created: Optional[datetime.datetime]  # v3.29.0 创建时间
+    created: Optional[datetime.datetime] = None  # v3.29.0 创建时间
     sign: str  # 签名
     thumb: str  # 缩略图
     type: int  # 类型
@@ -154,7 +154,7 @@ class Me(_BaseModel):
     disabled: bool
     permission: int
     sso_id: str | None
-    otp: Optional[bool]
+    otp: Optional[bool] = False
 
 
 class Task(_BaseModel):
