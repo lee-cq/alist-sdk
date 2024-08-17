@@ -61,8 +61,9 @@
     1. alist版本支持到3.36.0
     2. 现在可以使用AlistPath(path, username="", password="", token="")的方式快速登录。
     3. 登录失败现在抛出异常。
+    4. #3 Bugfix 为models中的全部可选字段添加默认值。
 """
 
-__version__ = "0.36.13a3"
+__version__ = "0.36.13a4"
 
 ALIST_VERSION = "v3.36.0"
