@@ -42,7 +42,7 @@
 0.30.11:
     1. BUGFIX: 从其他站点导入配置时，数据模型错误。
     2. BUGFIX: http://localhost:5244 无法正常识别
-    3. UPDATE: 更新AplistPath.__repl__方法.
+    3. UPDATE: 更新AlistPath.__repl__方法.
     4. UPDATE: 更新AlistPath.添加新的方法 set_stat，可以自定义设置stat属性，加快速度。
     5. UPDATE: 更新AlistPath.iterdir，在迭代时添加stat数据，加快速度。
     6. UPDATE: 更新AlistPath.stat，不再使用/api/fs/get 接口
@@ -62,8 +62,14 @@
     2. 现在可以使用AlistPath(path, username="", password="", token="")的方式快速登录。
     3. 登录失败现在抛出异常。
     4. #3 Bugfix 为models中的全部可选字段添加默认值。
+
+0.36.14:
+    1. Client API 现在增加属性获取服务端版本: client.server_version
+    2. 异步客户端添加 client.login_username 属性。
+    3. 移除为保持兼容的 alist_sdk.path_lib_old.py 文件
+    4. 添加测试
 """
 
-__version__ = "0.36.13a4"
+__version__ = "0.36.14a4"
 
 ALIST_VERSION = "v3.36.0"

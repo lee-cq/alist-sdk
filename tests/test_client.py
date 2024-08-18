@@ -388,6 +388,12 @@ class TestSyncClient:
         res = self.run(self.client.admin_meta_list)
         assert res.code == 200
 
+    def test_server_version(self):
+        assert self.client.service_version[0] == 3
+
+    def test_login_user(self):
+        assert self.client.login_username == "admin"
+
 
 class TestAsyncClient(TestSyncClient):
     @property
@@ -400,3 +406,9 @@ class TestAsyncClient(TestSyncClient):
 
     def test_async_client(self):
         assert isinstance(self.client, AsyncClient)
+
+    def test_server_version(self):
+        assert asyncio.run(self.client.service_version)[0] == 3
+
+    def test_login_user(self):
+        assert asyncio.run(self.client.login_username) == "admin"

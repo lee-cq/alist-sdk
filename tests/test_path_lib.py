@@ -1,4 +1,6 @@
 # 测试 path_lib.py
+import time
+
 import pytest
 
 from alist_sdk.path_lib import PureAlistPath, AlistPath, login_server
@@ -54,6 +56,10 @@ class TestAlistPath:
     def setup_method(self):
         self.client._cached_path_list = {}
 
+    def test_login(self):
+        _c = AlistPath("http://localhost:5245/", username="admin", password="123456")
+        assert _c.is_dir()
+
     def test_read_text(self):
         DATA_DIR.joinpath("test.txt").write_text("123")
         path = AlistPath("http://localhost:5245/local/test.txt")
@@ -74,9 +80,10 @@ class TestAlistPath:
         assert DATA_DIR.joinpath("test_write_bytes.txt").read_bytes() == b"123"
 
     def test_mkdir(self):
-        path = AlistPath("http://localhost:5245/local/test_mkdir")
+        dir_name = f"test_mkdir_{int(time.time())}"
+        path = AlistPath(f"http://localhost:5245/local/{dir_name}")
         path.mkdir()
-        assert DATA_DIR.joinpath("test_mkdir").is_dir()
+        assert DATA_DIR.joinpath(dir_name).is_dir()
 
     def test_touch(self):
         path = AlistPath("http://localhost:5245/local/test_touch.txt")

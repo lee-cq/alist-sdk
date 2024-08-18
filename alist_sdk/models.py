@@ -201,7 +201,7 @@ class Setting(_BaseModel):
     """/api/admin/setting/list .data.[]"""
 
     key: str
-    value: Any
+    value: str
     help: str  # 帮助信息
     type: str  # TODO 类型指导
     options: str

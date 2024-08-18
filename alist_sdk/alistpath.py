@@ -14,6 +14,8 @@ from posixpath import *
 
 __all__ = [*posixpath.__all__, "splitroot"]
 
+_ = sep  # 解决IDE报错：未使用的导入
+
 
 def splitroot(p):
     """Split a pathname into drive, root and tail. On Posix, drive is always

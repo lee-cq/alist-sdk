@@ -224,6 +224,9 @@ class _SyncFs(_ClientBase):
             "/api/fs/get", json={"path": path, "password": password}
         )
 
+    def fs_get(self, path: str | PurePosixPath, password=None):
+        return self.get_item_info(path, password)
+
     @verify()
     def search(
         self,
@@ -500,6 +503,15 @@ class _SyncAdminSetting(_ClientBase):
         query = {"group": group} if group else {}
         return locals(), self.get("/api/admin/setting/list", params=query)
 
+    @cached_property
+    def service_version(self) -> tuple:
+        """返回服务器版本元组 (int, int, int)"""
+        settings: list[Setting] = self.admin_setting_list(group=1).data
+        for s in settings:
+            if s.key == "version":
+                return tuple(map(int, s.value.strip("v").split(".", 2)))
+        raise ValueError("无法获取服务端版本")
+
 
 class Client(
     _SyncFs,
@@ -530,7 +542,7 @@ class Client(
                 logger.debug("缓存命中[times: %d]: %s", self._succeed_cache, path)
                 return self._cached_path_list[path]
 
-        if len(self._cached_path_list) >= 10000:
+        if len(self._cached_path_list) >= 1000:
             self._cached_path_list.pop(0)  # Python 3中的字典是按照插入顺序保存的
 
         logger.debug("缓存未命中: %s", path)

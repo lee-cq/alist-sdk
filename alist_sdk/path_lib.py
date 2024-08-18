@@ -13,7 +13,9 @@ from pydantic import BaseModel
 from pydantic.json_schema import JsonSchemaValue
 from pydantic_core import core_schema
 
-from alist_sdk import alistpath, Item, AlistError, RawItem
+from alist_sdk import alistpath
+from alist_sdk.models import Item, RawItem
+from alist_sdk.err import AlistError
 from alist_sdk.py312_pathlib import PurePosixPath
 from alist_sdk.client import Client
 
@@ -186,7 +188,12 @@ class AlistPath(PureAlistPath):
 
     def stat(self) -> Item | RawItem:
         def f_stat() -> Item | RawItem:
-            _r = self.client.dict_files_items(self.parent.as_posix()).get(self.name)
+            _r = (
+                self.client.get_item_info(self.as_posix()).data
+                if self.as_posix() == "/"
+                else self.client.dict_files_items(self.parent.as_posix()).get(self.name)
+            )
+
             if not _r:
                 raise FileNotFoundError(f"文件不存在: {self.as_posix()} ")
             self.set_stat(_r)

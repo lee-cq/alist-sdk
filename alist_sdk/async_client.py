@@ -2,6 +2,7 @@ import asyncio
 import logging
 import time
 import urllib.parse
+from functools import cached_property
 from pathlib import Path, PurePosixPath
 
 from httpx import AsyncClient as HttpClient, Response
@@ -55,9 +56,7 @@ class AsyncClientBase(HttpClient):
         """验证登陆状态,"""
         me = (await self.get("/api/me")).json()
         if me.get("code") != 200:
-            logger.error(
-                "异步客户端登陆失败[%d], %s", me.get("code"), me.get("message")
-            )
+            logger.error("异步客户端登陆失败[%d], %s", me.get("code"), me.get("message"))
             return False
 
         username = me["data"].get("username")
@@ -131,6 +130,10 @@ class AsyncClientBase(HttpClient):
             return await self.set_token(res.json()["data"]["token"])
         logger.warning("登陆失败[%d]：%s", res.status_code, res.text)
         return False
+
+    @cached_property
+    async def login_username(self):
+        return (await self.me()).data.username
 
     # ================ FS 相关方法 =================
 
@@ -482,6 +485,15 @@ class _AsyncAdminSettings(AsyncClientBase):
 
         query = {"group": group} if group else {}
         return locals(), await self.get("/api/admin/setting/list", params=query)
+
+    @cached_property
+    async def service_version(self) -> tuple:
+        """返回服务器版本元组 (int, int, int)"""
+        settings: list[Setting] = (await self.admin_setting_list(group=1)).data
+        for s in settings:
+            if s.key == "version":
+                return tuple(map(int, s.value.strip("v").split(".", 2)))
+        raise ValueError("无法获取服务端版本")
 
 
 class AsyncClient(
