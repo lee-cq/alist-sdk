@@ -212,7 +212,7 @@ class AlistPath(PureAlistPath):
     def re_stat(self, retry=2, timeout=1) -> Item:
         if hasattr(self, "_stat"):
             delattr(self, "_stat")
-        self.client.list_files(self.parent.as_posix(), per_page=1, refresh=True)
+        # self.client.list_files(self.parent.as_posix(), per_page=1, refresh=True)
         return self.raw_stat(retry=retry, timeout=timeout)
 
     def is_dir(self):

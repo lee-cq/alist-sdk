@@ -68,8 +68,10 @@
     2. 异步客户端添加 client.login_username 属性。
     3. 移除为保持兼容的 alist_sdk.path_lib_old.py 文件
     4. 添加测试
+    5. TaskStateModify添加新的状态8
+    6. AlistPath.re_stat()移除list_file调用。
 """
 
-__version__ = "0.36.14a4"
+__version__ = "0.36.14a6"
 
 ALIST_VERSION = "v3.36.0"
