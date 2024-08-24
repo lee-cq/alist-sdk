@@ -2,7 +2,7 @@ import datetime
 import logging
 import os
 from pathlib import PurePosixPath
-from typing import Optional, Literal, Any
+from typing import Optional, Literal
 
 from pydantic import (
     BaseModel as _BaseModel,
@@ -57,6 +57,7 @@ TaskTypeModify = Literal[
     "offline_download",
     "offline_download_transfer",
 ]
+# 0- 等待 1- 正在运行 2- 成功 3- 失败 4- 获取源对象 5- 上传中  7- 已取消 8- 重试中
 TaskStateModify = Literal[0, 1, 2, 3, 4, 5, 6, 7, 8]
 TaskStatusModify = Literal[
     "",

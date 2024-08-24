@@ -62,7 +62,13 @@ class Verify:
         self.locals.update(local_s)
         self.request = res.request
         url = res.request.url.path
-        logger.debug(f"收到响应: {url}[{res.status_code}]  {res.text}")
+        args = "\n>>>".join(f"{k}: {v}" for k, v in self.locals.items() if k != "data")
+        logger.debug(
+            f">>> 响应详情: [{self.request.method}] {url}\n"
+            f">>> {args}\n"
+            f"<<<[{res.status_code}]\n"
+            f"<<<{res.text}"
+        )
         try:
             res_dict = res.json()
             resp = Resp.model_validate(res_dict)

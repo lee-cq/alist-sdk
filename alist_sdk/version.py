@@ -70,8 +70,12 @@
     4. 添加测试
     5. TaskStateModify添加新的状态8
     6. AlistPath.re_stat()移除list_file调用。
+
+0.36.15:
+    1. 实现CLI命令行工具 alist-cli，可以快速登录、列出文件
+    2. 细节日志优化
 """
 
-__version__ = "0.36.14a6"
+__version__ = "0.36.15-a2"
 
 ALIST_VERSION = "v3.36.0"
