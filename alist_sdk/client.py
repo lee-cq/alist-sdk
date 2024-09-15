@@ -31,6 +31,7 @@ class _ClientBase(HttpClient):
         max_connect=30,
         **kwargs,
     ):
+        kwargs.setdefault("timeout", 30)
         super().__init__(**kwargs)
         self.base_url = base_url
         self.headers.setdefault("User-Agent", f"Alist-SDK/{__version__}")
