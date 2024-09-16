@@ -28,9 +28,9 @@ def logout(host: str):
 def list_auth(token: bool = typer.Option(False, "--token", "-t", help="显示token")):
     """列出所有已登录的host"""
     if token:
-        las = "\n".join(f"{host}: {_t}" for host, _t in cnf.auth.items())
+        las = "\n".join(f"{host}: {_t}" for host, _t in cnf.auth_data.items())
     else:
-        las = "\n".join(host for host in cnf.auth.keys())
+        las = "\n".join(host for host in cnf.auth_data.keys())
     if not las:
         typer.echo("未登录到任何AlistServer")
         return

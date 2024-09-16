@@ -5,9 +5,10 @@ cd "$(dirname "$0")" || exit
 mkdir -p alist
 cd alist || exit
 
-alist_version=${ALIST_VERSION:-"3.30.0"}
+alist_version=${ALIST_VERSION:-"3.37.2"}
 
 if [ ! -f alist ]; then
+    rm -rf alist-linux-amd64.tar.gz
     echo "Install Alist Version: ${alist_version}."
     wget -q "https://github.com/alist-org/alist/releases/download/v${alist_version}/alist-linux-amd64.tar.gz"
     tar xzvf alist-linux-amd64.tar.gz

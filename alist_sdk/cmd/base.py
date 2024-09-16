@@ -5,6 +5,7 @@
 @Author     : LeeCQ
 @Date-Time  : 2024/9/15 22:47
 """
+import hashlib
 import time
 from pathlib import Path
 
@@ -16,6 +17,7 @@ from alist_sdk import Client, login_server, AlistPath
 text_types = "txt,htm,html,xml,java,properties,sql,js,md,json,conf,ini,vue,php,py,bat,gitignore,yml,go,sh,c,cpp,h,hpp,tsx,vtt,srt,ass,rs,lrc,yaml"
 
 CMD_BASE_PATH = ""
+CONFIG_FILE_PATH = Path.home().joinpath(".config", "alist_cli.json")
 
 
 def beautify_size(byte_size: float):
@@ -31,25 +33,14 @@ def beautify_size(byte_size: float):
     return f"{byte_size:.2f}GB"
 
 
-def xor_encrypt(s: str, key: str) -> str:
+def xor(s: str, key: str) -> str:
     """
-    字符串的亦或加密
-    :param s: 待加密的字符串
-    :param key: 加密密钥
-    :return: 加密后的字符串
+    字符串的亦或加密/解密
+    :param s: 待加密/解密的字符串
+    :param key: 加密/解密密钥
+    :return: 加密/解密后的字符串
     """
-    return "".join(
-        [chr(ord(c) ^ ord(k)) for c, k in zip(s, key * (len(s) // len(key) + 1))]
-    )
-
-
-def xor_decrypt(s: str, key: str) -> str:
-    """
-    字符串的亦或解密
-    :param s: 待解密的字符串
-    :param key: 加密密钥
-    :return: 解密后的字符串
-    """
+    key = hashlib.md5(key.encode("utf-8")).hexdigest()
     return "".join(
         [chr(ord(c) ^ ord(k)) for c, k in zip(s, key * (len(s) // len(key) + 1))]
     )
@@ -64,33 +55,41 @@ class Auth(BaseModel):
 
 
 class CmdConfig(BaseModel):
-    auth: dict[str, Auth] = {}
+    auth_data: dict[str, Auth] = {}
     base_path: dict[str, str] = {}
 
     @classmethod
     def load_config(cls):
         """加载配置"""
 
-        config_file = Path.home().joinpath(".config", "alist_cli.json")
-        if not config_file.exists():
+        if not CONFIG_FILE_PATH.exists():
             return cls()
         try:
+            typer.echo(f"load config from {CONFIG_FILE_PATH}")
             return cls.model_validate_json(
-                xor_decrypt(config_file.read_text(), str(config_file))
+                xor(
+                    CONFIG_FILE_PATH.read_bytes().decode("utf-8"),
+                    CONFIG_FILE_PATH.as_posix(),
+                )
             )
         except Exception as e:
             typer.echo(f"load config failed, {e}")
-            wait_info = f"Do you want to remove the config file[{config_file}]? (y/n)"
+            wait_info = (
+                f"Do you want to remove the config file[{CONFIG_FILE_PATH}]? (y/n)"
+            )
             if input(wait_info).lower() == "y":
-                config_file.unlink()
-                typer.echo(f"remove config file success, {config_file}")
+                CONFIG_FILE_PATH.unlink()
+                typer.echo(f"remove config file success, {CONFIG_FILE_PATH}")
             exit(1)
 
     def save_config(self):
         """保存配置"""
-        Path.home().joinpath(".config").mkdir(parents=True, exist_ok=True)
-        config_file = Path.home().joinpath(".config", "alist_cli.json")
-        config_file.write_text(xor_encrypt(self.model_dump_json(), str(config_file)))
+        CONFIG_FILE_PATH.parent.mkdir(parents=True, exist_ok=True)
+
+        print(f"save config to {self.model_dump_json()}")
+        CONFIG_FILE_PATH.write_bytes(
+            xor(self.model_dump_json(), CONFIG_FILE_PATH.as_posix()).encode("utf-8"),
+        )
 
     def add_auth(
         self,
@@ -111,7 +110,7 @@ class CmdConfig(BaseModel):
                 typer.echo(f"login failed, {e}")
                 return
 
-        self.auth[host] = Auth(
+        self.auth_data[host] = Auth(
             host=host,
             token=token,
             username=username,
@@ -119,25 +118,25 @@ class CmdConfig(BaseModel):
             last_login=int(time.time()),
         )
         self.save_config()
-        typer.echo(f"login success, token: {self.auth[host].token}")
+        typer.echo(f"login success, token: {self.auth_data[host].token}")
 
     def remove_auth(self, host: str):
         host = host.strip("/")
-        if host not in self.auth:
+        if host not in self.auth_data:
             typer.echo(f"host {host} not found in auth data")
             return
-        del self.auth[host]
+        del self.auth_data[host]
         self.save_config()
         typer.echo(f"logout success, host: {host}")
 
     def get_client(self, host: str):
         host = host.strip("/")
-        if host not in self.auth:
+        if host not in self.auth_data:
             raise ValueError(f"host {host} not found in auth data")
-        t_info = self.auth[host]
+        t_info = self.auth_data[host]
         if int(time.time()) - t_info.last_login > 3600 * 24:
-            self.add_auth(host, t_info.username, t_info.password, t_info.token)
-        return login_server(host, token=self.auth[host])
+            self.add_auth(host, t_info.username, t_info.password)
+        return login_server(host, token=self.auth_data[host].token)
 
     def set_base_path(self, base_path: str, name: str = ""):
         self.base_path[name] = base_path

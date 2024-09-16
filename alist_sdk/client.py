@@ -505,12 +505,15 @@ class _SyncAdminSetting(_ClientBase):
         return locals(), self.get("/api/admin/setting/list", params=query)
 
     @cached_property
-    def service_version(self) -> tuple:
+    def service_version(self) -> tuple | str:
         """返回服务器版本元组 (int, int, int)"""
         settings: list[Setting] = self.admin_setting_list(group=1).data
         for s in settings:
             if s.key == "version":
-                return tuple(map(int, s.value.strip("v").split(".", 2)))
+                v = s.value.strip("v")
+                if "beta" in s.value:
+                    return v
+                return tuple(map(int, v.split(".", 2)))
         raise ValueError("无法获取服务端版本")
 
 

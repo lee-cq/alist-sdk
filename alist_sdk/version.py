@@ -79,6 +79,10 @@
     5. 在pyproject.toml中为alist-cli提供命令行入口。
     6. 实现更多命令行工具，上传、下载、删除、创建目录, 打印文本文件。
     7. 在README中添加CLI命令行工具的使用说明。
+    8. 对保存在本地的配置文件进行加密存储。
+    9. 添加CLI命令 - version, server-version
+    10. 解决新版本的alist中 Client.service_version 返回Beta版本的问题。
+    11. init_alist.sh 现在默认安装3.27.2版本。
 """
 
 __version__ = "0.37.15"

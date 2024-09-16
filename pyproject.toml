@@ -8,7 +8,7 @@ authors = [{ name = "LeeCQ", email = "lcq@leecq.cn" }]
 description = "Alist API 简单封装."
 readme = "README.md"
 requires-python = ">=3.10"
-dependencies = ["httpx>=0.25.1", "pydantic>=2.5.1"]
+dependencies = ["httpx>=0.25.1", "pydantic>=2.5.1", "typer>=0.12.5"]
 dynamic = ["version"]
 
 classifiers = [
