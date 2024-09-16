@@ -64,7 +64,10 @@ class PureAlistPath(PurePosixPath):
     _flavour = alistpath
 
     def __repr__(self):
-        return "{}({!r})".format(self.__class__.__name__, self.as_uri())
+        return "{}({!r})".format(
+            self.__class__.__name__,
+            self.as_uri() if self.is_absolute() else self.as_posix(),
+        )
 
     def is_absolute(self):
         """True if the path is absolute (has both a root and, if applicable,

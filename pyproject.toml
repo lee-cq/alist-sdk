@@ -25,8 +25,12 @@ classifiers = [
 Homepage = "https://github.com/lee-cq/alist-sdk"
 Issues = "https://github.com/lee-cq/alist-sdk/issues"
 
+[project.scripts]
+alist-cli = "alist_sdk.cmd.app:app"
+alist-fs = "alist_sdk.cmd.fs:fs"
+
 [tool.setuptools]
-packages = ["alist_sdk", "alist_sdk.tools"]
+packages = ["alist_sdk", "alist_sdk.tools", "alist_sdk.cmd"]
 
 [tool.setuptools.dynamic]
 version = { attr = "alist_sdk.version.__version__" }
