@@ -78,8 +78,9 @@
     4. 修复AlistPath.__repl__ 在相对目录时报错的问题。
     5. 在pyproject.toml中为alist-cli提供命令行入口。
     6. 实现更多命令行工具，上传、下载、删除、创建目录, 打印文本文件。
+    7. 在README中添加CLI命令行工具的使用说明。
 """
 
-__version__ = "0.36.15-a6"
+__version__ = "0.37.15"
 
 ALIST_VERSION = "v3.37.2"
