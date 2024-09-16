@@ -83,8 +83,12 @@
     9. 添加CLI命令 - version, server-version
     10. 解决新版本的alist中 Client.service_version 返回Beta版本的问题。
     11. init_alist.sh 现在默认安装3.27.2版本。
+
+0.37.16:
+    1. 添加MIT License
+    2. Pyproject.toml 标记为 3 - Alpha
 """
 
-__version__ = "0.37.15"
+__version__ = "0.37.16-a2"
 
 ALIST_VERSION = "v3.37.2"
