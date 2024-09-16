@@ -1,5 +1,7 @@
 # Alist Sdk
 
+[![Alist SDK - Test](https://github.com/lee-cq/alist-sdk/actions/workflows/CI.yaml/badge.svg)](https://github.com/lee-cq/alist-sdk/actions/workflows/CI.yaml)
+
 Alist API 简单封装
 
 ## [Alist API 文档](https://alist.nn.ci/zh/guide/api/)
