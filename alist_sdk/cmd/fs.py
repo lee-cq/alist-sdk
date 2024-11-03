@@ -31,9 +31,10 @@ def cd(path: str):
     else:
         typer.echo(f"CD Error. {path} -> {_p.as_uri()}", err=True)
 
+
 @fs.command("pwd")
 def pwd():
-    _ = cnf.get_pwd() 
+    _ = cnf.get_pwd()
     typer.echo(f"PWD: {_ if _ != '/' else 'Not Find.'}")
 
 
@@ -66,6 +67,11 @@ def ls(path: str):
 @fs.command("print")
 def fs_read(path: str):
     """读取文件内容"""
+    text_types = (
+        "txt,md,log,conf,ini,yaml,json,xml,csv,tsv,list,lst,sh,bash,zsh,py,"
+        "yaml,yml,java,c,cpp,h,hpp,go,php,js,css,html,jsp,jspx,asp,aspx,cs,"
+        "vb,lua,pl,pm,rb,sql,bat,ps1,psm1,psd1"
+    )
     path = AlistPath(path)
     _text_types = (
         {i.key: i.value for i in path.client.admin_setting_list(3).data}
@@ -96,11 +102,20 @@ def mkdir(
 @fs.command("rm")
 def rm(
     path: str,
-    recursive: bool = typer.Option(False, help="是否递归删除"),
-    force: bool = typer.Option(False, help="是否强制删除"),
+    recursive: bool = typer.Option(False, "-r", help="是否递归删除"),
+    force: bool = typer.Option(False, "-f", help="是否强制删除"),
 ):
-    """删除文件或目录"""
+    """删除文件或目录,"""
     try:
+        path = AlistPath(path)
+        if not recursive and path.is_dir() and len(list(path.iterdir())) != 0:
+            typer.echo(f"{path} 不是空目录，请使用 -r 参数递归删除")
+            return
+        if not force:
+            typer.echo(f"rm {path} ? (y/n)")
+            if input().lower() not in ["y", "yes"]:
+                return
+
         AlistPath(path).unlink(missing_ok=True)
     except Exception as e:
         typer.echo(f"rm error: {e}")
