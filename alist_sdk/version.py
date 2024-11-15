@@ -87,6 +87,10 @@
 0.37.16:
     1. 添加MIT License
     2. Pyproject.toml 标记为 3 - Alpha
+
+0.38.16:
+    1. alist 支持到 3.38.0
+
 """
 
 __version__ = "0.37.16-a2"

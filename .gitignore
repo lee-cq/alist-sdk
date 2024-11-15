@@ -1,6 +1,7 @@
 /db.sqlite3-
 __pycache__/
 .idea/
+auth.json
 alist/
 test/alist/
 # Byte-compiled / optimized / DLL files
