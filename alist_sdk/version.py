@@ -92,10 +92,12 @@
     1. alist 支持到 3.38.0
 
 0.39.17:
-    1. alist 支持到 3.39.1
+    1. alist 支持到 3.39.4
     2. cmd.fs.rm 现在支持递归、确认。
+
+
 """
 
 __version__ = "0.39.17"
 
-ALIST_VERSION = "v3.39.1"
+ALIST_VERSION = "v3.39.4"
