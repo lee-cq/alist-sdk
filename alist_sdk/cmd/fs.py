@@ -5,33 +5,60 @@
 @Author     : LeeCQ
 @Date-Time  : 2024/9/15 22:47
 """
+from datetime import datetime
 import subprocess
 from pathlib import Path
 
 import typer
 
 from alist_sdk import AlistPath
-from alist_sdk.cmd.base import beautify_size, text_types
+from alist_sdk.cmd.base import beautify_size, CmdPath, cnf
 
 fs = typer.Typer(name="fs", help="文件系统相关操作")
 
 
+@fs.command("cd")
+def cd(path: str):
+    """设置一个pwd"""
+    if path.startswith("./"):
+        _p: AlistPath = CmdPath("//" + path)
+    else:
+        _p: AlistPath = CmdPath(path)
+
+    if isinstance(_p, AlistPath) and _p.exists():
+        cnf.set_pwd(_p.as_uri())
+        typer.echo(f"cd {path} succeed. [{_p.as_uri()}]")
+    else:
+        typer.echo(f"CD Error. {path} -> {_p.as_uri()}", err=True)
+
+@fs.command("pwd")
+def pwd():
+    _ = cnf.get_pwd() 
+    typer.echo(f"PWD: {_ if _ != '/' else 'Not Find.'}")
+
+
 @fs.command("ls")
-def ls(
-    path: str,
-):
+def ls(path: str):
     """列出文件系统"""
-    path = AlistPath(path)
-    ls = path.iterdir() if path.is_dir() else [path]
-    # type, size, modify_time, name
+    path: AlistPath | Path = CmdPath(path)
     total_size = 0
-    for p in ls:
-        total_size += p.stat().size
+    is_remote = isinstance(path, AlistPath)
+    print(type(path), path)
+    # type, size, modify_time, name
+    for p in path.iterdir() if path.is_dir() else [path]:
+        f_size = p.stat().st_size if is_remote or p.is_file() else 0
+        total_size += f_size
         p_type = "dir" if p.is_dir() else "file"
+
+        p_mtime = (
+            p.stat().modified
+            if is_remote
+            else datetime.fromtimestamp(p.stat().st_mtime)
+        )
         typer.echo(
             f"{p_type:<8}"
-            f"{beautify_size(p.stat().size):<10}"
-            f"{p.stat().modified.strftime('%Y-%m-%d %H:%M:%S'):<20} {p.name}"
+            f"{beautify_size(f_size):<10}"
+            f"{p_mtime.strftime('%Y-%m-%d %H:%M:%S'):<20} {p.name}"
         )
     typer.echo(f"total: {beautify_size(total_size)}")
 

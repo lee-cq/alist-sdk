@@ -73,6 +73,37 @@ OrderDirectionModify = Literal["", "asc", "desc"]
 OrderByModify = Literal["", "size", "name"]
 ExtractFolderModify = Literal["", "front", "back", "none"]
 
+class _Stat:
+    
+    @property
+    def st_mtime(self):
+        return self.modified
+    
+    @property
+    def st_ctime(self):
+        return self.modified
+    
+    @property
+    def st_atime(self):
+        return self.modified
+    
+    @property
+    def st_mode(self):
+        return 0000
+    
+    @property
+    def st_size(self):
+        return self.size
+    
+    @property
+    def st_uid(self):
+        return 0
+    
+    @property
+    def st_gid(self):
+        return 0
+
+
 
 class BaseModel(_BaseModel):
     parent: Optional[str | PurePosixPath | None] = ""
@@ -105,7 +136,7 @@ class HashInfo(_BaseModel):
     sha1: Optional[str] = None
 
 
-class Item(BaseModel):
+class Item(BaseModel, _Stat):
     """文件对象"""
 
     name: str  # 文件名

@@ -13,9 +13,14 @@ auth = typer.Typer(name="auth", help="Authentication commands.")
 
 
 @auth.command("login")
-def login(host: str, username: str, password: str):
+def login(
+    host: str,
+    username: str,
+    password: str,
+    name: str = typer.Option(default="default"),
+):
     """登录, 创建或添加一个更新的token到本地"""
-    cnf.add_auth(host, username=username, password=password)
+    cnf.add_auth(name, host, username=username, password=password)
 
 
 @auth.command("logout")
@@ -40,3 +45,12 @@ def list_auth(token: bool = typer.Option(False, "--token", "-t", help="显示tok
 @auth.command("refresh")
 def refresh_token(host: str = typer.Argument(None, help="更新指定host的token")):
     """刷新token"""
+
+
+@auth.command("pconfig")
+def print_config():
+    for name in cnf.auth_data.keys():
+        cnf.auth_data[name].password = "****"
+        cnf.auth_data[name].token = "*******"
+
+    typer.echo(cnf.model_dump_json(indent=2))
