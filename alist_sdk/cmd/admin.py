@@ -7,4 +7,21 @@
 """
 import typer
 
+from alist_sdk.cmd.base import cnf
+
 admin = typer.Typer(name="admin", help="管理命令")
+
+
+storage = typer.Typer(name="storage", help="存储管理")
+admin.add_typer(storage, name="storage")
+
+
+@storage.command("list")
+def storage_list():
+    """
+    列出存储列表
+    """
+
+    client = cnf.get_client()
+    res = client.admin_storage_list()
+    typer.echo(res)

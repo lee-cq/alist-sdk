@@ -15,8 +15,6 @@ from pydantic import BaseModel
 
 from alist_sdk import Client, login_server, AlistPath
 
-text_types = "txt,htm,html,xml,java,properties,sql,js,md,json,conf,ini,vue,php,py,bat,gitignore,yml,go,sh,c,cpp,h,hpp,tsx,vtt,srt,ass,rs,lrc,yaml"
-
 CMD_BASE_PATH = ""
 CONFIG_FILE_PATH = Path.home().joinpath(".config", "alist_cli.json")
 
@@ -62,7 +60,6 @@ class PWD(BaseModel):
 
 
 class CmdConfig(BaseModel):
-
     # 登陆数据
     auth_data: dict[str, Auth] = {}
 
@@ -145,7 +142,7 @@ class CmdConfig(BaseModel):
         self.save_config()
         typer.echo(f"logout success, host: {host}")
 
-    def get_client(self, name: str):
+    def get_client(self, name: str) -> Client:
         if name not in self.auth_data:
             raise ValueError(f"name [{name}] not found in auth data")
         t_info = self.auth_data[name]
