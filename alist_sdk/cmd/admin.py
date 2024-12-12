@@ -25,3 +25,15 @@ def storage_list():
     client = cnf.get_client()
     res = client.admin_storage_list()
     typer.echo(res)
+
+
+@storage.command("delete")
+def storage_delete(
+    storage_id=typer.Argument(..., help="存储ID, 通过alist-cli admin storage list获取")
+):
+    """
+    创建存储
+    """
+    client = cnf.get_client()
+    res = client.admin_storage_delete(storage_id)
+    typer.echo(res)

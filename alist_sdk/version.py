@@ -100,6 +100,10 @@
     2. 支持 cmd.admin.storage.list 列出存储器列表。
     3. 移除不必要的代码。
 
+0.41.19:
+    1. alist 支持到 3.41.0
+    2. 支持  cmd.admin.storage.delete 删除存储器。
+
 """
 
 __version__ = "0.39.17"
