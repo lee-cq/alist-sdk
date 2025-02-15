@@ -94,13 +94,14 @@ class TestAlistPath:
         DATA_DIR.joinpath("test_unlink.txt").write_text("123")
         path = AlistPath("http://localhost:5245/local/test_unlink.txt")
         path.unlink()
+        time.sleep(1)
         assert not DATA_DIR.joinpath("test_unlink.txt").exists()
 
-    @pytest.mark.skip("Alist 接口不生效")
     def test_rmdir(self):
         DATA_DIR.joinpath("test_rmdir").mkdir()
         path = AlistPath("http://localhost:5245/local/test_rmdir")
         path.rmdir()
+        time.sleep(1)
         assert not DATA_DIR.joinpath("test_rmdir").exists()
 
     def test_rename(self):

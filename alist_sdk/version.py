@@ -104,8 +104,12 @@
     1. alist 支持到 3.41.0
     2. 支持  cmd.admin.storage.delete 删除存储器。
 
+0.42.20:
+    1. alist 支持到 3.42.0
+    2. 支持 AlistPath.rmdir 删除空目录，使用 unlink 接口, Alist提供的接口不生效。
+    3. 更新单元测试。
 """
 
-__version__ = "0.39.17"
+__version__ = "0.42.20"
 
-ALIST_VERSION = "v3.39.4"
+ALIST_VERSION = "v3.42.0"

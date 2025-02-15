@@ -305,14 +305,13 @@ class AlistPath(PureAlistPath):
             raise AlistError(_data.message)
 
     def rmdir(self, missing_ok=False):
-        """"""
-        if not self.exists():
-            if missing_ok:
-                return
-            raise FileNotFoundError(f"文件不存在: {self.as_posix()}")
-        _data = self.client.remove_empty_directory(self.as_posix())
-        if _data.code != 200:
-            raise AlistError(_data.message)
+        """目前remove_empty_directory接口不生效"""
+        if not self.is_dir():
+            raise NotADirectoryError(f"不是目录: {self.as_posix()}")
+        if len(list(self.iterdir())) > 0:
+            raise OSError(f"目录不为空: {self.as_posix()}")
+
+        return self.unlink(missing_ok=missing_ok)
 
     def rename(self, target: "AlistPath"):
         """"""
