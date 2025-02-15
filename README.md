@@ -2,7 +2,7 @@
 
 [![Alist SDK - Test](https://github.com/lee-cq/alist-sdk/actions/workflows/CI.yaml/badge.svg)](https://github.com/lee-cq/alist-sdk/actions/workflows/CI.yaml)
 
-Alist API 简单封装
+Alist API 封装，客户端支持同步和异步，全部的请求和响应都有完整的数据校验。支持pathlib的路径风格，体验使用更接近Python调用原生文件系统。一个简单的命令行工具正在开发中。
 
 ## [Alist API 文档](https://alist.nn.ci/zh/guide/api/)
 
