@@ -7,13 +7,13 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  unit-tests:
 
     runs-on: ubuntu-latest
     strategy:
       max-parallel: 3
       matrix:
-        python-version: [ '3.10', '3.11', '3.12' ]
+        python-version: [ 3.9, '3.10', '3.11', '3.12', '3.13' ]
         alist-version: [ '3.40.0', '3.41.0', '3.42.0' ]
       fail-fast: false
 
