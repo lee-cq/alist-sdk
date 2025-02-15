@@ -2,11 +2,22 @@
 
 [![Alist SDK - Test](https://github.com/lee-cq/alist-sdk/actions/workflows/CI.yaml/badge.svg)](https://github.com/lee-cq/alist-sdk/actions/workflows/CI.yaml)
 
-Alist API 封装，客户端支持同步和异步，全部的请求和响应都有完整的数据校验。支持pathlib的路径风格，体验使用更接近Python调用原生文件系统。一个简单的命令行工具正在开发中。
+Alist API 封装，客户端支持同步和异步，全部的请求和响应都有完整的数据校验。支持pathlib的路径风格，体验使用更接近Python调用原生文件系统。
+一个简单的命令行工具正在开发中。
+
 
 ## [Alist API 文档](https://alist.nn.ci/zh/guide/api/)
 
 ## 安装
+
+alist-sdk 支持 Python 3.10+
+依赖：
+
+- "httpx>=0.25.1"       HTTP客户端库
+- "pydantic>=2.5.1"      数据校验库
+- "typer>=0.12.5"        命令行工具集成
+
+
 
 从PyPI安装最新release版本  
 `pip install alist-sdk`
@@ -16,7 +27,7 @@ Alist API 封装，客户端支持同步和异步，全部的请求和响应都�
 
 ## 使用
 
-客户端或异步客户端方法签名于API基本一致。
+客户端或异步客户端方法的签名与Alist API基本一致。
 
 ```python
 # Sync 模式
